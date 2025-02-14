@@ -1,5 +1,6 @@
 import { registerRootComponent } from 'expo';
 
+import ListadoLibros from './src/componentes/ListadoLibros';
 import App from './App';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

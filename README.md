@@ -26,9 +26,6 @@ TUTORIAL
         Ahora haremos un  git checkout main para volver a la rama main(la compartida entre todos) y con git pull origin main me bajo los posibles cambios. Unimos nuestra rama con la compartida, git merge ramaPrueba y git push origin main (subes los cambios definitivamente a lo compartido por todos)
 
 
-
-
-
     git pull origin main(te bajas lo último que ha hecho alguien)
     git checkout -b ramaPrueba (Creas la rama con el -b y te cambias a la vez con el checkout).
     //modifico lo que quiera
