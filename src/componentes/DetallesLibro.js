@@ -44,10 +44,12 @@ export default function DetallesLibro({ route }) {
       <View style={stylesGeneral.linea}/>
 
       {/* Más libros del autor */}
-      <View>
-        <Text style={stylesGeneral.titulo}>Más de {libro.autor}</Text>
-          {/* Añadir más libros de ese autor */}
-      </View>
+      {libro.autor !== "Anónimo" && (
+        <View>
+          <Text style={stylesGeneral.titulo}>Más de {libro.autor}</Text>
+            {/* Añadir más libros de ese autor */}
+        </View>
+      )}
 
       <View style={stylesGeneral.linea}/>
 
@@ -121,8 +123,6 @@ export default function DetallesLibro({ route }) {
 
 
 
-
-
     </ScrollView>
   );
 }
@@ -164,20 +164,22 @@ const stylesGeneral = StyleSheet.create({
   linea: {
     width: '80%',
     height: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#000', // Color: Negro
   },
   titulo: {
     fontWeight: 'bold',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 
   boton: {
-    backgroundColor: '#333333',  // Gris oscuro
-    paddingVertical: 12,  // Espaciado vertical
-    paddingHorizontal: 20,  // Espaciado horizontal
-    borderRadius: 5,  // Bordes redondeados
-    alignItems: 'center',  // Centra el texto dentro del botón
-    marginVertical: 10,  // Espacio vertical entre el botón y otros elementos
-    alignSelf: 'flex-start', // Hace que el botón ocupe solo el espacio del texto
+    backgroundColor: '#333333',  // Color: Gris oscuro
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 10,
+    alignSelf: 'flex-start',
   },
   textoBoton: {
     color: 'white',

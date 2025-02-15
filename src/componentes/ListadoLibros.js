@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 
@@ -26,18 +26,20 @@ export default function ListadoLibros() {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       {libros.map(libro => (
         <View key={libro.enlace}> 
-          <TouchableOpacity onPress={() => navigation.navigate("detalles", { libro })}>
+          {/* <TouchableOpacity onPress={() => navigation.navigate("detalles", { libro })}> */}
+          <TouchableOpacity onPress={() => navigation.navigate("Detalles", { libro })}>
             <Image 
               source={{ uri: libro.imagen_portada }}
-              style={styles.imagen_portada_libro} />
+              style={styles.imagen_portada_libro} 
+            />
           </TouchableOpacity>
           <Text>{libro.nombre}</Text>
         </View>
       ))}
-    </ScrollView>
+    </View>
   );
 }
 
@@ -45,8 +47,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   imagen_portada_libro: {
     width: 100,
@@ -54,3 +54,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
