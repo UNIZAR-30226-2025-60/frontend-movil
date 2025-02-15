@@ -1,3 +1,4 @@
+// ListadoLibros.js
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
@@ -29,7 +30,6 @@ export default function ListadoLibros() {
     <View style={styles.container}>
       {libros.map(libro => (
         <View key={libro.enlace}> 
-          {/* <TouchableOpacity onPress={() => navigation.navigate("detalles", { libro })}> */}
           <TouchableOpacity onPress={() => navigation.navigate("Detalles", { libro })}>
             <Image 
               source={{ uri: libro.imagen_portada }}

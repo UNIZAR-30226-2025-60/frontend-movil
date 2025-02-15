@@ -1,3 +1,4 @@
+// DetallesLibro.js
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
