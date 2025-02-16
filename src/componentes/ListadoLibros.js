@@ -35,8 +35,8 @@ export default function ListadoLibros() {
               source={{ uri: libro.imagen_portada }}
               style={styles.imagen_portada_libro} 
             />
+            <Text>{libro.nombre}</Text>
           </TouchableOpacity>
-          <Text>{libro.nombre}</Text>
         </View>
       ))}
     </View>

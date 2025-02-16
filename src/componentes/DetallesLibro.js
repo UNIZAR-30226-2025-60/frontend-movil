@@ -2,9 +2,11 @@
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
+  const navigation = useNavigation();
 
   const handleAñadirALista = () => {
 
@@ -15,7 +17,7 @@ export default function DetallesLibro({ route }) {
   };
 
   const handleLeer = () => {
-
+    navigation.navigate("LeerLibro", { libro });
   };
 
   return (
