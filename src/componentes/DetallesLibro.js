@@ -1,7 +1,8 @@
 // DetallesLibro.js
-import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
+
+import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function DetallesLibro({ route }) {
@@ -70,7 +71,7 @@ export default function DetallesLibro({ route }) {
         <View style={stylesAcercaDe.columnas3}>
           {/* Columna del número de páginas */}
           <View style={stylesAcercaDe.columna}>
-            <FontAwesomeIcon icon={faBook} style={stylesAcercaDe.icono}/>
+            <FontAwesomeIcon icon={faBook} style={stylesAcercaDe.icono} />
             <View style={stylesAcercaDe.textoSubcolumna}>
               <Text>{libro.num_paginas}</Text>
               <Text>páginas</Text>

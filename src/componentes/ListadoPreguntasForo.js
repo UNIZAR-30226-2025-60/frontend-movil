@@ -11,7 +11,7 @@ export default function ListadoPreguntasForo() {
 
   const getPreguntas = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/preguntas");
+      const response = await fetch("http://10.0.2.2:3000/api/preguntas");
       if (!response.ok) {
         throw new Error("Error al obtener las preguntas del foro" + response.error);
       }
