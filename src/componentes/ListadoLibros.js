@@ -13,7 +13,7 @@ export default function ListadoLibros() {
 
   const getLibros = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/libros");
+      const response = await fetch("http://10.0.2.2:3000/api/libros");
       if (!response.ok) {
         throw new Error("Error al obtener libros" + response.error);
       }
@@ -35,8 +35,8 @@ export default function ListadoLibros() {
               source={{ uri: libro.imagen_portada }}
               style={styles.imagen_portada_libro} 
             />
+            <Text>{libro.nombre}</Text>
           </TouchableOpacity>
-          <Text>{libro.nombre}</Text>
         </View>
       ))}
     </View>
