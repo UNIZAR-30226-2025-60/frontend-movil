@@ -42,34 +42,31 @@ export default function ListadoLibros() {
       data={libros}
       renderItem={renderItem}
       keyExtractor={(item) => item.enlace}
-      numColumns={2}  // Mantenemos 2 columnas
+      numColumns={2}
       contentContainerStyle={styles.container}
+
     />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingTop: 10,
+    flexGrow: 1,
   },
   itemContainer: {
     flex: 1,
     margin: 5,
-    alignItems: 'center', // Alinea cada item al centro de su contenedor
+    alignItems: 'center',
     justifyContent: 'center',
   },
   imagen_portada_libro: {
-    width: 100,  // Establece el tamaño de la imagen a 100px
-    height: 150,  // Establece el tamaño de la imagen a 150px
+    width: 100,
+    height: 150,
     marginBottom: 5,
   },
   bookTitle: {
-    textAlign: 'center',  // Centra el texto
-    fontSize: 16,
-    width: 100,  // Asegura que el texto tenga el mismo ancho que la imagen
-    marginTop: 5,  // Espacio entre la imagen y el título
+    textAlign: 'center',
+    width: 100,
+    marginTop: 5,
   },
 });
