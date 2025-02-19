@@ -10,6 +10,7 @@ import DetallesLibro from './src/componentes/DetallesLibro';
 import Foro from './src/pantallas/Foro';
 import LeerLibro from './src/pantallas/LeerLibro';
 import Favoritos from './src/pantallas/Favoritos';
+import MisListas from './src/pantallas/MisListas';
 
 import { useThemeColors } from './src/componentes/Tema';
 
@@ -20,7 +21,6 @@ const Drawer = createDrawerNavigator();
 const Estadisticas = () => <Text>Estadísticas</Text>;
 const Leidos = () => <Text>Leídos</Text>;
 const EnProceso = () => <Text>En Proceso</Text>;
-const MisListas = () => <Text>Mis Listas</Text>;
 //
 
 
