@@ -27,7 +27,6 @@ export default function MisListas() {
       setListas(datos);
     } catch (error) {
       console.error('Error al obtener listas:', error);
-      Alert.alert('Error', 'No se pudieron cargar las listas.');
     }
   };
 
@@ -91,7 +90,7 @@ export default function MisListas() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Encabezado />
+      <Encabezado titulo="Mis Listas" />
       <FlatList
         data={[...listas, { id_lista: 'nueva', nombre: 'Añadir lista', esNueva: true }]}
         renderItem={({ item }) =>

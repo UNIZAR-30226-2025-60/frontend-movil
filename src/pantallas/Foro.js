@@ -6,7 +6,7 @@ import ListadoPreguntasForo from '../componentes/ListadoPreguntasForo';
 export default function Foro() {
   return (
     <View style={{ flex: 1 }}>
-      <Encabezado />
+      <Encabezado titulo="Foro"/>
       <ScrollView contentContainerStyle={styles.container}>
         <ListadoPreguntasForo />
       </ScrollView>

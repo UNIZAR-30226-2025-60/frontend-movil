@@ -62,12 +62,12 @@ export default function App() {
         }}
       >
         <Drawer.Screen name="Inicio" component={MenuStack} options={{ headerShown: false }} />
-        <Drawer.Screen name="Foro" component={Foro} options={{ headerShown: false }} />
-        <Drawer.Screen name="Estadísticas" component={Estadisticas} options={{ headerShown: false }} />
-        <Drawer.Screen name="Mis Favoritos" component={Favoritos} options={{ headerShown: false }} />
-        <Drawer.Screen name="Leídos" component={Leidos} options={{ headerShown: false }} />
-        <Drawer.Screen name="En Proceso" component={EnProceso} options={{ headerShown: false }} />
-        <Drawer.Screen name="Mis Listas" component={MisListas} options={{ headerShown: false }} />
+        <Drawer.Screen name="Foro" component={ForoStack} options={{ headerShown: false }} />
+        <Drawer.Screen name="Estadísticas" component={EstadisticasStack} options={{ headerShown: false }} />
+        <Drawer.Screen name="Mis Favoritos" component={FavoritosStack} options={{ headerShown: false }} />
+        <Drawer.Screen name="Leídos" component={LeidosStack} options={{ headerShown: false }} />
+        <Drawer.Screen name="En Proceso" component={EnProcesoStack} options={{ headerShown: false }} />
+        <Drawer.Screen name="Mis Listas" component={MisListasStack} options={{ headerShown: false }} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
@@ -105,6 +105,55 @@ function MenuStack() {
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
+    </Stack.Navigator>
+  );
+}
+
+function ForoStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Foro" component={Foro} />
+    </Stack.Navigator>
+  );
+}
+
+function EstadisticasStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Estadísticas" component={Estadisticas} />
+    </Stack.Navigator>
+  );
+}
+
+function FavoritosStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Mis Favoritos" component={Favoritos} />
+      <Stack.Screen name="DetallesLibro" component={DetallesLibro} />
+    </Stack.Navigator>
+  );
+}
+
+function LeidosStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Leídos" component={Leidos} />
+    </Stack.Navigator>
+  );
+}
+
+function EnProcesoStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="En Proceso" component={EnProceso} />
+    </Stack.Navigator>
+  );
+}
+
+function MisListasStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Mis Listas" component={MisListas} />
     </Stack.Navigator>
   );
 }
