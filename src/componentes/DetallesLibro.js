@@ -1,13 +1,18 @@
 // DetallesLibro.js
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 
+import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { Alert } from 'react-native'; // EXISTEN OTRAS OPCIONES MÁS BONITAS
 import { useNavigation } from '@react-navigation/native';
 
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
   const navigation = useNavigation();
+  const [esFavorito, setEsFavorito] = useState(false);  // Estado del corazón
 
   const handleAñadirALista = () => {
 
@@ -17,6 +22,56 @@ export default function DetallesLibro({ route }) {
 
   };
 
+  // Añadir libro a favoritos
+  const añadirAFavoritos = async () => {
+    try {
+      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: usuarioCorreo,
+          enlace_libro: libro.enlace,
+        }),
+      });
+      if (respuesta.ok) {
+        setEsFavorito(true);
+        Alert.alert('💖 Añadido', 'El libro se ha añadido a tus favoritos');
+      } else {
+        Alert.alert('⚠️ Error', 'No se pudo añadir el libro a favoritos');
+      }
+    } catch (error) {
+      console.error('❌ Error al añadir a favoritos:', error);
+    }
+  };
+
+  // Eliminar libro de favoritos
+  const eliminarDeFavoritos = async () => {
+    try {
+      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: usuarioCorreo,
+          enlace_libro: libro.enlace,
+        }),
+      });
+      if (respuesta.ok) {
+        setEsFavorito(false);
+        Alert.alert('💔 Eliminado', 'El libro se ha eliminado de tus favoritos');
+      } else {
+        Alert.alert('⚠️ Error', 'No se pudo eliminar el libro de favoritos');
+      }
+    } catch (error) {
+      console.error('❌ Error al eliminar de favoritos:', error);
+    }
+  };
+
+  // Manejar pulsación del corazón
+  const handleCorazonPress = () => {
+    esFavorito ? eliminarDeFavoritos() : añadirAFavoritos();
+  };
+
+
   const handleLeer = () => {
     navigation.navigate("LeerLibro", { libro });
   };
@@ -24,13 +79,23 @@ export default function DetallesLibro({ route }) {
   return (
     <ScrollView contentContainerStyle={stylesGeneral.container}>
 
-      {/* Botón de leer */}
-      <TouchableOpacity 
-        style={stylesGeneral.boton} 
-        onPress={handleLeer}
-      >
-        <Text style={stylesGeneral.textoBoton}>Leer</Text>
-      </TouchableOpacity>
+      {/* Botón de leer y corazón */}
+      <View>
+        <TouchableOpacity 
+          style={stylesGeneral.boton} 
+          onPress={handleLeer}
+        >
+          <Text style={stylesGeneral.textoBoton}>Leer</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
+            <FontAwesomeIcon
+              icon={esFavorito ? faHeartSolid : faHeartRegular}
+              size={30}
+              color={esFavorito ? 'red' : 'gray'}
+            />
+        </TouchableOpacity>
+      </View>
 
 
       {/* Título */}
@@ -187,5 +252,13 @@ const stylesGeneral = StyleSheet.create({
   },
   textoBoton: {
     color: 'white',
+  },
+  fila: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  corazon: {
+    marginHorizontal: 15,
   },
 });

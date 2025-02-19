@@ -9,13 +9,13 @@ import Menu from './src/pantallas/Menu';
 import DetallesLibro from './src/componentes/DetallesLibro';
 import Foro from './src/pantallas/Foro';
 import LeerLibro from './src/pantallas/LeerLibro';
+import Favoritos from './src/pantallas/Favoritos';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 // ELIMINAR ESTO CUANDO ESTÉN LAS PANTALLAS
 const Estadisticas = () => <Text>Estadísticas</Text>;
-const MisFavoritos = () => <Text>Mis Favoritos</Text>;
 const Leidos = () => <Text>Leídos</Text>;
 const EnProceso = () => <Text>En Proceso</Text>;
 const MisListas = () => <Text>Mis Listas</Text>;
@@ -47,7 +47,7 @@ export default function App() {
         <Drawer.Screen name="Inicio" component={MenuStack} options={{ headerShown: false }} />
         <Drawer.Screen name="Foro" component={Foro} options={{ headerShown: false }} />
         <Drawer.Screen name="Estadísticas" component={Estadisticas} options={{ headerShown: false }} />
-        <Drawer.Screen name="Mis Favoritos" component={MisFavoritos} options={{ headerShown: false }} />
+        <Drawer.Screen name="Mis Favoritos" component={Favoritos} options={{ headerShown: false }} />
         <Drawer.Screen name="Leídos" component={Leidos} options={{ headerShown: false }} />
         <Drawer.Screen name="En Proceso" component={EnProceso} options={{ headerShown: false }} />
         <Drawer.Screen name="Mis Listas" component={MisListas} options={{ headerShown: false }} />
