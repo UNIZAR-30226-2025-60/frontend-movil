@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { Provider as PaperProvider } from "react-native-paper";
 import { Text } from 'react-native'; // Asegúrate de importar Text
 
 import Menu from './src/pantallas/Menu';
@@ -14,6 +15,7 @@ import MisListas from './src/pantallas/MisListas';
 import IniciarSesion from './src/pantallas/IniciarSesion';
 
 import { useThemeColors } from './src/componentes/Tema';
+import Encabezado from "./src/componentes/Encabezado";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -22,39 +24,35 @@ const Drawer = createDrawerNavigator();
 const Estadisticas = () => <Text>Estadísticas</Text>;
 const Leidos = () => <Text>Leídos</Text>;
 const EnProceso = () => <Text>En Proceso</Text>;
+const Registrarse = () => <Text>Registrarse</Text>;
 //
 
 export default function App() {
-  const [correoUsuario, setCorreoUsuario] = useState(null);
-  const colors = useThemeColors();
+  const [correoUsuario, setCorreoUsuario] = useState(() => null);
 
   return (
-    <NavigationContainer>
-      <RootStack correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        <RootStack correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
-
 
 function RootStack({ correoUsuario, setCorreoUsuario }) {
   const colors = useThemeColors();
 
-  
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen 
-        name="Drawer"
-      >
-        {(props) => <DrawerNavigator {...props} correoUsuario={correoUsuario} />}
+      <Stack.Screen name="Drawer">
+        {(props) => <DrawerNavigator {...props} correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
       <Stack.Screen 
         name="IniciarSesion"
         options={{
           title: "Iniciar Sesión",
           headerShown: true,
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
+          headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.text,
         }}
       >
@@ -64,25 +62,85 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
   );
 }
 
+// function DrawerNavigator({ correoUsuario, setCorreoUsuario }) {
+//   return (
+//     <Drawer.Navigator>
+//       <Drawer.Screen 
+//         name="Inicio" 
+//         options={{ headerShown: false }}
+//         component={MenuStack}
+//       />
+//       <Drawer.Screen 
+//         name="Foro" 
+//         component={ForoStack} 
+//         options={{ headerShown: false }}
+//       />
 
-function DrawerNavigator({ correoUsuario }) {
+//       {!correoUsuario ? (
+//         <>
+//           {/* <Drawer.Screen name="Iniciar Sesión">
+//             {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
+//           </Drawer.Screen> */}
+//           <Drawer.Screen 
+//             name="Iniciar Sesión" 
+//             component={IniciarSesion} 
+//             options={{ headerShown: true }}
+//           />
+//           <Drawer.Screen name="Registrarse" component={Registrarse} />
+//         </>
+//       ) : (
+//         <>
+//           <Drawer.Screen name="Mis Listas" component={MisListasStack} />
+//           <Drawer.Screen name="Mis Favoritos" component={FavoritosStack} />
+
+//           <Drawer.Screen 
+//             name="Cerrar Sesión"
+//             component={() => {
+//               setCorreoUsuario(null);
+//               return null;
+//             }}
+//           />
+//         </>
+//       )}
+//     </Drawer.Navigator>
+//   );
+// }
+
+function DrawerNavigator({ correoUsuario, setCorreoUsuario }) {
   return (
     <Drawer.Navigator>
       <Drawer.Screen 
         name="Inicio" 
-        component={MenuStack}
         options={{ headerShown: false }}
+        component={MenuStack}
       />
       <Drawer.Screen 
         name="Foro" 
         component={ForoStack} 
         options={{ headerShown: false }}
       />
-      
-      {correoUsuario && (
+
+      {!correoUsuario ? (
+        <>
+          <Drawer.Screen 
+            name="Iniciar Sesión"
+            options={{ headerShown: true }}
+          >
+            {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
+          </Drawer.Screen>
+          <Drawer.Screen name="Registrarse" component={Registrarse} />
+        </>
+      ) : (
         <>
           <Drawer.Screen name="Mis Listas" component={MisListasStack} />
-          <Drawer.Screen name="Mis favoritos" component={FavoritosStack} />
+          <Drawer.Screen name="Mis Favoritos" component={FavoritosStack} />
+          <Drawer.Screen 
+            name="Cerrar Sesión"
+            component={() => {
+              setCorreoUsuario(null);
+              return null;
+            }}
+          />
         </>
       )}
     </Drawer.Navigator>
@@ -91,16 +149,16 @@ function DrawerNavigator({ correoUsuario }) {
 
 
 
-
-// Función del stack para el menú principal y detalles
 function MenuStack() {
   const colors = useThemeColors();
   return (
     <Stack.Navigator>
       <Stack.Screen 
         name="Menu" 
-        component={Menu} 
-        options={{ headerShown: false }}
+        component={Menu}
+        options={{ 
+          headerShown: false 
+        }}
       />
       <Stack.Screen 
         name="Detalles" 
@@ -123,17 +181,6 @@ function MenuStack() {
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
-      {/* <Stack.Screen 
-        name="IniciarSesion" 
-        component={IniciarSesion} 
-        options={{
-          title: "Iniciar Sesión",
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
-          headerTintColor: colors.text,
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }
@@ -186,4 +233,3 @@ function MisListasStack() {
     </Stack.Navigator>
   );
 }
-
