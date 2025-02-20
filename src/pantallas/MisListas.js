@@ -3,17 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert, Modal, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import { useThemeColors } from "../componentes/Tema";
 
 export default function MisListas() {
+  const route = useRoute();
+  const { libro } = route.params || {}; // Recibimos el libro di viene de DetallesLibro
   const [listas, setListas] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [nuevaLista, setNuevaLista] = useState("");
   const colors = useThemeColors();
   const navigation = useNavigation();
-  const usuarioCorreo = 'usuario@correo.com'; // Simulación, debería venir de autenticación
+
+  const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
   const backendUrl = 'http://10.0.2.2:3000';
 
   useEffect(() => {
@@ -27,6 +30,29 @@ export default function MisListas() {
       setListas(datos);
     } catch (error) {
       console.error('Error al obtener listas:', error);
+    }
+  };
+
+  // Añadir el libro a la lista seleccionada
+  const añadirLibroALista = async (idLista) => {
+    try {
+      const respuesta = await fetch(`${backendUrl}/api/listas/libro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: usuarioCorreo,
+          id_lista: idLista,
+          enlace_libro: libro.enlace, // Añadimos el libro
+        }),
+      });
+      if (respuesta.ok) {
+        Alert.alert('Éxito', `El libro se ha añadido a la lista seleccionada.`);
+        navigation.goBack(); // Volvemos a la pantalla anterior
+      } else {
+        Alert.alert('Error', 'No se pudo añadir el libro a la lista.');
+      }
+    } catch (error) {
+      console.error('Error al añadir libro a la lista:', error);
     }
   };
 
@@ -71,7 +97,8 @@ export default function MisListas() {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={[styles.itemContainer, { backgroundColor: colors.background }]}
-      onPress={() => navigation.navigate("MostrarListaLibros", { lista: item })}
+      //onPress={() => navigation.navigate("MostrarListaLibros", { lista: item })}
+      onPress={() => libro ? añadirLibroALista(item.id_lista) : navigation.navigate("MostrarListaLibros", { lista: item })}
       onLongPress={() =>
         Alert.alert(
           'Eliminar lista',
@@ -106,7 +133,8 @@ export default function MisListas() {
             renderItem({ item })
           )
         }
-        keyExtractor={(item) => item.id_lista.toString()}
+        //keyExtractor={(item) => item.id_lista.toString()}
+        keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : index.toString())}
         numColumns={2}
         contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
       />

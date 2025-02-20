@@ -79,14 +79,8 @@ function MenuStack() {
   const colors = useThemeColors();
   return (
     <Stack.Navigator>
-      <Stack.Screen 
-        name="Menu" 
-        component={Menu} 
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen 
-        name="Detalles" 
-        component={DetallesLibro} 
+      <Stack.Screen name="Menu" component={Menu} options={{ headerShown: false }} />
+      <Stack.Screen name="Detalles" component={DetallesLibro} 
         options={{
           title: "Detalles del libro",
           headerStyle: {
@@ -95,9 +89,8 @@ function MenuStack() {
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
-      <Stack.Screen 
-        name="LeerLibro" 
-        component={LeerLibro} 
+      <Stack.Screen name="MisListasScreen" component={MisListas} options={{ title: "Mis Listas" }} />
+      <Stack.Screen name="LeerLibro" component={LeerLibro} 
         options={{ title: "Leyendo...",
           headerStyle: {
             backgroundColor: colors.backgroundHeader, // Fondo oscuro o claro del encabezado
@@ -112,7 +105,7 @@ function MenuStack() {
 function ForoStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Foro" component={Foro} />
+      <Stack.Screen name="ForoScreen" component={Foro} />
     </Stack.Navigator>
   );
 }
@@ -120,7 +113,7 @@ function ForoStack() {
 function EstadisticasStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Estadísticas" component={Estadisticas} />
+      <Stack.Screen name="EstadisticasScreen" component={Estadisticas} />
     </Stack.Navigator>
   );
 }
@@ -128,7 +121,7 @@ function EstadisticasStack() {
 function FavoritosStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Mis Favoritos" component={Favoritos} />
+      <Stack.Screen name="FavoritosScreen" component={Favoritos} />
       <Stack.Screen name="DetallesLibro" component={DetallesLibro} />
     </Stack.Navigator>
   );
@@ -137,7 +130,7 @@ function FavoritosStack() {
 function LeidosStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Leídos" component={Leidos} />
+      <Stack.Screen name="LeidosScreen" component={Leidos} />
     </Stack.Navigator>
   );
 }
@@ -145,7 +138,7 @@ function LeidosStack() {
 function EnProcesoStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="En Proceso" component={EnProceso} />
+      <Stack.Screen name="EnProcesoScreen" component={EnProceso} />
     </Stack.Navigator>
   );
 }
@@ -153,7 +146,7 @@ function EnProcesoStack() {
 function MisListasStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Mis Listas" component={MisListas} />
+      <Stack.Screen name="MisListasScreen" component={MisListas} />
     </Stack.Navigator>
   );
 }

@@ -1,39 +1,23 @@
 // Favoritos.js
 
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import DetallesLibro  from '../componentes/DetallesLibro';
 
-// Función para convertir enlaces de Drive a un formato visible en <Image />
-const obtenerEnlaceImagen = (originalURL) => {
-  // Busca la parte "/d/<ID>/" del enlace
-  const fileIDMatch = originalURL.match(/\/d\/(.+?)\//);
-
-  // Si encuentra el ID, construye la URL de visualización de Drive
-  // Si no, retorna el enlace original (por si NO es de Google Drive)
-  return fileIDMatch
-    ? `https://drive.google.com/uc?export=view&id=${fileIDMatch[1]}`
-    : originalURL;
-};
-
 export default function Favoritos() {
     const [librosFavoritos, setLibrosFavoritos] = useState([]);
-    const [cargando, setCargando] = useState(true);
     const navigation = useNavigation();
 
     // Obtener libros favoritos del backend
     const obtenerFavoritos = async () => {
-      setCargando(true);
       try {
           const respuesta = await fetch('http://10.0.2.2:3000/api/listas/favoritos/amador@gmail.com');
           const datos = await respuesta.json();
           setLibrosFavoritos(datos);
       } catch (error) {
           console.error('Error al obtener libros favoritos:', error);
-      } finally {
-        setCargando(false);
       }
     };
 
@@ -71,39 +55,35 @@ export default function Favoritos() {
       <View style={{ flex: 1 }}>
           <Encabezado titulo="Mis Favoritos" />
           <ScrollView contentContainerStyle={styles.container}>
-              {cargando ? (
-                  <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 50 }} />
-              ) : (
-                  <View style={styles.grid}>
-                      {librosFavoritos.length > 0 ? (
-                          librosFavoritos.map((libro, index) => (
-                              <TouchableOpacity
-                                  key={index}
-                                  style={styles.libroContainer}
-                                  onPress={() => verDetallesLibro(libro)}
-                                  onLongPress={() =>
-                                      Alert.alert(
-                                          'Eliminar libro',
-                                          '¿Estás seguro de que deseas eliminar este libro de favoritos?',
-                                          [
-                                              { text: 'Cancelar', style: 'cancel' },
-                                              { text: 'Eliminar', onPress: () => eliminarDeFavoritos(libro.enlace_libro) },
-                                          ]
-                                      )
-                                  }
-                              >
-                                  <Image
-                                    source={{ uri: obtenerEnlaceImagen(libro.enlace_libro) }}
-                                    style={styles.imagenLibro}
-                                  />
-                                  <Text style={styles.nombreLibro}>{libro.nombre_lista}</Text>
-                              </TouchableOpacity>
-                          ))
-                      ) : (
-                          <Text style={styles.textoVacio}>No tienes libros favoritos aún.</Text>
-                      )}
-                  </View>
-              )}
+            <View style={styles.grid}>
+                {librosFavoritos.length > 0 ? (
+                    librosFavoritos.map((libro, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.libroContainer}
+                            onPress={() => verDetallesLibro(libro)}
+                            onLongPress={() =>
+                                Alert.alert(
+                                    'Eliminar libro',
+                                    '¿Estás seguro de que deseas eliminar este libro de favoritos?',
+                                    [
+                                        { text: 'Cancelar', style: 'cancel' },
+                                        { text: 'Eliminar', onPress: () => eliminarDeFavoritos(libro.enlace_libro) },
+                                    ]
+                                )
+                            }
+                        >
+                            <Image
+                              source={{ uri: libro.enlace_libro }}
+                              style={styles.imagenLibro}
+                            />
+                            <Text style={styles.nombreLibro}>{libro.titulo}</Text>
+                        </TouchableOpacity>
+                    ))
+                ) : (
+                    <Text style={styles.textoVacio}>No tienes libros favoritos aún.</Text>
+                )}
+            </View>
           </ScrollView>
       </View>
   );
