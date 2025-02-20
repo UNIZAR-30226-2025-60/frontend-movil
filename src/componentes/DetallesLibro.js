@@ -1,16 +1,25 @@
 // DetallesLibro.js
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 
+import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { Alert } from 'react-native'; // EXISTEN OTRAS OPCIONES MÁS BONITAS
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { ProgressBar } from 'react-native-paper';
+import { useThemeColors } from "./Tema";
+
 
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
   const navigation = useNavigation();
   const [ reseñas, setReseñas ] = useState([]);
+
+  const [esFavorito, setEsFavorito] = useState(false);  // Estado del corazón
+  const colors = useThemeColors();
   
   useEffect(() => {
     obtenerReseñas();
@@ -50,7 +59,6 @@ export default function DetallesLibro({ route }) {
     return total > 0 ? cantidad / total : 0;
   };
 
-  
 
   const handleAñadirALista = () => {
 
@@ -60,87 +68,146 @@ export default function DetallesLibro({ route }) {
 
   };
 
+  // Añadir libro a favoritos
+  const añadirAFavoritos = async () => {
+    try {
+      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: usuarioCorreo,
+          enlace_libro: libro.enlace,
+        }),
+      });
+      if (respuesta.ok) {
+        setEsFavorito(true);
+        Alert.alert('💖 Añadido', 'El libro se ha añadido a tus favoritos');
+      } else {
+        Alert.alert('⚠️ Error', 'No se pudo añadir el libro a favoritos');
+      }
+    } catch (error) {
+      console.error('❌ Error al añadir a favoritos:', error);
+    }
+  };
+
+  // Eliminar libro de favoritos
+  const eliminarDeFavoritos = async () => {
+    try {
+      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: usuarioCorreo,
+          enlace_libro: libro.enlace,
+        }),
+      });
+      if (respuesta.ok) {
+        setEsFavorito(false);
+        Alert.alert('💔 Eliminado', 'El libro se ha eliminado de tus favoritos');
+      } else {
+        Alert.alert('⚠️ Error', 'No se pudo eliminar el libro de favoritos');
+      }
+    } catch (error) {
+      console.error('❌ Error al eliminar de favoritos:', error);
+    }
+  };
+
+  // Manejar pulsación del corazón
+  const handleCorazonPress = () => {
+    esFavorito ? eliminarDeFavoritos() : añadirAFavoritos();
+  };
+
+
   const handleLeer = () => {
     navigation.navigate("LeerLibro", { libro });
   };
 
   return (
-    <ScrollView contentContainerStyle={stylesGeneral.container}>
+    <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
 
-      {/* Botón de leer */}
-      <TouchableOpacity 
-        style={stylesGeneral.boton} 
-        onPress={handleLeer}
-      >
-        <Text style={stylesGeneral.textoBoton}>Leer</Text>
-      </TouchableOpacity>
+      {/* Botón de leer y corazón */}
+      <View>
+        <TouchableOpacity 
+          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+          onPress={handleLeer}
+        >
+          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
+            <FontAwesomeIcon
+              icon={esFavorito ? faHeartSolid : faHeartRegular}
+              size={30}
+              color={esFavorito ? 'red' : 'gray'}
+            />
+        </TouchableOpacity>
+      </View>
 
 
       {/* Título */}
       <View>
-        <Text style={stylesGeneral.titulo}>{libro.nombre}</Text>
-        <Text style={stylesGeneral.titulo}>de: {libro.autor}</Text>
+      <Text style={[stylesGeneral.titulo, { color: colors.text }]}>{libro.nombre}</Text>
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>de: {libro.autor}</Text>
         <TouchableOpacity 
-          style={stylesGeneral.boton} 
+          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
           onPress={handleAñadirALista}
         >
-          <Text style={stylesGeneral.textoBoton}>Añadir a lista</Text>
+          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={stylesGeneral.linea}/>
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
       {/* Más libros del autor */}
       {libro.autor !== "Anónimo" && (
         <View>
-          <Text style={stylesGeneral.titulo}>Más de {libro.autor}</Text>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
             {/* Añadir más libros de ese autor */}
         </View>
       )}
 
-      <View style={stylesGeneral.linea}/>
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
       {/* Sinopsis */}
       <View>
-        <Text style={stylesGeneral.titulo}>Sinopsis</Text>
-        <Text>{libro.resumen}</Text>
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Sinopsis</Text>
+        <Text style={{ color: colors.text }}>{libro.resumen}</Text>
       </View>
 
-      <View style={stylesGeneral.linea}/>
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]}/>
 
       {/* Acerca de este libro */}
       <View>
-        <Text style={stylesGeneral.titulo}>Acerca de este libro</Text>
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Acerca de este libro</Text>
         <View style={stylesAcercaDe.columnas3}>
           {/* Columna del número de páginas */}
           <View style={stylesAcercaDe.columna}>
-            <FontAwesomeIcon icon={faBook} style={stylesAcercaDe.icono} />
+            <FontAwesomeIcon icon={faBook} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
-              <Text>{libro.num_paginas}</Text>
-              <Text>páginas</Text>
+              <Text style={{ color: colors.text }}>{libro.num_paginas}</Text>
+              <Text style={{ color: colors.text }}>páginas</Text>
             </View>
           </View>
           {/* Columna del número de horas de lectura */}
           <View style={stylesAcercaDe.columna}>
-            <FontAwesomeIcon icon={faClock} style={stylesAcercaDe.icono}/>
+            <FontAwesomeIcon icon={faClock} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
-              <Text>{libro.horas_lectura}</Text>
-              <Text>horas de lectura</Text>
+              <Text style={{ color: colors.text }}>{libro.horas_lectura}</Text>
+              <Text style={{ color: colors.text }}>horas de lectura</Text>
             </View>
           </View>
           {/* Columna del número total de palabras */}
           <View style={stylesAcercaDe.columna}>
-            <FontAwesomeIcon icon={faFileWord} style={stylesAcercaDe.icono}/>
+          <FontAwesomeIcon icon={faFileWord} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
-              <Text>{libro.num_palabras}</Text>
-              <Text>total de palabras</Text>
+              <Text style={{ color: colors.text }}>{libro.num_palabras}</Text>
+              <Text style={{ color: colors.text }}>total de palabras</Text>
             </View>
           </View>
-
         </View>
       </View>
 
-      <View style={stylesGeneral.linea}/>
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
       {/* Valoraciones del libro */}
       <View>
@@ -183,21 +250,22 @@ export default function DetallesLibro({ route }) {
         })()}
 
 
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
         <TouchableOpacity 
-          style={stylesGeneral.boton} 
+          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
           onPress={handleAñadirValoracion}
         >
-          <Text style={stylesGeneral.textoBoton}>Añadir valoración</Text>
+          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir valoración</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={stylesGeneral.linea}/>
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
       {/* Todas las reseñas del libro */}
       <View>
         <View>
-          <Text style={stylesGeneral.titulo}>Todas las reseñas del libro:</Text>
-          {/* Poner aquí el botón desplegable de ordenar por */}
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
+        {/* Poner aquí el botón desplegable de ordenar por */}
         </View>
         <View>
             {reseñas.length === 0 ? (
@@ -277,5 +345,13 @@ const stylesGeneral = StyleSheet.create({
   },
   textoBoton: {
     color: 'white',
+  },
+  fila: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  corazon: {
+    marginHorizontal: 15,
   },
 });

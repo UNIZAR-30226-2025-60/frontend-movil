@@ -2,10 +2,12 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
 import { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
+import { useThemeColors } from "./Tema";
 
 export default function ListadoLibros() {
   const [libros, setLibros] = useState([]);
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   useEffect(() => {
     getLibros().then(setLibros);
@@ -26,13 +28,13 @@ export default function ListadoLibros() {
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
+    <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
       <TouchableOpacity onPress={() => navigation.navigate("Detalles", { libro: item })}>
         <Image 
           source={{ uri: item.imagen_portada }}
           style={styles.imagen_portada_libro} 
         />
-        <Text style={styles.bookTitle}>{item.nombre}</Text>
+        <Text style={[styles.bookTitle, { color: colors.text }]}>{item.nombre}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -43,7 +45,7 @@ export default function ListadoLibros() {
       renderItem={renderItem}
       keyExtractor={(item) => item.enlace}
       numColumns={2}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
 
     />
   );
