@@ -9,6 +9,9 @@ import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Alert, Modal, Fla
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";
 
+
+// NECESITA QUE LE PASES EL LIBRO COMPLETO (enlace, sinopsis, autor, nombre, etc)
+
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
   const navigation = useNavigation();
@@ -343,14 +346,5 @@ const stylesGeneral = StyleSheet.create({
   },
   corazon: {
     marginHorizontal: 15,
-  },
-  modalContainer: {
-    flex: 1, justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: { width: '80%', padding: 20, borderRadius: 10 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  botonCerrar: {
-    backgroundColor: '#999', padding: 10, borderRadius: 5, marginTop: 10, alignItems: 'center',
   },
 });
