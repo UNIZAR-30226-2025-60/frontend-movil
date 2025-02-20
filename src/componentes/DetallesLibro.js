@@ -8,57 +8,16 @@ import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { Alert } from 'react-native'; // EXISTEN OTRAS OPCIONES MÁS BONITAS
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import { ProgressBar } from 'react-native-paper';
 import { useThemeColors } from "./Tema";
 
+
+// NECESITA QUE LE PASES EL LIBRO COMPLETO (enlace, sinopsis, autor, nombre, etc)
 
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
   const navigation = useNavigation();
-  const [ reseñas, setReseñas ] = useState([]);
-
   const [esFavorito, setEsFavorito] = useState(false);  // Estado del corazón
   const colors = useThemeColors();
-  
-  useEffect(() => {
-    obtenerReseñas();
-  }, [libro.enlace]);
-
-  const obtenerReseñas = async () => {
-    try {
-      const enlaceCodificado = encodeURIComponent(libro.enlace);
-      const response = await fetch(`http://10.0.2.2:3000/api/opiniones/${enlaceCodificado}`);
-        if (!response.ok) {
-          throw new Error("Error al obtener las reseñas");
-        }
-        const data = await response.json();
-        setReseñas(data);
-    } catch(error) {
-      console.error("Error al obtener las reseñas:", error);
-    }
-  };
-  // const obtenerReseñas = async () => {
-  //   try {
-  //     const enlaceCodificado = encodeURIComponent(libro.enlace);
-  //     const response = await fetch(`http://10.0.2.2:3000/api/opiniones/${enlaceCodificado}`);
-  //     if (!response.ok) {
-  //       throw new Error("Error al obtener las reseñas");
-  //     }
-  //     const data = await response.json();
-  //     if (JSON.stringify(data) !== JSON.stringify(reseñas)) {
-  //       setReseñas(data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al obtener las reseñas:", error);
-  //   }
-  // };
-  
-
-  const calcularProgreso = (cantidad, total) => {
-    return total > 0 ? cantidad / total : 0;
-  };
-
 
   const handleAñadirALista = () => {
 
@@ -211,45 +170,6 @@ export default function DetallesLibro({ route }) {
 
       {/* Valoraciones del libro */}
       <View>
-        <Text style={stylesGeneral.titulo}>Valoraciones del libro:</Text>
-        {(() => {
-          const conteo = reseñas.reduce((acc, reseña) => {
-            acc[reseña.valor] = (acc[reseña.valor] || 0) + 1;
-            return acc;
-          }, {});
-
-          const totalReseñas = reseñas.length;
-          const sumaValores = reseñas.reduce((sum, reseña) => sum + reseña.valor, 0);
-          const promedio = totalReseñas > 0 ? (sumaValores / totalReseñas).toFixed(1) : "0.0";
-
-          return (
-            <View style={{ padding: 10 }}>
-              {/* Promedio general */}
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Valoración general</Text>
-              <Text style={{ fontSize: 16 }}>{promedio} de 5</Text>
-
-              {/* Estrellas (simples con emojis, puedes reemplazar con iconos si prefieres) */}
-              <Text style={{ fontSize: 20 }}>⭐️⭐️⭐️⭐️☆ ({totalReseñas})</Text>
-
-              {/* Barras de progreso */}
-              {[5, 4, 3, 2, 1].map((num) => {
-                const porcentaje = Math.min(1, totalReseñas > 0 ? (conteo[num] || 0) / totalReseñas : 0);
-                console.log("Conteo de valoraciones:", conteo);
-                console.log("Total de reseñas:", totalReseñas);
-                // const porcentaje = totalReseñas > 0 ? (conteo[num] || 0) / totalReseñas : 0;
-                return (
-                  <View key={num} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
-                    <Text style={{ width: 50 }}>{num} ESTRELLA</Text>
-                    <ProgressBar progress={porcentaje} color="#FFD700" style={{ flex: 1, height: 8, marginLeft: 5 }} />
-                    <Text style={{ marginLeft: 5 }}>{conteo[num] || 0}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          );
-        })()}
-
-
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
         <TouchableOpacity 
           style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
@@ -268,16 +188,7 @@ export default function DetallesLibro({ route }) {
         {/* Poner aquí el botón desplegable de ordenar por */}
         </View>
         <View>
-            {reseñas.length === 0 ? (
-              <Text>No hay reseñas todavía.</Text>
-            ) : (
-              reseñas.map((reseña, index) => (
-                <View key={index}>
-                  <Text>{reseña.usuario_id}</Text>
-                  <Text>{reseña.mensaje}</Text>
-                </View>
-              ))
-            )}
+            {/* Poner aquí las reseñas */}
         </View>
       </View>
 

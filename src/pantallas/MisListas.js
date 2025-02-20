@@ -1,5 +1,4 @@
 // MisListas.js
-
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert, Modal, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
