@@ -1,8 +1,8 @@
 // Favoritos.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import DetallesLibro  from '../componentes/DetallesLibro';
 
@@ -10,14 +10,37 @@ export default function Favoritos() {
     const [librosFavoritos, setLibrosFavoritos] = useState([]);
     const navigation = useNavigation();
 
-    // Obtener libros favoritos del backend
+    // Obtener detalles del libro a partir de su enlace
+    const obtenerDetallesLibro = async (enlaceLibro) => {
+      try {
+        const enlaceCodificado = encodeURIComponent(enlaceLibro);
+        const respuesta = await fetch(`http://10.0.2.2:3000/api/libros/libro/${enlaceCodificado}`);
+        if (respuesta.ok) {
+          const datos = await respuesta.json();
+          return datos;
+        }
+        return null;
+      } catch (error) {
+        console.error(`Error al obtener detalles del libro: ${enlaceLibro}`, error);
+        return null;
+      }
+    };
+
     const obtenerFavoritos = async () => {
       try {
-          const respuesta = await fetch('http://10.0.2.2:3000/api/listas/favoritos/amador@gmail.com');
-          const datos = await respuesta.json();
-          setLibrosFavoritos(datos);
+        const respuesta = await fetch('http://10.0.2.2:3000/api/listas/favoritos/amador@gmail.com');
+        const datos = await respuesta.json();
+  
+        // Obtener los detalles de cada libro y guardarlos en librosFavoritos
+        const librosConDetalles = await Promise.all(
+          datos.map(async (libro) => {
+            const detalles = await obtenerDetallesLibro(libro.enlace_libro);
+            return detalles ? { ...libro, ...detalles } : libro;
+          })
+        );
+        setLibrosFavoritos(librosConDetalles);
       } catch (error) {
-          console.error('Error al obtener libros favoritos:', error);
+        console.error('Error al obtener los enlaces de los libros favoritos:', error);
       }
     };
 
@@ -34,7 +57,10 @@ export default function Favoritos() {
           });
           if (respuesta.ok) {
             Alert.alert('Éxito', 'Libro eliminado de favoritos');
-            obtenerFavoritos(); // Actualiza la lista tras eliminar
+            //obtenerFavoritos(); // Actualiza la lista tras eliminar
+            setLibrosFavoritos((prevLibros) =>
+              prevLibros.filter((libro) => libro.enlace_libro !== enlaceLibro)
+            );
           } else {
             Alert.alert('Error', 'No se pudo eliminar el libro');
           }
@@ -42,6 +68,12 @@ export default function Favoritos() {
           console.error('Error al eliminar libro:', error);
         }
     };
+
+    useFocusEffect(
+      useCallback(() => {
+        obtenerFavoritos();
+      }, [])
+    );
 
     const verDetallesLibro = (libro) => {
       navigation.navigate("DetallesLibro", { libro });
@@ -62,22 +94,12 @@ export default function Favoritos() {
                             key={index}
                             style={styles.libroContainer}
                             onPress={() => verDetallesLibro(libro)}
-                            onLongPress={() =>
-                                Alert.alert(
-                                    'Eliminar libro',
-                                    '¿Estás seguro de que deseas eliminar este libro de favoritos?',
-                                    [
-                                        { text: 'Cancelar', style: 'cancel' },
-                                        { text: 'Eliminar', onPress: () => eliminarDeFavoritos(libro.enlace_libro) },
-                                    ]
-                                )
-                            }
                         >
-                            <Image
-                              source={{ uri: libro.enlace_libro }}
-                              style={styles.imagenLibro}
+                            <Image 
+                              source={{ uri: libro.imagen_portada }}
+                              style={styles.imagenLibro} 
                             />
-                            <Text style={styles.nombreLibro}>{libro.titulo}</Text>
+                            <Text style={styles.nombreLibro}>{libro.nombre || 'Título no disponible'}</Text>
                         </TouchableOpacity>
                     ))
                 ) : (
@@ -93,7 +115,11 @@ const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 16, backgroundColor: '#fff' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   libroContainer: { width: '47%', marginBottom: 20, alignItems: 'center' },
-  imagenLibro: { width: '100%', height: 200, resizeMode: 'cover', borderRadius: 10, borderWidth: 1, borderColor: '#ccc' },
+  imagenLibro: { 
+    width: 100,
+    height: 150,
+    marginBottom: 5, 
+  },
   nombreLibro: { marginTop: 8, textAlign: 'center', fontSize: 14 },
   textoVacio: { fontSize: 16, textAlign: 'center', marginTop: 20 },
 });

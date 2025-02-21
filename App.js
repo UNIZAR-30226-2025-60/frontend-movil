@@ -12,6 +12,7 @@ import LeerLibro from './src/pantallas/LeerLibro';
 import Favoritos from './src/pantallas/Favoritos';
 import MisListas from './src/pantallas/MisListas';
 import IniciarSesion from './src/pantallas/IniciarSesion';
+import LibrosDeLista from './src/componentes/LibrosDeLista';
 
 import { useThemeColors } from './src/componentes/Tema';
 
@@ -84,7 +85,17 @@ function DrawerNavigator({ correoUsuario }) {
           <Drawer.Screen 
             name="Mis Listas" 
             component={MisListasStack}
-            options={{ headerShown: false }} 
+            options={{
+              headerShown: false,
+              listeners: ({ navigation }) => ({
+                drawerItemPress: (e) => {
+                  e.preventDefault();
+                  navigation.navigate('Mis Listas', {
+                    screen: 'MisListasScreen',
+                  });
+                },
+              }),
+            }}
           />
           <Drawer.Screen 
             name="Mis favoritos" 
@@ -96,9 +107,6 @@ function DrawerNavigator({ correoUsuario }) {
     </Drawer.Navigator>
   );
 }
-
-
-
 
 // Función del stack para el menú principal y detalles
 function MenuStack() {
@@ -149,6 +157,7 @@ function FavoritosStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="FavoritosScreen" component={Favoritos} />
       <Stack.Screen name="DetallesLibro" component={DetallesLibro} />
+      <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
     </Stack.Navigator>
   );
 }
@@ -173,6 +182,8 @@ function MisListasStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MisListasScreen" component={MisListas} />
+      <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
+      <Stack.Screen name="LibrosDeListaScreen" component={LibrosDeLista} />
     </Stack.Navigator>
   );
 }

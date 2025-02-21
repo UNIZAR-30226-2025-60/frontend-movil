@@ -26,7 +26,16 @@ export default function MisListas() {
     try {
       const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
       const datos = await respuesta.json();
-      setListas(datos);
+
+    // Ordenar: "Mis Favoritos" primero y el resto alfabéticamente
+    const listasOrdenadas = datos.sort((a, b) => {
+      if (a.nombre === 'Mis Favoritos') return -1;
+      if (b.nombre === 'Mis Favoritos') return 1;
+      return a.nombre.localeCompare(b.nombre); // Orden alfabético
+    });
+
+    setListas(listasOrdenadas);
+
     } catch (error) {
       console.error('Error al obtener listas:', error);
     }
@@ -96,18 +105,19 @@ export default function MisListas() {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={[styles.itemContainer, { backgroundColor: colors.background }]}
-      //onPress={() => navigation.navigate("MostrarListaLibros", { lista: item })}
-      onPress={() => libro ? añadirLibroALista(item.id_lista) : navigation.navigate("MostrarListaLibros", { lista: item })}
-      onLongPress={() =>
-        Alert.alert(
-          'Eliminar lista',
-          `¿Seguro que deseas eliminar la lista "${item.nombre}"?`,
-          [
-            { text: 'Cancelar', style: 'cancel' },
-            { text: 'Eliminar', onPress: () => eliminarLista(item.id_lista) },
-          ]
-        )
-      }
+      //onPress={() => libro ? añadirLibroALista(item.id_lista) : navigation.navigate("MostrarListaLibros", { lista: item })}
+      onPress={() => {
+        if (item.nombre === 'Mis Favoritos') {
+          // Solo redirige si el nombre coincide
+          navigation.navigate('Mis favoritos');
+        } else if (libro) {
+          añadirLibroALista(item.id_lista);
+        } else {
+          // Aquí manejarías otras listas
+          const urlLista = `http://10.0.2.2:3000/api/listas/amador@gmail.com/${item.nombre}/libros`;
+          navigation.navigate('LibrosDeListaScreen', { nombreLista: item.nombre, url: urlLista });
+        }
+      }}
     >
       <Ionicons name="book-outline" size={50} color={colors.icon} />
       <Text style={[styles.nombreLista, { color: colors.text }]}>{item.nombre}</Text>
