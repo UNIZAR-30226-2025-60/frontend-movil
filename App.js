@@ -81,8 +81,16 @@ function DrawerNavigator({ correoUsuario }) {
       
       {correoUsuario && (
         <>
-          <Drawer.Screen name="Mis Listas" component={MisListasStack} />
-          <Drawer.Screen name="Mis favoritos" component={FavoritosStack} />
+          <Drawer.Screen 
+            name="Mis Listas" 
+            component={MisListasStack}
+            options={{ headerShown: false }}
+          />
+          <Drawer.Screen 
+            name="Mis favoritos" 
+            component={FavoritosStack} 
+            options={{ headerShown: false }}
+          />
         </>
       )}
     </Drawer.Navigator>
@@ -116,17 +124,6 @@ function MenuStack() {
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
-      {/* <Stack.Screen 
-        name="IniciarSesion" 
-        component={IniciarSesion} 
-        options={{
-          title: "Iniciar Sesión",
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
-          headerTintColor: colors.text,
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }
