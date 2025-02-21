@@ -81,8 +81,16 @@ function DrawerNavigator({ correoUsuario }) {
       
       {correoUsuario && (
         <>
-          <Drawer.Screen name="Mis Listas" component={MisListasStack} />
-          <Drawer.Screen name="Mis favoritos" component={FavoritosStack} />
+          <Drawer.Screen 
+            name="Mis Listas" 
+            component={MisListasStack}
+            options={{ headerShown: false }} 
+          />
+          <Drawer.Screen 
+            name="Mis favoritos" 
+            component={FavoritosStack}
+            options={{ headerShown: false }} 
+          />
         </>
       )}
     </Drawer.Navigator>
