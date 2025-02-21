@@ -84,12 +84,12 @@ function DrawerNavigator({ correoUsuario }) {
           <Drawer.Screen 
             name="Mis Listas" 
             component={MisListasStack}
-            options={{ headerShown: false }}
+            options={{ headerShown: false }} 
           />
           <Drawer.Screen 
             name="Mis favoritos" 
-            component={FavoritosStack} 
-            options={{ headerShown: false }}
+            component={FavoritosStack}
+            options={{ headerShown: false }} 
           />
         </>
       )}
