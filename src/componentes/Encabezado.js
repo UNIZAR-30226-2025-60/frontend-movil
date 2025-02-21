@@ -1,15 +1,202 @@
+// // Encabezado.js
+// import React, { use } from "react";
+// import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+// import { SafeAreaView } from "react-native-safe-area-context";
+// import { Ionicons } from "@expo/vector-icons";
+// import { useNavigation, useRoute } from "@react-navigation/native";
+// import { useThemeColors } from "./Tema";
+
+// export default function Encabezado({ titulo }) {
+//   const navigation = useNavigation();
+//   const route = useRoute(); // Detecta la pantalla actual
+//   const colors = useThemeColors();
+
+//   // Define pantallas donde quiero que se muestre el subtítulo
+//   const pantallasConTitulo = ["Mis Favoritos", "Mis Listas", "Foro", "Leídos"];
+
+//   return (
+//     <SafeAreaView style={{ backgroundColor: colors.backgroundHeader }}>
+//       <View style={[styles.header, { backgroundColor: colors.backgroundHeader }]}>
+//         {/* Botón de Menú */}
+//         <TouchableOpacity onPress={() => navigation.openDrawer()}>
+//           <Ionicons name="menu" size={30} color={colors.icon} />
+//         </TouchableOpacity>
+
+//         {/* Título */}
+//         <Text style={[styles.title, { color: colors.text }]}>BOOKLY</Text>
+
+//         {/* Icono de Usuario */}
+//         <TouchableOpacity onPress={() => navigation.navigate("IniciarSesion")}>
+//           <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
+//         </TouchableOpacity>
+//       </View>
+
+//       {/* Mostrar título solo si la pantalla está en la lista */}
+//       {pantallasConTitulo.includes(route.name) && (
+//         <View style={styles.subtituloContainer}>
+//           <Text style={[styles.subtitulo, { color: colors.text }]}>{titulo}</Text>
+//         </View>
+//       )}
+//     </SafeAreaView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   header: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     paddingLeft: 15,
+//     paddingRight: 15,
+//     paddingVertical: 10,
+//   },
+//   title: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//   },
+//   subtituloContainer: {
+//     paddingHorizontal: 15,
+//     paddingVertical: 10,
+//   },
+//   subtitulo: {
+//     fontSize: 22,
+//     fontWeight: "bold",
+//   },
+// });
+
+
+
+
+// // Encabezado.js
+// import React, { useState } from "react";
+// import { View, Text, TouchableOpacity, StyleSheet, Pressable } from "react-native";
+// import { SafeAreaView } from "react-native-safe-area-context";
+// import { Ionicons } from "@expo/vector-icons";
+// import { useNavigation, useRoute } from "@react-navigation/native";
+// import { useThemeColors } from "./Tema";
+
+// export default function Encabezado({ titulo }) {
+//   const navigation = useNavigation();
+//   const route = useRoute(); // Detecta la pantalla actual
+//   const colors = useThemeColors();
+//   const [menuVisible, setMenuVisible] = useState(false);
+
+//   // Define pantallas donde quiero que se muestre el subtítulo
+//   const pantallasConTitulo = ["Mis Favoritos", "Mis Listas", "Foro", "Leídos"];
+
+//   return (
+//     <SafeAreaView style={{ backgroundColor: colors.backgroundHeader }}>
+//       <View style={[styles.header, { backgroundColor: colors.backgroundHeader }]}>
+//         {/* Botón de Menú */}
+//         <TouchableOpacity onPress={() => navigation.openDrawer()}>
+//           <Ionicons name="menu" size={30} color={colors.icon} />
+//         </TouchableOpacity>
+
+//         {/* Título */}
+//         <Text style={[styles.title, { color: colors.text }]}>BOOKLY</Text>
+
+//         {/* Icono de Usuario con Menú Desplegable */}
+//         <View style={{ position: "relative" }}>
+//           <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+//             <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
+//           </TouchableOpacity>
+
+//           {menuVisible && (
+//             <Pressable style={styles.overlay} onPress={() => setMenuVisible(false)}>
+//               <View style={[styles.menuDesplegable, { backgroundColor: colors.backgroundHeader }]}>
+//                 <TouchableOpacity
+//                   onPress={() => {
+//                     setMenuVisible(false);
+//                     navigation.navigate("IniciarSesion");
+//                   }}
+//                 >
+//                   <Text style={[styles.menuItem, { color: colors.text }]}>Iniciar sesión</Text>
+//                 </TouchableOpacity>
+//               </View>
+//             </Pressable>
+//           )}
+//         </View>
+//       </View>
+
+//       {/* Mostrar título solo si la pantalla está en la lista */}
+//       {pantallasConTitulo.includes(route.name) && (
+//         <View style={styles.subtituloContainer}>
+//           <Text style={[styles.subtitulo, { color: colors.text }]}>{titulo}</Text>
+//         </View>
+//       )}
+//     </SafeAreaView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   header: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     paddingLeft: 15,
+//     paddingRight: 15,
+//     paddingVertical: 10,
+//   },
+//   title: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//   },
+//   subtituloContainer: {
+//     paddingHorizontal: 15,
+//     paddingVertical: 10,
+//   },
+//   subtitulo: {
+//     fontSize: 22,
+//     fontWeight: "bold",
+//   },
+//   menuDesplegable: {
+//     position: "absolute",
+//     top: 40,
+//     right: 0,
+//     width: 150,
+//     borderRadius: 5,
+//     padding: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.2,
+//     shadowRadius: 4,
+//     elevation: 5,
+//     zIndex: 10, // Asegura que se muestre encima de otros elementos
+//     borderWidth: 1,
+//     borderColor: "#ccc",
+//   },
+//   menuItem: {
+//     fontSize: 16,
+//     paddingVertical: 10,
+//     textAlign: "center",
+//   },
+//   overlay: {
+//     position: "absolute",
+//     top: 0,
+//     left: 0,
+//     right: 0,
+//     bottom: 0,
+//     backgroundColor: "rgba(0,0,0,0.1)",
+//   },
+// });
+
+
 // Encabezado.js
-import React, { use } from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useThemeColors } from "./Tema";
+import { Menu, Divider } from "react-native-paper";
+
 
 export default function Encabezado({ titulo }) {
   const navigation = useNavigation();
   const route = useRoute(); // Detecta la pantalla actual
   const colors = useThemeColors();
+
+  const [menuVisible, setMenuVisible] = useState(false);
 
   // Define pantallas donde quiero que se muestre el subtítulo
   const pantallasConTitulo = ["Mis Favoritos", "Mis Listas", "Foro", "Leídos"];
@@ -26,9 +213,31 @@ export default function Encabezado({ titulo }) {
         <Text style={[styles.title, { color: colors.text }]}>BOOKLY</Text>
 
         {/* Icono de Usuario */}
-        <TouchableOpacity onPress={() => navigation.navigate("IniciarSesion")}>
-        <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
-        </TouchableOpacity>
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <TouchableOpacity onPress={() => setMenuVisible(true)}>
+              <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
+            </TouchableOpacity>
+          }  
+        >
+          <Menu.Item
+            title="Iniciar Sesión"
+            onPress={() => {
+              setMenuVisible(false); 
+              navigation.navigate("IniciarSesion")
+            }}
+          />
+          <Divider />
+          <Menu.Item
+            title="Registrarse"
+            onPress={() => {
+              setMenuVisible(false); 
+              // navigation.navigate("Registrarse")
+            }}
+          />
+        </Menu>
       </View>
 
       {/* Mostrar título solo si la pantalla está en la lista */}
@@ -63,3 +272,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+

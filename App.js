@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Text } from 'react-native'; // Asegúrate de importar Text
+import { Text } from 'react-native';
+import { Provider as PaperProvider } from "react-native-paper";
+
 
 import Menu from './src/pantallas/Menu';
 import DetallesLibro from './src/componentes/DetallesLibro';
@@ -29,9 +31,11 @@ export default function App() {
   const colors = useThemeColors();
 
   return (
-    <NavigationContainer>
-      <RootStack correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        <RootStack correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 
@@ -42,6 +46,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
   
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* Menú desplegable izquierdo */}
       <Stack.Screen 
         name="Drawer"
       >
@@ -52,14 +57,13 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         options={{
           title: "Iniciar Sesión",
           headerShown: true,
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
+          headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.text,
         }}
       >
         {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
+      
     </Stack.Navigator>
   );
 }
@@ -78,11 +82,19 @@ function DrawerNavigator({ correoUsuario }) {
         component={ForoStack} 
         options={{ headerShown: false }}
       />
-      
+
       {correoUsuario && (
         <>
-          <Drawer.Screen name="Mis Listas" component={MisListasStack} />
-          <Drawer.Screen name="Mis favoritos" component={FavoritosStack} />
+          <Drawer.Screen
+            name="Mis Listas"
+            component={MisListasStack}
+            options={{ headerShown: false }}
+          />
+          <Drawer.Screen 
+            name="Mis favoritos" 
+            component={FavoritosStack}
+            options={{ headerShown: false }}
+          />
         </>
       )}
     </Drawer.Navigator>
@@ -109,24 +121,12 @@ function MenuStack() {
       />
       <Stack.Screen name="MisListasScreen" component={MisListas} options={{ title: "Mis Listas" }} />
       <Stack.Screen name="LeerLibro" component={LeerLibro} 
-        options={{ title: "Leyendo...",
-          headerStyle: {
-            backgroundColor: colors.backgroundHeader, // Fondo oscuro o claro del encabezado
-          },
+        options={{ 
+          title: "Leyendo...",
+          headerStyle: { backgroundColor: colors.backgroundHeader, },
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
-      {/* <Stack.Screen 
-        name="IniciarSesion" 
-        component={IniciarSesion} 
-        options={{
-          title: "Iniciar Sesión",
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
-          headerTintColor: colors.text,
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }
