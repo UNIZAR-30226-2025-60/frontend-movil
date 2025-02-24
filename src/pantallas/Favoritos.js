@@ -5,10 +5,12 @@ import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity } fr
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import DetallesLibro  from '../componentes/DetallesLibro';
+import { useThemeColors } from "../componentes/Tema";
 
 export default function Favoritos() {
     const [librosFavoritos, setLibrosFavoritos] = useState([]);
     const navigation = useNavigation();
+    const colors = useThemeColors();
 
     // Obtener detalles del libro a partir de su enlace
     const obtenerDetallesLibro = async (enlaceLibro) => {
@@ -84,9 +86,9 @@ export default function Favoritos() {
     }, []);
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
           <Encabezado titulo="Mis Favoritos" />
-          <ScrollView contentContainerStyle={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.grid}>
                 {librosFavoritos.length > 0 ? (
                     librosFavoritos.map((libro, index) => (
@@ -97,13 +99,13 @@ export default function Favoritos() {
                         >
                             <Image 
                               source={{ uri: libro.imagen_portada }}
-                              style={styles.imagenLibro} 
+                              style={styles.imagenLibro}
                             />
-                            <Text style={styles.nombreLibro}>{libro.nombre || 'Título no disponible'}</Text>
+                            <Text style={[styles.nombreLibro, { color: colors.text }]}>{libro.nombre || 'Título no disponible'}</Text>
                         </TouchableOpacity>
                     ))
                 ) : (
-                    <Text style={styles.textoVacio}>No tienes libros favoritos aún.</Text>
+                    <Text style={[styles.textoVacio, { color: colors.text }]}>No tienes libros favoritos aún.</Text>
                 )}
             </View>
           </ScrollView>
@@ -112,14 +114,36 @@ export default function Favoritos() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 16, backgroundColor: '#fff' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  libroContainer: { width: '47%', marginBottom: 20, alignItems: 'center' },
+  container: { 
+    flex: 1 
+  },
+  scrollContainer: { 
+    flexGrow: 1, 
+    padding: 16 
+  },
+  grid: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between' 
+  },
+  libroContainer: { 
+    width: '47%', 
+    marginBottom: 20, 
+    alignItems: 'center' 
+  },
   imagenLibro: { 
     width: 100,
     height: 150,
     marginBottom: 5, 
   },
-  nombreLibro: { marginTop: 8, textAlign: 'center', fontSize: 14 },
-  textoVacio: { fontSize: 16, textAlign: 'center', marginTop: 20 },
+  nombreLibro: { 
+    marginTop: 8, 
+    textAlign: 'center', 
+    fontSize: 14 
+  },
+  textoVacio: { 
+    fontSize: 16, 
+    textAlign: 'center', 
+    marginTop: 20 
+  },
 });

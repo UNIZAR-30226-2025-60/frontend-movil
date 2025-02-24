@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useThemeColors } from "../componentes/Tema";
 
 
 export default function IniciarSesion({ setCorreoUsuario }) {
@@ -10,14 +11,17 @@ export default function IniciarSesion({ setCorreoUsuario }) {
   const [cargando, setCargando] = useState(false);
 
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   // Configuramos la cabecera con el título y la flecha de volver
   useEffect(() => {
     navigation.setOptions({
       title: "Iniciar Sesión",
-      headerBackTitle: "Atrás", // Texto opcional para la flecha
+      headerStyle: { backgroundColor: colors.backgroundHeader },
+      headerTintColor: colors.text,
+      headerBackTitle: "Atrás",
     });
-  }, [navigation]);
+  }, [navigation, colors]);
 
   const handleLogin = async () => {
     if (!correo || !contrasena) {
@@ -49,13 +53,13 @@ export default function IniciarSesion({ setCorreoUsuario }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Iniciar Sesión</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}> 
+      <Text style={[styles.titulo, { color: colors.text }]}>Iniciar Sesión</Text>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
         placeholder="Correo electrónico"
-        placeholderTextColor="#aaa"
+        placeholderTextColor={colors.text}
         value={correo}
         onChangeText={setCorreo}
         keyboardType="email-address"
@@ -63,16 +67,16 @@ export default function IniciarSesion({ setCorreoUsuario }) {
       />
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
         placeholder="Contraseña"
-        placeholderTextColor="#aaa"
+        placeholderTextColor={colors.text}
         value={contrasena}
         onChangeText={setContrasena}
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.boton} onPress={handleLogin} disabled={cargando}>
-        <Text style={styles.textoBoton}>{cargando ? "Cargando..." : "Continuar"}</Text>
+      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleLogin} disabled={cargando}>
+        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Continuar"}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -84,14 +88,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff', // Fondo blanco
     padding: 20,
   },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
   },
   input: {
     width: '100%',
@@ -102,7 +104,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
   },
   boton: {
     width: '100%',
@@ -113,7 +114,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   textoBoton: {
-    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
