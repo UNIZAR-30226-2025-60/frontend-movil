@@ -5,14 +5,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Text } from 'react-native'; // Asegúrate de importar Text
 
+import MenuUsuario from "./src/pantallas/MenuUsuario";
+import IniciarSesion from './src/pantallas/IniciarSesion';
 import Menu from './src/pantallas/Menu';
 import DetallesLibro from './src/componentes/DetallesLibro';
-import Foro from './src/pantallas/Foro';
 import LeerLibro from './src/pantallas/LeerLibro';
+import Foro from './src/pantallas/Foro';
 import Favoritos from './src/pantallas/Favoritos';
 import MisListas from './src/pantallas/MisListas';
-import IniciarSesion from './src/pantallas/IniciarSesion';
 import LibrosDeLista from './src/componentes/LibrosDeLista';
+
 
 import { useThemeColors } from './src/componentes/Tema';
 
@@ -61,6 +63,16 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
       >
         {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
+      <Stack.Screen 
+        name="MenuUsuario"
+        component={MenuUsuario}
+        options={{
+          title: "Menú de Usuario",
+          headerShown: true,
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      />
     </Stack.Navigator>
   );
 }

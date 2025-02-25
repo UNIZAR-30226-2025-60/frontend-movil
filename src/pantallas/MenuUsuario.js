@@ -28,8 +28,8 @@ export default function MenuUsuario({ setCorreoUsuario }) {
 
       <TouchableOpacity 
         style={[styles.boton, { backgroundColor: colors.button }]}
-        // onPress={() => navigation.navigate("IniciarSesion")}
-        onPress={() => navigation.navigate("MenuUsuarioStack", { screen: "IniciarSesion" })}
+        onPress={() => navigation.navigate("IniciarSesion")}
+        // onPress={() => navigation.navigate("MenuUsuario", { screen: "IniciarSesion" })}
       >
         <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Iniciar sesión</Text>
       </TouchableOpacity>

@@ -26,7 +26,8 @@ export default function Encabezado({ titulo }) {
         <Text style={[styles.title, { color: colors.text }]}>BOOKLY</Text>
 
         {/* Icono de Usuario */}
-        <TouchableOpacity onPress={() => navigation.navigate("IniciarSesion")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("IniciarSesion")}> */}
+        <TouchableOpacity onPress={() => navigation.navigate("MenuUsuario")}>
         <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
         </TouchableOpacity>
       </View>
