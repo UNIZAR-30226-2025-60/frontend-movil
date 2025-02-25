@@ -62,7 +62,6 @@ export default function IniciarSesion({ setCorreoUsuario }) {
         placeholderTextColor={colors.text}
         value={correo}
         onChangeText={setCorreo}
-        keyboardType="email-address"
         autoCapitalize="none"
       />
 

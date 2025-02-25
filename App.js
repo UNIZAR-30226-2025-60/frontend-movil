@@ -7,6 +7,7 @@ import { Text } from 'react-native'; // Asegúrate de importar Text
 
 import MenuUsuario from "./src/pantallas/MenuUsuario";
 import IniciarSesion from './src/pantallas/IniciarSesion';
+import Registrarse from "./src/pantallas/Registrarse";
 import Menu from './src/pantallas/Menu';
 import DetallesLibro from './src/componentes/DetallesLibro';
 import LeerLibro from './src/pantallas/LeerLibro';
@@ -62,6 +63,19 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         }}
       >
         {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
+      </Stack.Screen>
+      <Stack.Screen 
+        name="Registrarse"
+        options={{
+          title: "Registrarse",
+          headerShown: true,
+          headerStyle: { 
+            backgroundColor: colors.backgroundHeader 
+          },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <Registrarse {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
       <Stack.Screen 
         name="MenuUsuario"

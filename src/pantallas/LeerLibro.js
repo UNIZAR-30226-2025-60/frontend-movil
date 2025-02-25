@@ -17,23 +17,6 @@ export default function LeerLibro({ route }) {
         domStorageEnabled={true}
         setBuiltInZoomControls={true}
       />
-      {/* <WebView 
-        source={{ uri: pdfUrl }} 
-        style={styles.webview} 
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        scalesPageToFit={true} // Habilita zoom nativo
-        allowsFullscreenVideo={true}
-        useWebKit={true}
-        setBuiltInZoomControls={true} // Controles de zoom en Android
-        // setDisplayZoomControls={false} // Oculta los botones de zoom
-      /> */}
-      {/* <WebView 
-        source={{ uri: pdfUrl }} 
-        style={styles.webview} 
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-      /> */}
     </View>
   );
 }
