@@ -46,7 +46,6 @@ export default function ListadoLibros() {
       keyExtractor={(item) => item.enlace}
       numColumns={2}
       contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
-
     />
   );
 }

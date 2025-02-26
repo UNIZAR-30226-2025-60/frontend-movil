@@ -5,7 +5,8 @@ import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
+import { ProgressBar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";
 
@@ -15,13 +16,69 @@ import { useThemeColors } from "./Tema";
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
   const navigation = useNavigation();
-  const [esFavorito, setEsFavorito] = useState(false);  // Estado del corazón
-  const [modalVisible, setModalVisible] = useState(false); // Modal para seleccionar lista
-  const [listasUsuario, setListasUsuario] = useState([]); // Listas del ususario
+  const [esFavorito, setEsFavorito] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [listasUsuario, setListasUsuario] = useState([]);
+  const [librosDelAutor, setLibrosDelAutor] = useState([]);
+
+
+  const [mostrarResumenCompleto, setMostrarResumenCompleto] = useState(false);
+
+  const [valoraciones, setValoraciones] = useState([]);
+  const [promedio, setPromedio] = useState(null);
+  const [conteo, setConteo] = useState([]);
+  const [totalValoraciones, setTotalValoraciones] = useState(null);
   const colors = useThemeColors();
 
   const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
   const backendUrl = 'http://10.0.2.2:3000';
+
+  useEffect(() => {
+    if (libro.autor !== "Anónimo") {
+      obtenerMasLibrosDelAutor();
+    }
+    obtenerValoraciones();
+  }, []);
+
+  const obtenerMasLibrosDelAutor = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/libros/autor/${libro.autor}`);
+      if (!response.ok) {
+        throw new Error("Error al obtener libros del autor " + libro.autor + ": " + response.error);
+      }
+      const data = await response.json();
+      setLibrosDelAutor(data);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  const obtenerValoraciones = async () => {
+    try {
+      const enlaceCodificado = encodeURIComponent(libro.enlace);
+      const response = await fetch(`${backendUrl}/api/opiniones/${enlaceCodificado}`);
+      if (!response.ok) {
+        throw new Error("Error al obtener las valoraciones del libro " + libro.nombre + ": " + response.error);
+      }
+      const data = await response.json();
+      setValoraciones(data);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    const conteoAux = valoraciones.reduce((acc, valoracion) => {
+      acc[valoracion.valor] = (acc[valoracion.valor] || 0) + 1;
+      return acc;
+    }, {});
+    setConteo(conteoAux);
+    const totalValoracionesAux = valoraciones.length;
+    setTotalValoraciones(totalValoracionesAux);
+    const sumaValores = valoraciones.reduce((sum, valoracion) => sum + valoracion.valor, 0);
+    const promedioAux = totalValoracionesAux > 0 ? (sumaValores / totalValoracionesAux).toFixed(1) : "0.0";
+    setPromedio(promedioAux);
+  }, [valoraciones]);
 
   const handleAñadirValoracion = () => {
 
@@ -101,16 +158,16 @@ export default function DetallesLibro({ route }) {
     navigation.navigate("LeerLibro", { libro });
   };
 
-  // Obtener listas del usuario
-  const obtenerListasUsuario = async () => {
-    try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
-      const datos = await respuesta.json();
-      setListasUsuario(datos);
-    } catch (error) {
-      console.error('Error al obtener listas del usuario:', error);
-    }
-  };
+  // // Obtener listas del usuario
+  // const obtenerListasUsuario = async () => {
+  //   try {
+  //     const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
+  //     const datos = await respuesta.json();
+  //     setListasUsuario(datos);
+  //   } catch (error) {
+  //     console.error('Error al obtener listas del usuario:', error);
+  //   }
+  // };
 
   // Añadir libro a la lista seleccionada
   const añadirLibroALista = async (idLista) => {
@@ -142,54 +199,75 @@ export default function DetallesLibro({ route }) {
 
   return (
     <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
-
-      {/* Botón de leer y corazón */}
-      <View>
-        <TouchableOpacity 
-          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-          onPress={handleLeer}
-        >
-          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
-            <FontAwesomeIcon
-              icon={esFavorito ? faHeartSolid : faHeartRegular}
-              size={30}
-              color={esFavorito ? 'red' : 'gray'}
-            />
-        </TouchableOpacity>
-      </View>
-
-
-      {/* Título y botón de "Añadir a lista"*/}
-      <View>
-      <Text style={[stylesGeneral.titulo, { color: colors.text }]}>{libro.nombre}</Text>
-        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>de: {libro.autor}</Text>
-        <TouchableOpacity 
-          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-          onPress={() => { obtenerListasUsuario(); setModalVisible(true); }}
-        >
-          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
-
-      {/* Más libros del autor */}
-      {libro.autor !== "Anónimo" && (
-        <View>
-          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
-            {/* Añadir más libros de ese autor */}
+    {/* <View style={[stylesGeneral.container, { backgroundColor: colors.background }]}> */}
+      <View style={stylesGeneral.containerPrincipio}>
+        {/* Portada */}
+        <View style={stylesGeneral.columnaIzquierda}>
+          <Image 
+            source={{ uri: libro.imagen_portada }}
+            style={stylesGeneral.imagen_portada_libro} 
+          />
         </View>
-      )}
+
+        {/* Título y botones: corazón, leer y añadir a lista */}
+        <View style={stylesGeneral.columnaDerecha}>
+          {/* Título y botón corazón */}
+          <View style={stylesGeneral.fila}>
+            <View style={stylesGeneral.tituloContainer}>
+              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>{libro.nombre}</Text>
+              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>de: {libro.autor}</Text>
+            </View>
+            <View>
+              <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
+                  <FontAwesomeIcon
+                    icon={esFavorito ? faHeartSolid : faHeartRegular}
+                    size={30}
+                    color={esFavorito ? 'red' : 'gray'}
+                  />
+              </TouchableOpacity>
+            </View>
+          </View>
+          {/* Botones leer y añadir a lista */}
+          <View style={stylesGeneral.fila}>
+            <TouchableOpacity 
+              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+              onPress={handleLeer}
+            >
+              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+              onPress={handleAñadirALista}
+            >
+              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
 
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
+
 
       {/* Sinopsis */}
       <View>
-        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Sinopsis</Text>
-        <Text style={{ color: colors.text }}>{libro.resumen}</Text>
+        <Text 
+          style={[stylesGeneral.titulo, { color: colors.text }]}
+        >
+          Sinopsis
+        </Text>
+        <Text 
+          style={[stylesGeneral.resumen, { color: colors.text }]}
+          numberOfLines={mostrarResumenCompleto ? undefined : 6} 
+          ellipsizeMode="tail"
+        >
+          {libro.resumen}
+        </Text>
+        <TouchableOpacity onPress={() => setMostrarResumenCompleto(!mostrarResumenCompleto)}>
+          <Text style={{ color: colors.button, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
+            {mostrarResumenCompleto ? "Ver menos" : "Ver más"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]}/>
@@ -219,17 +297,77 @@ export default function DetallesLibro({ route }) {
           <FontAwesomeIcon icon={faFileWord} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
               <Text style={{ color: colors.text }}>{libro.num_palabras}</Text>
-              <Text style={{ color: colors.text }}>total de palabras</Text>
+              <Text style={{ color: colors.text }}>palabras</Text>
             </View>
           </View>
         </View>
       </View>
 
+
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
+
+
+      {/* Más libros del autor */}
+      {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
+        <View>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {librosDelAutor
+              .filter((item) => item.nombre !== libro.nombre)
+              .map((item) => (
+              <TouchableOpacity
+                key={item.enlace}
+                onPress={() => navigation.push("Detalles", { libro: item })}
+                style={{ marginRight: 10, alignItems: "center" }}
+              >
+                <Image
+                  source={{ uri: item.imagen_portada }}
+                  style={{ width: 100, height: 150, borderRadius: 5 }}
+                />
+                <Text
+                  style={{ width: 100, textAlign: "center", color: colors.text }}
+                  numberOfLines={2}
+                >
+                  {item.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
+        
+        </View>
+      )}
+
 
       {/* Valoraciones del libro */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
+        <View>
+          <Text style={{ fontSize: 16 }}>{promedio} de 5</Text>
+          <Text style={{ fontSize: 20 }}>
+            {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))}
+          </Text>
+        </View>
+        {/* Barras de progreso */}
+        {totalValoraciones > 0 && [5, 4, 3, 2, 1].map((num) => {
+          const porcentaje = ((conteo[num] || 0) / totalValoraciones) * 100; // Calcula el porcentaje
+          return (
+            <View key={num} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
+              <Text style={{ width: 50, color: colors.text }}>{num} ESTRELLA</Text>
+              <View style={{ flex: 1, height: 8, backgroundColor: '#ddd', marginLeft: 5, borderRadius: 4 }}>
+                <View style={{
+                  height: '100%',
+                  width: `${porcentaje}%`, // Ajusta el width dinámicamente
+                  backgroundColor: '#FFD700',
+                  borderRadius: 4
+                }} />
+              </View>
+              <Text style={{ marginLeft: 5, color: colors.text }}>{conteo[num] || 0}</Text>
+            </View>
+          );
+        })}
+
         <TouchableOpacity 
           style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
           onPress={handleAñadirValoracion}
@@ -238,16 +376,22 @@ export default function DetallesLibro({ route }) {
         </TouchableOpacity>
       </View>
 
-      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
-
       {/* Todas las reseñas del libro */}
       <View>
         <View>
           <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
-        {/* Poner aquí el botón desplegable de ordenar por */}
-        </View>
-        <View>
-            {/* Poner aquí las reseñas */}
+          {valoraciones.length > 0 ? (
+            <View>
+              {valoraciones.map((item) => (
+                <View key={`${item.usuario_id}-${item.libro_id}`}>
+                  <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
+                  <Text style={{ color: colors.text }}>{item.mensaje}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text style={{ color: colors.text, textAlign: 'center' }}>Aún no hay valoraciones.</Text>
+          )}
         </View>
       </View>
 
@@ -275,9 +419,7 @@ export default function DetallesLibro({ route }) {
           </View>
         </View>
       </Modal>
-
-
-
+    {/* </View> */}
     </ScrollView>
   );
 }
@@ -285,8 +427,6 @@ export default function DetallesLibro({ route }) {
 const stylesAcercaDe = StyleSheet.create({
   columnas3: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // width: '100%',
   },
   columna: {
     flexDirection: 'row',
@@ -301,8 +441,8 @@ const stylesAcercaDe = StyleSheet.create({
     marginBottom: '10',
   },
   textoSubcolumna: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'left',
+    alignItems: 'left',
   },
   icono: {
     height: 30,
@@ -312,20 +452,64 @@ const stylesAcercaDe = StyleSheet.create({
 });
 
 const stylesGeneral = StyleSheet.create({
+  containerPrincipio: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  columnaIzquierda: {
+    flex: 1,  // Ocupa 1 parte del espacio disponible
+    alignItems: 'center',
+  },
+  imagenPortada: {
+    width: 120,
+    height: 180,
+    resizeMode: 'cover',
+    borderRadius: 5,
+  },
+  columnaDerecha: {
+    flex: 2,  // Ocupa 2 partes del espacio disponible
+    paddingLeft: 16,
+  },
+  fila: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  tituloContainer: {
+    flex: 1,  // Permite que el texto ocupe el espacio disponible
+  },
+  imagen_portada_libro: {
+    width: 100,
+    height: 150,
+  },
+
+
+
   container: {
     flexGrow: 1, // Asegura que el ScrollView no se expanda de más
     padding: 16,
   },
   linea: {
-    width: '80%',
-    height: 1,
-    backgroundColor: '#000', // Color: Negro
-  },
+    width: '100%',       // Ocupar todo el ancho disponible
+    height: 1,          // Altura de la línea
+    backgroundColor: '#000', // Color de la línea
+    marginVertical: 5,
+  },  
   titulo: {
     fontWeight: 'bold',
     paddingTop: 10,
     paddingBottom: 10,
   },
+
+
+  resumen: {
+    textAlign: 'justify',
+    marginLeft: 10,
+    marginRight: 10,
+  },
+
 
   boton: {
     backgroundColor: '#333333',  // Color: Gris oscuro
