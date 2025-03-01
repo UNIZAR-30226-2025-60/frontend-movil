@@ -18,7 +18,7 @@ export const useThemeColors = () => {
         buttonText: "#ffffff",
       }
     : { // TEMA CLARO
-        backgroundHeader: "#ffffff",
+        backgroundHeader: "#a2a2a2ff",
         background: "#ffffff",
         text: "#000000",
         icon: "#000000",

@@ -1,40 +1,32 @@
-// ListadoLibros.js
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
-import { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";
 
-export default function ListadoLibros() {
-  const [libros, setLibros] = useState([]);
+export default function ListadoLibros({ libros }) {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  useEffect(() => {
-    getLibros().then(setLibros);
-  }, []);
-
-  const getLibros = async () => {
-    try {
-      const response = await fetch("http://10.0.2.2:3000/api/libros");
-      if (!response.ok) {
-        throw new Error("Error al obtener libros" + response.error);
-      }
-      const data = await response.json();
-      return data;
-    } catch(error) {
-      console.error(error);
-      return [];
-    }
-  };
+  if (!libros || libros.length === 0) {
+    return (
+      <View style={styles.noResultadosContainer}>
+        <Text style={styles.noResultadosText}>No se encontraron libros.</Text>
+      </View>
+    );
+  }
 
   const renderItem = ({ item }) => (
     <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
-      <TouchableOpacity onPress={() => navigation.navigate("Detalles", { libro: item })}>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate("Detalles", { libro: item })} 
+        style={styles.bookTouchable}
+      >
         <Image 
           source={{ uri: item.imagen_portada }}
           style={styles.imagen_portada_libro} 
         />
-        <Text style={[styles.bookTitle, { color: colors.text }]}>{item.nombre}</Text>
+        <Text style={[styles.bookTitle, { color: colors.text }]}>
+          {item.nombre}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,10 +47,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   itemContainer: {
-    flex: 1,
+    flex: 1, // Hace que las celdas de cada fila tengan el mismo tamaño
+    minHeight: 220, // Asegura que todas las filas tengan la misma altura
     margin: 5,
     alignItems: 'center',
+    justifyContent: 'flex-start', // Alinea los elementos dentro de cada celda
+  },
+  bookTouchable: {
+    alignItems: 'center',
     justifyContent: 'center',
+    width: 120, // Mantiene la alineación de las columnas
   },
   imagen_portada_libro: {
     width: 100,
@@ -66,8 +64,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   bookTitle: {
-    textAlign: 'center',
-    width: 100,
-    marginTop: 5,
+    textAlign: "center",
+    flexWrap: "wrap",
+    width: 100, // Evita que el texto sobresalga
   },
 });
