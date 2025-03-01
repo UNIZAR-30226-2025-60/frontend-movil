@@ -9,7 +9,7 @@ export default function ListadoLibros({ libros }) {
   if (!libros || libros.length === 0) {
     return (
       <View style={styles.noResultadosContainer}>
-        <Text style={styles.noResultadosText}>No se encontraron libros.</Text>
+        <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros.</Text>
       </View>
     );
   }
@@ -68,4 +68,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: 100, // Evita que el texto sobresalga
   },
+  noResultadosText: {
+    textAlign: "center",
+    marginTop: 50,
+  }
 });

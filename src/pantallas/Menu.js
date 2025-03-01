@@ -4,17 +4,20 @@ import { View, StyleSheet } from 'react-native';
 import ListadoLibros from '../componentes/ListadoLibros';
 import Encabezado from '../componentes/Encabezado';
 import BuscadorLibros from "../componentes/BuscadorLibros";
+import FiltroCategorias from "../componentes/FiltroCategorias";
 import { useThemeColors } from "../componentes/Tema";
 
 export default function Menu() {
   const [resultados, setResultados] = useState(null);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
 
   const colors = useThemeColors();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Encabezado />
-      <BuscadorLibros setResultados={setResultados} />
+      <BuscadorLibros setResultados={setResultados} categoria={categoriaSeleccionada} />
+      <FiltroCategorias onSelectCategoria={setCategoriaSeleccionada} />
       <ListadoLibros libros={resultados} />
     </View>
   );

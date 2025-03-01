@@ -16,14 +16,18 @@ export const useThemeColors = () => {
         button: "#a54cac",
         buttonSec: "#a5365d",
         buttonText: "#ffffff",
+        categoriaButton: "#be954e",
+        categoriaButtonSec: "#d45682",
       }
     : { // TEMA CLARO
-        backgroundHeader: "#a2a2a2ff",
+        backgroundHeader: "#be954e",
         background: "#ffffff",
         text: "#000000",
         icon: "#000000",
         button: "#007bff",
         buttonSec: "#28a745",
         buttonText: "#000000",
+        categoriaButton: "#be954e",
+        categoriaButtonSec: "#007bff",
       };
 };
