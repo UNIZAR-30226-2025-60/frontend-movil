@@ -383,7 +383,7 @@ export default function DetallesLibro({ route }) {
           {valoraciones.length > 0 ? (
             <View>
               {valoraciones.map((item) => (
-                <View key={`${item.usuario_id}-${item.libro_id}`}>
+                <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}`}>
                   <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
                 </View>
