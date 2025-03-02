@@ -1,9 +1,22 @@
-// App.js
+/**
+ * Archivo: App.js
+ * Descripción: Configuración de la navegación principal de la app.
+ * Contenido:
+ *  - Definición de navegadores (Stack, Drawer)
+ *  - Manejo de autenticación con estado de usuario
+ *  - Configuración del menú lateral (DrawerNavigator)
+ *  - Pilas de navegación para cada sección de la app
+ */
+
 import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Text } from 'react-native'; // Asegúrate de importar Text
+
+// Importación de pantallas principales
+import DetallesLibro from './src/componentes/DetallesLibro';
+import LibrosDeLista from './src/componentes/LibrosDeLista';
 
 import MenuUsuario from "./src/pantallas/MenuUsuario";
 import IniciarSesion from './src/pantallas/IniciarSesion';
@@ -11,15 +24,18 @@ import Registrarse from "./src/pantallas/Registrarse";
 import MenuPerfil from './src/pantallas/MenuPerfil';
 import CambioContrasena from './src/pantallas/CambioContrasena';
 import Menu from './src/pantallas/Menu';
-import DetallesLibro from './src/componentes/DetallesLibro';
 import LeerLibro from './src/pantallas/LeerLibro';
 import Foro from './src/pantallas/Foro';
 import Favoritos from './src/pantallas/Favoritos';
 import MisListas from './src/pantallas/MisListas';
+import CrearLista from './src/pantallas/CrearLista';
+
+// Importación del tema de colores
 import LibrosDeLista from './src/componentes/LibrosDeLista';
 
 import { useThemeColors } from './src/componentes/Tema';
 
+// Creación de navegadores
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -27,10 +43,14 @@ const Drawer = createDrawerNavigator();
 const Estadisticas = () => <Text>Estadísticas</Text>;
 const Leidos = () => <Text>Leídos</Text>;
 const EnProceso = () => <Text>En Proceso</Text>;
-//
 
+/**
+ * 📌 Componente principal de la aplicación
+ *  - Maneja el estado del usuario autenticado (`correoUsuario`)
+ *  - Contiene `NavigationContainer` para envolver toda la navegación
+ */
 export default function App() {
-  const [correoUsuario, setCorreoUsuario] = useState(null);
+  const [correoUsuario, setCorreoUsuario] = useState(null); // Estado para guardar el correo del usuario autenticado
   const colors = useThemeColors();
 
   return (
@@ -40,43 +60,43 @@ export default function App() {
   );
 }
 
-
+/**
+ * 📌 RootStack: Pila de navegación principal
+ *  - Incluye el `DrawerNavigator` y las pantallas de autenticación.
+ */
 function RootStack({ correoUsuario, setCorreoUsuario }) {
   const colors = useThemeColors();
   
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen 
-        name="Drawer"
-      >
+      <Stack.Screen name="Drawer" >
         {(props) => <DrawerNavigator {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
+
       <Stack.Screen 
         name="IniciarSesion"
         options={{
           title: "Iniciar Sesión",
           headerShown: true,
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
+          headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.text,
         }}
       >
         {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
+
       <Stack.Screen 
         name="Registrarse"
         options={{
           title: "Registrarse",
           headerShown: true,
-          headerStyle: { 
-            backgroundColor: colors.backgroundHeader 
-          },
+          headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.text,
         }}
       >
         {(props) => <Registrarse {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
+
       <Stack.Screen 
         name="MenuUsuario"
         component={MenuUsuario}
@@ -111,7 +131,10 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
   );
 }
 
-
+/**
+ * 📌 DrawerNavigator: Menú lateral de la app
+ *  - Muestra opciones según si el usuario está autenticado o no.
+ */
 function DrawerNavigator({ correoUsuario }) {
   return (
     <Drawer.Navigator>
@@ -134,8 +157,9 @@ function DrawerNavigator({ correoUsuario }) {
               listeners: ({ navigation }) => ({
                 drawerItemPress: (e) => {
                   e.preventDefault();
-                  navigation.navigate('Mis Listas', {
-                    screen: 'MisListasScreen',
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'MisListasScreen' }],
                   });
                 },
               }),
@@ -152,7 +176,10 @@ function DrawerNavigator({ correoUsuario }) {
   );
 }
 
-// Función del stack para el menú principal y detalles
+/**
+ * 📌 MenuStack: Pila de navegación del menú principal
+ * - Incluye la pantalla principal, detalles de libro y lector de libros.
+ */
 function MenuStack({ correoUsuario }) {
   const colors = useThemeColors();
   return (
@@ -163,18 +190,14 @@ function MenuStack({ correoUsuario }) {
       <Stack.Screen name="Detalles" component={DetallesLibro} 
         options={{
           title: "Detalles del libro",
-          headerStyle: {
-            backgroundColor: colors.backgroundHeader, // Fondo oscuro o claro del encabezado
-          },
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
       <Stack.Screen name="MisListasScreen" component={MisListas} options={{ title: "Mis Listas" }} />
       <Stack.Screen name="LeerLibro" component={LeerLibro} 
         options={{ title: "Leyendo...",
-          headerStyle: {
-            backgroundColor: colors.backgroundHeader, // Fondo oscuro o claro del encabezado
-          },
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.text, // Color del texto del título
         }}
       />
@@ -182,6 +205,9 @@ function MenuStack({ correoUsuario }) {
   );
 }
 
+/**
+ * 📌 ForoStack: Pila de navegación del foro
+ */
 function ForoStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -190,6 +216,9 @@ function ForoStack() {
   );
 }
 
+/**
+ * 📌 EstadisticasStack: Pila de navegación para la sección de estadísticas
+ */
 function EstadisticasStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -198,16 +227,21 @@ function EstadisticasStack() {
   );
 }
 
+/**
+ * 📌 FavoritosStack: Pila de navegación para la sección de favoritos
+ */
 function FavoritosStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="FavoritosScreen" component={Favoritos} />
       <Stack.Screen name="DetallesLibro" component={DetallesLibro} />
-      <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
     </Stack.Navigator>
   );
 }
 
+/**
+ * 📌 LeidosStack
+ */
 function LeidosStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -216,6 +250,9 @@ function LeidosStack() {
   );
 }
 
+/**
+ * 📌 EnProcesoStack
+ */
 function EnProcesoStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -224,10 +261,14 @@ function EnProcesoStack() {
   );
 }
 
+/**
+ * 📌 MisListasStack: Pila de navegación para las listas de usuario
+ */
 function MisListasStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MisListasScreen" component={MisListas} />
+      <Stack.Screen name="CrearLista" component={CrearLista} />
       <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
       <Stack.Screen name="LibrosDeListaScreen" component={LibrosDeLista} />
     </Stack.Navigator>

@@ -1,3 +1,12 @@
+/**
+ * Archivo: ListadoLibros.js
+ * Descripción: Componente que muestra una lista de libros.
+ * Contenido:
+ *  - Obtiene los libros desde el backend
+ *  - Muestra la portada y el título de cada libro
+ *  - Permite navegar a la pantalla de detalles del libro
+ */
+
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";

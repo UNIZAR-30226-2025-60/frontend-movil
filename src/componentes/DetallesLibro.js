@@ -1,45 +1,73 @@
-// DetallesLibro.js
+/**
+ * Archivo: DetallesLibro.js
+ * Descripción: Pantalla de detalles de un libro.
+ * Contenido:
+ *  - Muestra información detallada de un libro (portada, sinopsis, autor, etc.)
+ *  - Permite al usuario marcar el libro como favorito
+ *  - Posibilita añadir el libro a listas personalizadas
+ *  - Muestra valoraciones y otros libros del mismo autor
+ */
+
+// 📌 Importaciones necesarias
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
+import { Menu, Provider, ProgressBar } from 'react-native-paper';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
-
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
-import { ProgressBar } from 'react-native-paper';
+import { faHeart as faHeartSolid, faHeart as faHeartRegular } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";
 
-
 // NECESITA QUE LE PASES EL LIBRO COMPLETO (enlace, sinopsis, autor, nombre, etc)
-
+// 📌 Componente principal
 export default function DetallesLibro({ route }) {
   const { libro } = route.params;
   const navigation = useNavigation();
+  const colors = useThemeColors();
+  const botonRef = useRef(null);
+
+  // 📌 Estados
   const [esFavorito, setEsFavorito] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [listasUsuario, setListasUsuario] = useState([]);
   const [librosDelAutor, setLibrosDelAutor] = useState([]);
-
-
+  const [menuVisible, setMenuVisible] = useState(false);
   const [mostrarResumenCompleto, setMostrarResumenCompleto] = useState(false);
-
   const [valoraciones, setValoraciones] = useState([]);
   const [promedio, setPromedio] = useState(null);
   const [conteo, setConteo] = useState([]);
   const [totalValoraciones, setTotalValoraciones] = useState(null);
-  const colors = useThemeColors();
-
+  
+  // 📌 Variables generales
   const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
   const backendUrl = 'http://10.0.2.2:3000';
 
+  // 📌 Efectos de carga
   useEffect(() => {
     if (libro.autor !== "Anónimo") {
       obtenerMasLibrosDelAutor();
     }
     obtenerValoraciones();
+    obtenerListasUsuario();
+    verificarSiEsFavorito();
   }, []);
 
+  // 📌 Efecto para calcular estadísticas de valoraciones
+  useEffect(() => {
+    const conteoAux = valoraciones.reduce((acc, valoracion) => {
+      acc[valoracion.valor] = (acc[valoracion.valor] || 0) + 1;
+      return acc;
+    }, {});
+
+    setConteo(conteoAux);
+    const totalValoracionesAux = valoraciones.length;
+    setTotalValoraciones(totalValoracionesAux);
+    const sumaValores = valoraciones.reduce((sum, valoracion) => sum + valoracion.valor, 0);
+    const promedioAux = totalValoracionesAux > 0 ? (sumaValores / totalValoracionesAux).toFixed(1) : "0.0";
+    setPromedio(promedioAux);
+  }, [valoraciones]);
+
+  // 📌 Funciones para obtener datos
   const obtenerMasLibrosDelAutor = async () => {
     try {
       const response = await fetch(`${backendUrl}/api/libros/autor/${libro.autor}`);
@@ -67,40 +95,37 @@ export default function DetallesLibro({ route }) {
     }
   }
 
-  useEffect(() => {
-    const conteoAux = valoraciones.reduce((acc, valoracion) => {
-      acc[valoracion.valor] = (acc[valoracion.valor] || 0) + 1;
-      return acc;
-    }, {});
-    setConteo(conteoAux);
-    const totalValoracionesAux = valoraciones.length;
-    setTotalValoraciones(totalValoracionesAux);
-    const sumaValores = valoraciones.reduce((sum, valoracion) => sum + valoracion.valor, 0);
-    const promedioAux = totalValoracionesAux > 0 ? (sumaValores / totalValoracionesAux).toFixed(1) : "0.0";
-    setPromedio(promedioAux);
-  }, [valoraciones]);
-
-  const handleAñadirValoracion = () => {
-
-  };
-
-  // Verificar si el libro ya está en favoritos al cargar la pantalla
-  // SI LA CONSULTA ES PESADA, SE PODRÍA OPTIMIZAR ENVIANDO AL BACKEND SOLO UNA VERIFICACIÓN PUNTUAL
-  //    Endpoint que podría existir: /favorito/:usuario_id/:enlace_libro
-  //    const respuesta = await fetch(`http://10.0.2.2:3000/api/listas/favorito/amador@gmail.com/${encodeURIComponent(libro.enlace)}`);
-
-  const verificarSiEsFavorito = async () => {
+  const obtenerListasUsuario = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos/${usuarioCorreo}`);
-      const favoritos = await respuesta.json();
-      const encontrado = favoritos.some(fav => fav.enlace_libro === libro.enlace);
-      setEsFavorito(encontrado);  // Actualizar el estado si se encuentra
+      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
+      const datos = await respuesta.json();
+      setListasUsuario(datos);
     } catch (error) {
-      console.error('Error al verificar favoritos:', error);
+      console.error('Error al obtener listas del usuario:', error);
     }
   };
 
-  // Añadir libro a favoritos
+  // 📌 Funciones para manejar favoritos
+  const verificarSiEsFavorito = async () => {
+    try {
+      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos/${usuarioCorreo}`);
+      const textoRespuesta = await respuesta.text(); // 📌 Leer como texto primero
+  
+      // 📌 Verificar si la respuesta es JSON antes de intentar parsearla
+      if (textoRespuesta.startsWith("{") || textoRespuesta.startsWith("[")) {
+        const favoritos = JSON.parse(textoRespuesta); // Convertir en JSON si es válido
+        const encontrado = Array.isArray(favoritos) && favoritos.some(fav => fav.enlace_libro === libro.enlace);
+        setEsFavorito(encontrado);
+      } else {
+        //console.warn("El backend devolvió texto en lugar de JSON:", textoRespuesta);
+        setEsFavorito(false); // Si no es JSON, asumimos que no hay favoritos
+      }
+    } catch (error) {
+      console.error('Error al verificar favoritos:', error);
+      setEsFavorito(false); // En caso de fallo, asumimos que no es favorito
+    }
+  };
+
   const añadirAFavoritos = async () => {
     try {
       const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
@@ -122,7 +147,6 @@ export default function DetallesLibro({ route }) {
     }
   };
 
-  // Eliminar libro de favoritos
   const eliminarDeFavoritos = async () => {
     try {
       const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
@@ -144,35 +168,14 @@ export default function DetallesLibro({ route }) {
     }
   };
 
-  // Manejar pulsación del corazón
   const handleCorazonPress = () => {
     esFavorito ? eliminarDeFavoritos() : añadirAFavoritos();
   };
 
-  const handleAñadirALista = () => {
-    navigation.navigate("MisListasScreen", { libro }); // Pasamos el libro a la pantalla de listas
-  };
-  
-
-  const handleLeer = () => {
-    navigation.navigate("LeerLibro", { libro });
-  };
-
-  // // Obtener listas del usuario
-  // const obtenerListasUsuario = async () => {
-  //   try {
-  //     const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
-  //     const datos = await respuesta.json();
-  //     setListasUsuario(datos);
-  //   } catch (error) {
-  //     console.error('Error al obtener listas del usuario:', error);
-  //   }
-  // };
-
-  // Añadir libro a la lista seleccionada
+  // 📌 Funciones para manejar listas
   const añadirLibroALista = async (idLista) => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/libro`, {
+      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -181,9 +184,10 @@ export default function DetallesLibro({ route }) {
           enlace_libro: libro.enlace,
         }),
       });
+      const data = await respuesta.json(); // Obtener el cuerpo de la respuesta
       if (respuesta.ok) {
         Alert.alert('Añadido', 'El libro se ha añadido a la lista seleccionada');
-        setModalVisible(false);
+        setMenuVisible(false);
       } else {
         Alert.alert('Error', 'No se pudo añadir el libro a la lista');
       }
@@ -192,59 +196,39 @@ export default function DetallesLibro({ route }) {
     }
   };
 
-  // useEffect para cargar el estado inicial del corazón al entrar a la pantalla
-  useEffect(() => {
-    verificarSiEsFavorito();
-  }, []);
+  const handleLeer = () => {
+    navigation.navigate("LeerLibro", { libro });
+  };
 
+  const handleAñadirValoracion = () => {
+
+  };
+
+  // Abrir modal y cargar listas si no están cargadas
+  const handleAñadirALista = () => {
+    //navigation.navigate("MisListasScreen", { libro }); // Pasamos el libro a la pantalla de listas
+    {listasUsuario.length > 0 ? (
+      listasUsuario.map((item) => (
+        <Menu.Item 
+          key={item.id_lista} // Asegúrate de que cada elemento tenga un "key" único
+          onPress={() => añadirLibroALista(item.id_lista)} 
+          title={item.nombre} 
+        />
+      ))
+    ) : (
+      <Menu.Item title="No tienes listas creadas" disabled />
+    )}
+  };
+
+  // 📌 Renderización del componente
   return (
-    <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
-    {/* <View style={[stylesGeneral.container, { backgroundColor: colors.background }]}> */}
-      <View style={stylesGeneral.containerPrincipio}>
-        {/* Portada */}
-        <View style={stylesGeneral.columnaIzquierda}>
-          <Image 
-            source={{ uri: libro.imagen_portada }}
-            style={stylesGeneral.imagen_portada_libro} 
-          />
-        </View>
+    <Provider>
+      <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
 
-        {/* Título y botones: corazón, leer y añadir a lista */}
-        <View style={stylesGeneral.columnaDerecha}>
-          {/* Título y botón corazón */}
-          <View style={stylesGeneral.fila}>
-            <View style={stylesGeneral.tituloContainer}>
-              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>{libro.nombre}</Text>
-              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>de: {libro.autor}</Text>
-            </View>
-            <View>
-              <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
-                  <FontAwesomeIcon
-                    icon={esFavorito ? faHeartSolid : faHeartRegular}
-                    size={30}
-                    color={esFavorito ? 'red' : 'gray'}
-                  />
-              </TouchableOpacity>
-            </View>
-          </View>
-          {/* Botones leer y añadir a lista */}
-          <View style={stylesGeneral.fila}>
-            <TouchableOpacity 
-              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-              onPress={handleLeer}
-            >
-              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-              onPress={handleAñadirALista}
-            >
-              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        {/* 📌 Sección de la portada y botones de acción */}
+        <View style={stylesGeneral.containerPrincipio}>
 
+<<<<<<< HEAD
 
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
@@ -376,7 +360,7 @@ export default function DetallesLibro({ route }) {
         </TouchableOpacity>
       </View>
 
-      {/* Todas las reseñas del libro */}
+      {/* 📌 Sección de reseñas */}
       <View>
         <View>
           <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
@@ -424,6 +408,7 @@ export default function DetallesLibro({ route }) {
   );
 }
 
+// 📌 Estilos para la sección "Acerca de este libro"
 const stylesAcercaDe = StyleSheet.create({
   columnas3: {
     flexDirection: 'row',
@@ -451,7 +436,9 @@ const stylesAcercaDe = StyleSheet.create({
   },
 });
 
+// 📌 Estilos generales para el diseño principal de la pantalla
 const stylesGeneral = StyleSheet.create({
+  // 📌 Sección superior (Portada + Información)
   containerPrincipio: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -471,6 +458,8 @@ const stylesGeneral = StyleSheet.create({
     flex: 2,  // Ocupa 2 partes del espacio disponible
     paddingLeft: 16,
   },
+
+  // 📌 Diseño de las filas en la interfaz
   fila: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -480,37 +469,42 @@ const stylesGeneral = StyleSheet.create({
   tituloContainer: {
     flex: 1,  // Permite que el texto ocupe el espacio disponible
   },
+
+  // 📌 Imagen de la portada en la sección de detalles del libro
   imagen_portada_libro: {
     width: 100,
     height: 150,
   },
 
-
-
+  // 📌 Contenedor general
   container: {
     flexGrow: 1, // Asegura que el ScrollView no se expanda de más
     padding: 16,
   },
+
+  // 📌 Línea divisoria entre secciones
   linea: {
     width: '100%',       // Ocupar todo el ancho disponible
     height: 1,          // Altura de la línea
     backgroundColor: '#000', // Color de la línea
     marginVertical: 5,
-  },  
+  },
+
+  // 📌 Estilo del título de las secciones
   titulo: {
     fontWeight: 'bold',
     paddingTop: 10,
     paddingBottom: 10,
   },
 
-
+  // 📌 Texto de la sinopsis
   resumen: {
     textAlign: 'justify',
     marginLeft: 10,
     marginRight: 10,
   },
 
-
+  // 📌 Botones generales (Leer, Añadir a lista, etc.)
   boton: {
     backgroundColor: '#333333',  // Color: Gris oscuro
     paddingVertical: 12,
@@ -528,6 +522,8 @@ const stylesGeneral = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+
+  // 📌 Icono de favorito (corazón)
   corazon: {
     marginHorizontal: 15,
   },
