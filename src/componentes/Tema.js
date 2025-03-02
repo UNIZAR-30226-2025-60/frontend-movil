@@ -21,6 +21,7 @@ export const useThemeColors = () => {
         buttonOtherText: "#a54cac",
         categoriaButton: "#be954e",
         categoriaButtonSec: "#d45682",
+        border: "#ffffff",
       }
     : { // TEMA CLARO
         backgroundHeader: "#be954e",
@@ -35,5 +36,6 @@ export const useThemeColors = () => {
         buttonOtherText: "#007bff",
         categoriaButton: "#be954e",
         categoriaButtonSec: "#007bff",
+        border: "#000000",
       };
 };

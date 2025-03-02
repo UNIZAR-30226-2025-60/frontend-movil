@@ -54,34 +54,6 @@ export default function MenuPerfil({ route, navigation }) {
     );
   };
 
-  const eliminarCuenta = async () => {/*
-    Alert.alert(
-      "Eliminar cuenta",
-      "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
-      [
-        { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Eliminar", 
-          onPress: async () => {
-            try {
-              const response = await fetch(`http://10.0.2.2:3000/api/usuarios/eliminar/${encodeURIComponent(correoUsuario)}`, {
-                method: "DELETE"
-              });
-              if (!response.ok) throw new Error("Error al eliminar la cuenta");
-
-              Alert.alert("Cuenta eliminada", "Tu cuenta ha sido eliminada correctamente.");
-              navigation.navigate("Drawer", { screen: "Inicio" })
-            } catch (error) {
-              console.error("Error al eliminar la cuenta:", error);
-              Alert.alert("Error", "No se pudo eliminar la cuenta.");
-            }
-          },
-          style: "destructive"
-        }
-      ]
-    );*/
-  };
-
   if (usuario === null) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -103,17 +75,19 @@ export default function MenuPerfil({ route, navigation }) {
       <Text style={[styles.nombre, { color: colors.text }]}>{usuario.nombre}</Text>
       <Text style={[styles.emailText, { color: colors.textSecondary }]}>{usuario.correo}</Text>
       
+      {/* Botón Cambiar contraseña */}
       <TouchableOpacity
         style={[styles.button, { backgroundColor: colors.button }]}
-        onPress={() => navigation.navigate("CambioContrasenya", { correoUsuario: usuario.correo })}
+        onPress={() => navigation.navigate("CambioContrasena", { usuario: usuario })}
       >
         <Ionicons name="pencil" size={20} color={colors.buttonText} />
         <Text style={[styles.buttonText, { color: colors.buttonText}]}>Editar Contraseña</Text>
       </TouchableOpacity>
 
+      {/* Botón Cambiar nombre */}
       <TouchableOpacity
         style={[styles.button, { backgroundColor: colors.button }]}
-        onPress={() => navigation.navigate("CambioNombre", { correoUsuario: usuario.correo })}
+        onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
       >
         <Ionicons name="pencil" size={20} color={colors.buttonText} />
         <Text style={[styles.buttonText, { color: colors.buttonText}]}>Cambiar Nombre</Text>
@@ -126,15 +100,6 @@ export default function MenuPerfil({ route, navigation }) {
       >
         <Ionicons name="log-out-outline" size={18} color={colors.buttonOtherText} />
         <Text style={[styles.SecondButtonText, { color: colors.buttonOtherText }]}>Cerrar Sesión</Text>
-      </TouchableOpacity>
-
-      {/* Botón Eliminar Cuenta */}
-      <TouchableOpacity
-        style={[styles.secondButton, { backgroundColor: colors.buttonOther }]}
-        onPress={eliminarCuenta}
-      >
-        <Ionicons name="trash-outline" size={18} color={colors.buttonOtherText} />
-        <Text style={[styles.SecondButtonText, { color: colors.buttonOtherText }]}>Eliminar Cuenta</Text>
       </TouchableOpacity>
     </View>
   );

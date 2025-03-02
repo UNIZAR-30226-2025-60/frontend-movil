@@ -9,6 +9,7 @@ import MenuUsuario from "./src/pantallas/MenuUsuario";
 import IniciarSesion from './src/pantallas/IniciarSesion';
 import Registrarse from "./src/pantallas/Registrarse";
 import MenuPerfil from './src/pantallas/MenuPerfil';
+import CambioContrasena from './src/pantallas/CambioContrasena';
 import Menu from './src/pantallas/Menu';
 import DetallesLibro from './src/componentes/DetallesLibro';
 import LeerLibro from './src/pantallas/LeerLibro';
@@ -42,7 +43,6 @@ export default function App() {
 
 function RootStack({ correoUsuario, setCorreoUsuario }) {
   const colors = useThemeColors();
-
   
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -94,6 +94,16 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         options={{ 
           headerShown: true, 
           title: "Perfil",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text, }}
+      />
+      <Stack.Screen
+        name="CambioContrasena"
+        component={CambioContrasena}
+        initialParams={{ correoUsuario }}
+        options={{ 
+          headerShown: true, 
+          title: "Cambio contraseña",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.text, }}
       />
