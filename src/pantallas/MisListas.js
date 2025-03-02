@@ -180,8 +180,6 @@ export default function MisListas() {
       'Renderizando lista:',
       item.nombre,
       'ID:', item.id,
-      'menuVisibleId:', menuVisibleId,
-      'isMenuVisible:', menuVisibleId === item.id
     );
     const isMenuVisible = menuVisibleId === item.id_lista && item.nombre !== "Mis Favoritos";
     

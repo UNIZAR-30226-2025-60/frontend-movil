@@ -222,182 +222,227 @@ export default function DetallesLibro({ route }) {
   // 📌 Renderización del componente
   return (
     <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
-
-      {/* 📌 Sección de la portada y botones de acción */}
+    {/* <View style={[stylesGeneral.container, { backgroundColor: colors.background }]}> */}
       <View style={stylesGeneral.containerPrincipio}>
-
-        <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
-
-        {/* 📌 Sinopsis */}
-        <View>
-          <Text 
-            style={[stylesGeneral.titulo, { color: colors.text }]}
-          >
-            Sinopsis
-          </Text>
-          <Text 
-            style={[stylesGeneral.resumen, { color: colors.text }]}
-            numberOfLines={mostrarResumenCompleto ? undefined : 6} 
-            ellipsizeMode="tail"
-          >
-            {libro.resumen}
-          </Text>
-          <TouchableOpacity onPress={() => setMostrarResumenCompleto(!mostrarResumenCompleto)}>
-            <Text style={{ color: colors.button, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
-              {mostrarResumenCompleto ? "Ver menos" : "Ver más"}
-            </Text>
-          </TouchableOpacity>
+        {/* Portada */}
+        <View style={stylesGeneral.columnaIzquierda}>
+          <Image 
+            source={{ uri: libro.imagen_portada }}
+            style={stylesGeneral.imagen_portada_libro} 
+          />
         </View>
 
-        <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]}/>
-
-        {/* 📌 Acerca de este libro */}
-        <View>
-          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Acerca de este libro</Text>
-          <View style={stylesAcercaDe.columnas3}>
-            {/* 📌 Columna del número de páginas */}
-            <View style={stylesAcercaDe.columna}>
-              <FontAwesomeIcon icon={faBook} style={[stylesAcercaDe.icono, { color: colors.text }]} />
-              <View style={stylesAcercaDe.textoSubcolumna}>
-                <Text style={{ color: colors.text }}>{libro.num_paginas}</Text>
-                <Text style={{ color: colors.text }}>páginas</Text>
-              </View>
+        {/* Título y botones: corazón, leer y añadir a lista */}
+        <View style={stylesGeneral.columnaDerecha}>
+          {/* Título y botón corazón */}
+          <View style={stylesGeneral.fila}>
+            <View style={stylesGeneral.tituloContainer}>
+              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>{libro.nombre}</Text>
+              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>de: {libro.autor}</Text>
             </View>
-            {/* 📌 Columna del número de horas de lectura */}
-            <View style={stylesAcercaDe.columna}>
-              <FontAwesomeIcon icon={faClock} style={[stylesAcercaDe.icono, { color: colors.text }]} />
-              <View style={stylesAcercaDe.textoSubcolumna}>
-                <Text style={{ color: colors.text }}>{libro.horas_lectura}</Text>
-                <Text style={{ color: colors.text }}>horas de lectura</Text>
-              </View>
-            </View>
-            {/* 📌 Columna del número total de palabras */}
-            <View style={stylesAcercaDe.columna}>
-            <FontAwesomeIcon icon={faFileWord} style={[stylesAcercaDe.icono, { color: colors.text }]} />
-              <View style={stylesAcercaDe.textoSubcolumna}>
-                <Text style={{ color: colors.text }}>{libro.num_palabras}</Text>
-                <Text style={{ color: colors.text }}>palabras</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-
-        <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
-
-
-        {/* 📌 Más libros del autor */}
-        {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
-          <View>
-            <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {librosDelAutor
-                .filter((item) => item.nombre !== libro.nombre)
-                .map((item) => (
-                <TouchableOpacity
-                  key={item.enlace}
-                  onPress={() => navigation.push("Detalles", { libro: item })}
-                  style={{ marginRight: 10, alignItems: "center" }}
-                >
-                  <Image
-                    source={{ uri: item.imagen_portada }}
-                    style={{ width: 100, height: 150, borderRadius: 5 }}
+            <View>
+              <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
+                  <FontAwesomeIcon
+                    icon={esFavorito ? faHeartSolid : faHeartRegular}
+                    size={30}
+                    color={esFavorito ? 'red' : 'gray'}
                   />
-                  <Text
-                    style={{ width: 100, textAlign: "center", color: colors.text }}
-                    numberOfLines={2}
-                  >
-                    {item.nombre}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
-          
-          </View>
-        )}
-
-
-        {/* 📌 Valoraciones del libro */}
-        <View>
-          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
-          <View>
-            <Text style={{ fontSize: 16 }}>{promedio} de 5</Text>
-            <Text style={{ fontSize: 20 }}>
-              {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))}
-            </Text>
-          </View>
-          {/* 📌 Barras de progreso */}
-          {totalValoraciones > 0 && [5, 4, 3, 2, 1].map((num) => {
-            const porcentaje = ((conteo[num] || 0) / totalValoraciones) * 100; // Calcula el porcentaje
-            return (
-              <View key={num} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
-                <Text style={{ width: 50, color: colors.text }}>{num} ESTRELLA</Text>
-                <View style={{ flex: 1, height: 8, backgroundColor: '#ddd', marginLeft: 5, borderRadius: 4 }}>
-                  <View style={{
-                    height: '100%',
-                    width: `${porcentaje}%`, // Ajusta el width dinámicamente
-                    backgroundColor: '#FFD700',
-                    borderRadius: 4
-                  }} />
-                </View>
-                <Text style={{ marginLeft: 5, color: colors.text }}>{conteo[num] || 0}</Text>
-              </View>
-            );
-          })}
-
-          <TouchableOpacity 
-            style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-            onPress={handleAñadirValoracion}
-          >
-            <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir valoración</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* 📌 Sección de reseñas */}
-        <View>
-          <View>
-            <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
-            {valoraciones.length > 0 ? (
-              <View>
-                {valoraciones.map((item) => (
-                  <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}`}>
-                    <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
-                    <Text style={{ color: colors.text }}>{item.mensaje}</Text>
-                  </View>
-                ))}
-              </View>
-            ) : (
-              <Text style={{ color: colors.text, textAlign: 'center' }}>Aún no hay valoraciones.</Text>
-            )}
-          </View>
-        </View>
-
-        {/* 📌 Modal para seleccionar la lista */}
-        <Modal visible={modalVisible} transparent={true} animationType="slide">
-          <View style={stylesGeneral.modalContainer}>
-            <View style={[stylesGeneral.modalContent, { backgroundColor: colors.background }]}>
-              <Text style={[stylesGeneral.modalTitle, { color: colors.text }]}>Selecciona una lista</Text>
-              <FlatList
-                data={listasUsuario}
-                keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : index.toString())}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={[stylesGeneral.boton, { backgroundColor: colors.button }]}
-                    onPress={() => añadirLibroALista(item.id_lista)}
-                  >
-                    <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>{item.nombre}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-              <TouchableOpacity style={stylesGeneral.botonCerrar} onPress={() => setModalVisible(false)}>
-                <Text style={{ color: colors.buttonText }}>Cerrar</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </Modal>
+          {/* Botones leer y añadir a lista */}
+          <View style={stylesGeneral.fila}>
+            <TouchableOpacity 
+              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+              onPress={handleLeer}
+            >
+              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+              onPress={handleAñadirALista}
+            >
+              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
+
+
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
+
+
+      {/* Sinopsis */}
+      <View>
+        <Text 
+          style={[stylesGeneral.titulo, { color: colors.text }]}
+        >
+          Sinopsis
+        </Text>
+        <Text 
+          style={[stylesGeneral.resumen, { color: colors.text }]}
+          numberOfLines={mostrarResumenCompleto ? undefined : 6} 
+          ellipsizeMode="tail"
+        >
+          {libro.resumen}
+        </Text>
+        <TouchableOpacity onPress={() => setMostrarResumenCompleto(!mostrarResumenCompleto)}>
+          <Text style={{ color: colors.button, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
+            {mostrarResumenCompleto ? "Ver menos" : "Ver más"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]}/>
+
+      {/* Acerca de este libro */}
+      <View>
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Acerca de este libro</Text>
+        <View style={stylesAcercaDe.columnas3}>
+          {/* Columna del número de páginas */}
+          <View style={stylesAcercaDe.columna}>
+            <FontAwesomeIcon icon={faBook} style={[stylesAcercaDe.icono, { color: colors.text }]} />
+            <View style={stylesAcercaDe.textoSubcolumna}>
+              <Text style={{ color: colors.text }}>{libro.num_paginas}</Text>
+              <Text style={{ color: colors.text }}>páginas</Text>
+            </View>
+          </View>
+          {/* Columna del número de horas de lectura */}
+          <View style={stylesAcercaDe.columna}>
+            <FontAwesomeIcon icon={faClock} style={[stylesAcercaDe.icono, { color: colors.text }]} />
+            <View style={stylesAcercaDe.textoSubcolumna}>
+              <Text style={{ color: colors.text }}>{libro.horas_lectura}</Text>
+              <Text style={{ color: colors.text }}>horas de lectura</Text>
+            </View>
+          </View>
+          {/* Columna del número total de palabras */}
+          <View style={stylesAcercaDe.columna}>
+          <FontAwesomeIcon icon={faFileWord} style={[stylesAcercaDe.icono, { color: colors.text }]} />
+            <View style={stylesAcercaDe.textoSubcolumna}>
+              <Text style={{ color: colors.text }}>{libro.num_palabras}</Text>
+              <Text style={{ color: colors.text }}>palabras</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
+
+
+      {/* Más libros del autor */}
+      {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
+        <View>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {librosDelAutor
+              .filter((item) => item.nombre !== libro.nombre)
+              .map((item) => (
+              <TouchableOpacity
+                key={item.enlace}
+                onPress={() => navigation.push("Detalles", { libro: item })}
+                style={{ marginRight: 10, alignItems: "center" }}
+              >
+                <Image
+                  source={{ uri: item.imagen_portada }}
+                  style={{ width: 100, height: 150, borderRadius: 5 }}
+                />
+                <Text
+                  style={{ width: 100, textAlign: "center", color: colors.text }}
+                  numberOfLines={2}
+                >
+                  {item.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
+        
+        </View>
+      )}
+
+
+      {/* Valoraciones del libro */}
+      <View>
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
+        <View>
+          <Text style={{ fontSize: 16 }}>{promedio} de 5</Text>
+          <Text style={{ fontSize: 20 }}>
+            {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))}
+          </Text>
+        </View>
+        {/* Barras de progreso */}
+        {totalValoraciones > 0 && [5, 4, 3, 2, 1].map((num) => {
+          const porcentaje = ((conteo[num] || 0) / totalValoraciones) * 100; // Calcula el porcentaje
+          return (
+            <View key={num} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
+              <Text style={{ width: 50, color: colors.text }}>{num} ESTRELLA</Text>
+              <View style={{ flex: 1, height: 8, backgroundColor: '#ddd', marginLeft: 5, borderRadius: 4 }}>
+                <View style={{
+                  height: '100%',
+                  width: `${porcentaje}%`, // Ajusta el width dinámicamente
+                  backgroundColor: '#FFD700',
+                  borderRadius: 4
+                }} />
+              </View>
+              <Text style={{ marginLeft: 5, color: colors.text }}>{conteo[num] || 0}</Text>
+            </View>
+          );
+        })}
+
+        <TouchableOpacity 
+          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+          onPress={handleAñadirValoracion}
+        >
+          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir valoración</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Todas las reseñas del libro */}
+      <View>
+        <View>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
+          {valoraciones.length > 0 ? (
+            <View>
+              {valoraciones.map((item) => (
+                <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}`}>
+                  <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
+                  <Text style={{ color: colors.text }}>{item.mensaje}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text style={{ color: colors.text, textAlign: 'center' }}>Aún no hay valoraciones.</Text>
+          )}
+        </View>
+      </View>
+
+      {/* Modal para seleccionar la lista */}
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={stylesGeneral.modalContainer}>
+          <View style={[stylesGeneral.modalContent, { backgroundColor: colors.background }]}>
+            <Text style={[stylesGeneral.modalTitle, { color: colors.text }]}>Selecciona una lista</Text>
+            <FlatList
+              data={listasUsuario}
+              //keyExtractor={(item) => item.id_lista.toString()}
+              keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : index.toString())}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[stylesGeneral.boton, { backgroundColor: colors.button }]}
+                  onPress={() => añadirLibroALista(item.id_lista)}
+                >
+                  <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>{item.nombre}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity style={stylesGeneral.botonCerrar} onPress={() => setModalVisible(false)}>
+              <Text style={{ color: colors.buttonText }}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    {/* </View> */}
     </ScrollView>
   );
 }
