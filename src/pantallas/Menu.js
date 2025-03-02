@@ -7,7 +7,7 @@ import BuscadorLibros from "../componentes/BuscadorLibros";
 import FiltroCategorias from "../componentes/FiltroCategorias";
 import { useThemeColors } from "../componentes/Tema";
 
-export default function Menu() {
+export default function Menu({ correoUsuario }) {
   const [resultados, setResultados] = useState(null);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
 
@@ -15,7 +15,7 @@ export default function Menu() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Encabezado />
+      <Encabezado correoUsuario={correoUsuario} />
       <BuscadorLibros setResultados={setResultados} categoria={categoriaSeleccionada} />
       <FiltroCategorias onSelectCategoria={setCategoriaSeleccionada} />
       <ListadoLibros libros={resultados} />

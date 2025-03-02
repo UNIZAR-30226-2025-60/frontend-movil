@@ -6,13 +6,21 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useThemeColors } from "./Tema";
 
-export default function Encabezado({ titulo }) {
+export default function Encabezado({ titulo, correoUsuario }) {
   const navigation = useNavigation();
   const route = useRoute(); // Detecta la pantalla actual
   const colors = useThemeColors();
 
   // Define pantallas donde quiero que se muestre el subtítulo
   const pantallasConTitulo = ["Mis Favoritos", "Mis Listas", "Foro", "Leídos"];
+
+  const manejarNavegacionUsuario = () => {
+    if (correoUsuario) {
+      navigation.navigate("MenuPerfil", { correoUsuario });
+    } else {
+      navigation.navigate("MenuUsuario");
+    }
+  };
 
   return (
     <SafeAreaView style={{ backgroundColor: colors.backgroundHeader }}>
@@ -23,11 +31,11 @@ export default function Encabezado({ titulo }) {
         </TouchableOpacity>
 
         {/* Título */}
-        <Text style={[styles.title, { color: colors.text }]}>BOOKLY</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{ "BOOKLY" }</Text>
 
         {/* Icono de Usuario */}
         {/* <TouchableOpacity onPress={() => navigation.navigate("IniciarSesion")}> */}
-        <TouchableOpacity onPress={() => navigation.navigate("MenuUsuario")}>
+        <TouchableOpacity onPress={manejarNavegacionUsuario}>
         <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
         </TouchableOpacity>
       </View>

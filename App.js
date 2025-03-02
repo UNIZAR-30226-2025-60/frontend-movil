@@ -8,6 +8,7 @@ import { Text } from 'react-native'; // Asegúrate de importar Text
 import MenuUsuario from "./src/pantallas/MenuUsuario";
 import IniciarSesion from './src/pantallas/IniciarSesion';
 import Registrarse from "./src/pantallas/Registrarse";
+import MenuPerfil from './src/pantallas/MenuPerfil';
 import Menu from './src/pantallas/Menu';
 import DetallesLibro from './src/componentes/DetallesLibro';
 import LeerLibro from './src/pantallas/LeerLibro';
@@ -15,7 +16,6 @@ import Foro from './src/pantallas/Foro';
 import Favoritos from './src/pantallas/Favoritos';
 import MisListas from './src/pantallas/MisListas';
 import LibrosDeLista from './src/componentes/LibrosDeLista';
-
 
 import { useThemeColors } from './src/componentes/Tema';
 
@@ -87,6 +87,16 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerTintColor: colors.text,
         }}
       />
+      <Stack.Screen
+        name="MenuPerfil"
+        component={MenuPerfil}
+        initialParams={{ correoUsuario, setCorreoUsuario }}
+        options={{ 
+          headerShown: true, 
+          title: "Perfil",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text, }}
+      />
     </Stack.Navigator>
   );
 }
@@ -95,11 +105,9 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
 function DrawerNavigator({ correoUsuario }) {
   return (
     <Drawer.Navigator>
-      <Drawer.Screen 
-        name="Inicio" 
-        component={MenuStack}
-        options={{ headerShown: false }}
-      />
+      <Drawer.Screen name="Inicio" options={{ headerShown: false }}>
+        {(props) => <MenuStack {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
       <Drawer.Screen 
         name="Foro" 
         component={ForoStack} 
@@ -135,11 +143,13 @@ function DrawerNavigator({ correoUsuario }) {
 }
 
 // Función del stack para el menú principal y detalles
-function MenuStack() {
+function MenuStack({ correoUsuario }) {
   const colors = useThemeColors();
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Menu" component={Menu} options={{ headerShown: false }} />
+      <Stack.Screen name="Menu" options={{ headerShown: false }}>
+        {(props) => <Menu {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
       <Stack.Screen name="Detalles" component={DetallesLibro} 
         options={{
           title: "Detalles del libro",
