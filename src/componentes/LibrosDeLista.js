@@ -1,4 +1,10 @@
-// LibrosDeLista.js
+/**
+ * Archivo: LibrosDeLista.js
+ * Descripción: Pantalla que muestra los libros de una lista específica.
+ * Contenido:
+ *  - Obtiene y muestra libros de una lista seleccionada
+ *  - Permite navegar a los detalles de un libro
+ */
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
@@ -23,10 +29,22 @@ export default function ListaLibros({ urlProp, tituloProp }) {
     try {
       setCargando(true);
       const respuesta = await fetch(finalUrl);
-      const datos = await respuesta.json();
-      setLibros(datos);
+  
+      // 📌 Verificar si la respuesta es JSON antes de parsearla
+      const textoRespuesta = await respuesta.text();
+      
+      if (!respuesta.ok) {
+        //console.warn("Error en la respuesta del servidor:", textoRespuesta);
+        setLibros([]); // Si la respuesta no es válida, dejar la lista vacía
+        return;
+      }
+  
+      // 📌 Intentar convertir en JSON solo si es un formato correcto
+      const datos = JSON.parse(textoRespuesta);
+      setLibros(Array.isArray(datos) ? datos : []);
     } catch (error) {
       console.error('Error al obtener libros:', error);
+      setLibros([]); // Si hay un error, asegurar que la lista quede vacía
     } finally {
       setCargando(false);
     }
@@ -37,15 +55,6 @@ export default function ListaLibros({ urlProp, tituloProp }) {
   }, [finalUrl]);
 
   const renderItem = ({ item }) => (
-    // <TouchableOpacity
-    //   style={[styles.itemContainer, { backgroundColor: colors.background }]}
-    //   onPress={() => navigation.navigate("Detalles", { libro: item })}
-    // >
-    //   <Image source={{ uri: item.enlace_libro }} style={styles.imagen_portada_libro} />
-    //   <Text style={[styles.bookTitle, { color: colors.text }]} numberOfLines={2}>
-    //     {item.titulo || 'Título no disponible'}
-    //   </Text>
-    // </TouchableOpacity>
     <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
       <TouchableOpacity onPress={() => navigation.navigate("Detalles", { libro: item })}>
         <Image source={{ uri: item.imagen_portada }} style={styles.imagen_portada_libro} />
@@ -61,6 +70,12 @@ export default function ListaLibros({ urlProp, tituloProp }) {
   return (
     <View style={styles.container}>
       <Encabezado titulo={finalTitulo} />
+
+      {/* Botón para regresar a Mis Listas */}
+      <TouchableOpacity onPress={() => navigation.popToTop()} style={styles.backButton}>
+        <Text style={{ color: colors.text, fontSize: 16 }}>⬅ Volver a Mis Listas</Text>
+      </TouchableOpacity>
+
       <FlatList
         data={libros}
         renderItem={renderItem}
@@ -83,4 +98,11 @@ const styles = StyleSheet.create({
   },
   imagen_portada_libro: { width: 100, height: 150, marginBottom: 5 },
   bookTitle: { textAlign: 'center', width: 100, marginTop: 5, fontSize: 14 },
+  backButton: {
+    padding: 10,
+    margin: 10,
+    backgroundColor: '#ddd',
+    alignSelf: 'flex-start',
+    borderRadius: 5,
+  }
 });

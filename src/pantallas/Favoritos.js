@@ -1,4 +1,11 @@
-// Favoritos.js
+/**
+ * Archivo: Favoritos.js
+ * Descripción: Pantalla que muestra los libros favoritos del usuario.
+ * Contenido:
+ *  - Obtiene y muestra los libros guardados en "Mis Favoritos"
+ *  - Permite navegar a los detalles de un libro
+ *  - Posibilita eliminar libros de la lista de favoritos
+ */
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
@@ -31,18 +38,29 @@ export default function Favoritos() {
     const obtenerFavoritos = async () => {
       try {
         const respuesta = await fetch('http://10.0.2.2:3000/api/listas/favoritos/amador@gmail.com');
-        const datos = await respuesta.json();
-  
-        // Obtener los detalles de cada libro y guardarlos en librosFavoritos
-        const librosConDetalles = await Promise.all(
-          datos.map(async (libro) => {
-            const detalles = await obtenerDetallesLibro(libro.enlace_libro);
-            return detalles ? { ...libro, ...detalles } : libro;
-          })
-        );
-        setLibrosFavoritos(librosConDetalles);
+    
+        const textoRespuesta = await respuesta.text(); // 📌 Leer la respuesta como texto primero
+    
+        // 📌 Verificar si la respuesta es JSON antes de intentar parsearla
+        if (textoRespuesta.startsWith("{") || textoRespuesta.startsWith("[")) {
+          const datos = JSON.parse(textoRespuesta); // Convertir en JSON si es válido
+    
+          if (Array.isArray(datos)) {
+            const librosConDetalles = await Promise.all(
+              datos.map(async (libro) => {
+                const detalles = await obtenerDetallesLibro(libro.enlace_libro);
+                return detalles ? { ...libro, ...detalles } : libro;
+              })
+            );
+            setLibrosFavoritos(librosConDetalles);
+          } else {
+            console.warn("La respuesta no es una lista de libros:", datos);
+            setLibrosFavoritos([]); // Si no es un array, dejar la lista vacía
+          }
+        }
       } catch (error) {
         console.error('Error al obtener los enlaces de los libros favoritos:', error);
+        setLibrosFavoritos([]); // En caso de fallo, dejar la lista vacía
       }
     };
 

@@ -1,4 +1,12 @@
-// Encabezado.js
+/**
+ * Archivo: Encabezado.js
+ * Descripción: Componente de encabezado para la app.
+ * Contenido:
+ *  - Muestra el nombre de la app y un botón de menú lateral
+ *  - Incluye un icono para acceder al perfil del usuario
+ *  - Muestra un subtítulo en ciertas pantallas
+ */
+
 import React, { use } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
