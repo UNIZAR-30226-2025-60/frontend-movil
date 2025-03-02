@@ -31,8 +31,6 @@ import MisListas from './src/pantallas/MisListas';
 import CrearLista from './src/pantallas/CrearLista';
 
 // Importación del tema de colores
-import LibrosDeLista from './src/componentes/LibrosDeLista';
-
 import { useThemeColors } from './src/componentes/Tema';
 
 // Creación de navegadores
