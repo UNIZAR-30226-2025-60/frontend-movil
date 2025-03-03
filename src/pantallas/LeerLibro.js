@@ -1,455 +1,155 @@
 // LeerLibro.js
-// FUNCIONA PERO ES CON WEBVIEW
-// import React from 'react';
-// import { View, StyleSheet } from 'react-native';
-// import { WebView } from 'react-native-webview';
-
-// export default function LeerLibro({ route }) {
-//   const { libro } = route.params;
-//   const pdfUrl = libro.enlace.replace("view", "preview"); // Modifica la URL
-//   // const pdfUrl = `https://docs.google.com/gview?embedded=true&url=${pdfUrl1}`;
-
-//   return (
-//     <View style={styles.container}>
-//       <WebView 
-//         source={{ uri: pdfUrl }} 
-//         style={styles.webview} 
-//         javaScriptEnabled={true}
-//         domStorageEnabled={true}
-//         setBuiltInZoomControls={true}
-//       />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   webview: {
-//     flex: 1,
-//   },
-// });
-
-
-
-// BOTONES SIGUIENTE Y ANTERIOR PERO NO BAJAN
-// import React, { useState } from 'react';
-// import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-// import { WebView } from 'react-native-webview';
-
-// export default function LeerLibro({ route }) {
-//   const { libro } = route.params;
-//   const [paginaActual, setPaginaActual] = useState(1);
-//   const totalPaginas = 170; // 🔴 Cambia esto al número real de páginas
-
-//   // Construir la URL con la página actual
-//   const construirUrl = (pagina) => {
-//     return libro.enlace.replace("view", "preview") + `#page=${pagina}`;
-//   };
-
-//   // Navegar a la página siguiente
-//   const paginaSiguiente = () => {
-//     if (paginaActual < totalPaginas) {
-//       setPaginaActual(paginaActual + 1);
-//     }
-//   };
-
-//   // Navegar a la página anterior
-//   const paginaAnterior = () => {
-//     if (paginaActual > 1) {
-//       setPaginaActual(paginaActual - 1);
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <WebView 
-//         source={{ uri: construirUrl(paginaActual) }} 
-//         style={styles.webview} 
-//         javaScriptEnabled={true}
-//         domStorageEnabled={true}
-//       />
-
-//       {/* Número de página */}
-//       <Text style={styles.pageNumber}>Página: {paginaActual} / {totalPaginas}</Text>
-
-//       {/* Controles de navegación */}
-//       <View style={styles.controls}>
-//         <TouchableOpacity 
-//           onPress={paginaAnterior} 
-//           style={[styles.button, paginaActual === 1 && styles.disabled]}
-//           disabled={paginaActual === 1}
-//         >
-//           <Text style={styles.buttonText}>◀ Anterior</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity 
-//           onPress={paginaSiguiente} 
-//           style={[styles.button, paginaActual === totalPaginas && styles.disabled]}
-//           disabled={paginaActual === totalPaginas}
-//         >
-//           <Text style={styles.buttonText}>Siguiente ▶</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1 },
-//   webview: { flex: 1 },
-//   pageNumber: {
-//     position: 'absolute',
-//     bottom: 60,
-//     left: '50%',
-//     transform: [{ translateX: -50 }],
-//     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-//     color: 'white',
-//     padding: 10,
-//     borderRadius: 5,
-//   },
-//   controls: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     position: 'absolute',
-//     bottom: 10,
-//     left: 0,
-//     right: 0,
-//     paddingHorizontal: 20,
-//   },
-//   button: {
-//     backgroundColor: '#007AFF',
-//     paddingVertical: 10,
-//     paddingHorizontal: 20,
-//     borderRadius: 5,
-//   },
-//   buttonText: {
-//     color: 'white',
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//   },
-//   disabled: {
-//     backgroundColor: '#ccc',
-//   },
-// });
-
-
-
-
-
-// SI QUE CAMBIA DEL INDEXADOR, PERO NO BLOQUEA SCROLL
-// import React, { useRef, useState } from 'react';
-// import { View, StyleSheet, Button } from 'react-native';
-// import { WebView } from 'react-native-webview';
-
-// export default function LeerLibro({ route }) {
-//   const { libro } = route.params;
-//   const webViewRef = useRef(null);
-//   const [paginaActual, setPaginaActual] = useState(1);
-
-//   // Función para inyectar JavaScript y cambiar la página
-//   const cambiarPagina = (incremento) => {
-//     const nuevaPagina = paginaActual + incremento;
-//     if (nuevaPagina < 1) return;
-
-//     setPaginaActual(nuevaPagina);
-
-//     const script = `
-//       (function() {
-//         let elementos = document.querySelectorAll('.ndfHFb-c4YZDc-DARUcf-NnAfwf-cQYSPc');
-//         if (elementos.length > 0) {
-//           elementos[0].innerText = '${nuevaPagina}';
-//         }
-//       })();
-//       true;
-//     `;
-
-//     webViewRef.current?.injectJavaScript(script);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <WebView
-//         ref={webViewRef}
-//         source={{ uri: libro.enlace.replace("view", "preview") }}
-//         style={styles.webview}
-//         javaScriptEnabled={true}
-//         domStorageEnabled={true}
-//       />
-//       <View style={styles.buttonsContainer}>
-//         <Button title="Anterior" onPress={() => cambiarPagina(-1)} />
-//         <Button title="Siguiente" onPress={() => cambiarPagina(1)} />
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1 },
-//   webview: { flex: 1 },
-//   buttonsContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     padding: 10,
-//   },
-// });
-
-
-// NO CAMBIA EL INDEXADOR, PERO SI QUE BLOQUEA SCROLL
-// import React, { useRef, useState } from 'react';
-// import { View, StyleSheet, Button } from 'react-native';
-// import { WebView } from 'react-native-webview';
-
-// export default function LeerLibro({ route }) {
-//   const { libro } = route.params;
-//   const webViewRef = useRef(null);
-//   const [paginaActual, setPaginaActual] = useState(1);
-
-//   // Inyectamos JavaScript para deshabilitar el scroll
-//   const scriptBloquearScroll = `
-//     (function() {
-//       document.body.style.overflow = 'hidden'; // Oculta scroll
-//       document.documentElement.style.overflow = 'hidden';
-
-//       // Evita eventos táctiles para desplazamiento
-//       document.addEventListener('touchmove', function(event) {
-//         event.preventDefault();
-//       }, { passive: false });
-//     })();
-//     true;
-//   `;
-
-//   // Función para cambiar de página manualmente con los botones
-//   const cambiarPagina = (incremento) => {
-//     const nuevaPagina = paginaActual + incremento;
-//     if (nuevaPagina < 1) return;
-
-//     setPaginaActual(nuevaPagina);
-//     console.log("Página actual:", nuevaPagina);
-
-//     const script = `
-//       (function() {
-//         let event = new KeyboardEvent('keydown', {
-//           key: '${incremento > 0 ? 'PageDown' : 'PageUp'}',
-//           keyCode: ${incremento > 0 ? 34 : 33}, 
-//           bubbles: true
-//         });
-//         document.dispatchEvent(event);
-//       })();
-//       true;
-//     `;
-
-//     webViewRef.current?.injectJavaScript(script);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <WebView
-//         ref={webViewRef}
-//         source={{ uri: libro.enlace.replace("view", "preview") }}
-//         style={styles.webview}
-//         javaScriptEnabled={true}
-//         domStorageEnabled={true}
-//         injectedJavaScript={scriptBloquearScroll} // Inyectamos el script para bloquear el scroll
-//       />
-//       <View style={styles.buttonsContainer}>
-//         <Button title="Anterior" onPress={() => cambiarPagina(-1)} />
-//         <Button title="Siguiente" onPress={() => cambiarPagina(1)} />
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1 },
-//   webview: { flex: 1 },
-//   buttonsContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     padding: 10,
-//   },
-// });
-
-
-// SI CAMBIA EL INDEXADOR, SI BLOQUEA SCROLL (a veces)
-import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
-import { WebView } from 'react-native-webview';
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
+import Pdf from "react-native-pdf";
+import RNFetchBlob from "react-native-blob-util";
 
 export default function LeerLibro({ route }) {
   const { libro } = route.params;
-  const webViewRef = useRef(null);
-  const [paginaActual, setPaginaActual] = useState(1);
+  const [pdfPath, setPdfPath] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(libro.num_paginas || null);
+  const [pdfKey, setPdfKey] = useState(0); // 🔥 Se usa para forzar el renderizado
+  const pdfRef = useRef(null);
 
-  // Inyectamos JavaScript para bloquear el scroll y permitir el cambio de página
-  const scriptBloquearScroll = `
-    (function() {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
+  useEffect(() => {
+    const downloadPdf = async () => {
+      const match = libro.enlace.match(/[-\w]{25,}/);
+      const fileId = match ? match[0] : null;
+      const pdfUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
 
-      // Bloquear eventos de scroll táctil y de mouse
-      document.addEventListener('wheel', (event) => event.preventDefault(), { passive: false });
-      document.addEventListener('touchmove', (event) => event.preventDefault(), { passive: false });
+      const { dirs } = RNFetchBlob.fs;
+      const filePath = `${dirs.DocumentDir}/archivo.pdf`;
 
-      // Permitir PageUp/PageDown para navegación
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'PageDown' || event.key === 'PageUp') {
-          event.stopPropagation();
-        }
-      });
-    })();
-    true;
-  `;
+      try {
+        const res = await RNFetchBlob.config({
+          fileCache: true,
+          path: filePath,
+        }).fetch("GET", pdfUrl);
 
-  // Función para cambiar la página
-  const cambiarPagina = (incremento) => {
-    const nuevaPagina = paginaActual + incremento;
-    if (nuevaPagina < 1) return;
+        setPdfPath(res.path());
+      } catch (error) {
+        Alert.alert("Error", "No se pudo descargar el PDF: " + error.message);
+      }
+    };
 
-    setPaginaActual(nuevaPagina);
-    console.log("Página actual:", nuevaPagina);
+    downloadPdf();
+  }, [libro]);
 
-    const script = `
-      (function() {
-        // Simula presionar la tecla PageUp/PageDown
-        var event = new KeyboardEvent('keydown', {
-          key: '${incremento > 0 ? 'PageDown' : 'PageUp'}',
-          keyCode: ${incremento > 0 ? 34 : 33},
-          bubbles: true
-        });
-        document.dispatchEvent(event);
+  // 🚀 Función para cambiar la página
+  const changePage = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      setPdfKey((prevKey) => prevKey + 1); // 🔥 Forzar recarga del PDF
+    }
+  };
 
-        // Actualizar el número del indexador de página
-        let elementos = document.querySelectorAll('.ndfHFb-c4YZDc-DARUcf-NnAfwf-cQYSPc');
-        if (elementos.length > 0) {
-          elementos[0].innerText = '${nuevaPagina}';
-        }
-      })();
-      true;
-    `;
-
-    webViewRef.current?.injectJavaScript(script);
+  // Función para finalizar lectura
+  const finalizarLectura = () => {
+    console.log(`Lectura finalizada en la página: ${currentPage}`);
+    Alert.alert("Lectura Finalizada", `Terminaste en la página ${currentPage}`);
   };
 
   return (
     <View style={styles.container}>
-      <WebView
-        ref={webViewRef}
-        source={{ uri: libro.enlace.replace("view", "preview") }}
-        style={styles.webview}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        injectedJavaScript={scriptBloquearScroll} // Bloqueo de scroll
-      />
-      <View style={styles.buttonsContainer}>
-        <Button title="Anterior" onPress={() => cambiarPagina(-1)} />
-        <Button title="Siguiente" onPress={() => cambiarPagina(1)} />
-      </View>
+      {pdfPath ? (
+        <>
+          <Pdf
+            key={pdfKey} // 🔥 Forzamos el redibujado del PDF al cambiar la página
+            ref={pdfRef}
+            source={{ uri: pdfPath, cache: true }}
+            page={currentPage} // 📌 Se asegura de mostrar la página correcta
+            style={styles.pdf}
+            onLoadComplete={(numberOfPages) => {
+              setTotalPages(numberOfPages || libro.num_paginas);
+            }}
+            onPageChanged={(page) => setCurrentPage(page)}
+          />
+
+          {/* Botones de navegación */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, currentPage <= 1 && styles.disabledButton]}
+              onPress={() => changePage(currentPage - 1)}
+              disabled={currentPage <= 1}
+            >
+              <Text style={styles.buttonText}>Anterior</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.pageText}>
+              Página {currentPage} de {totalPages ?? "?"}
+            </Text>
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                totalPages && currentPage >= totalPages && styles.disabledButton,
+              ]}
+              onPress={() => changePage(currentPage + 1)}
+              disabled={totalPages && currentPage >= totalPages}
+            >
+              <Text style={styles.buttonText}>Siguiente</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Botón Finalizar Lectura */}
+          <TouchableOpacity style={styles.finishButton} onPress={finalizarLectura}>
+            <Text style={styles.buttonText}>Finalizar Lectura</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <View style={styles.loadingContainer}>
+          <Text>Cargando PDF...</Text>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  webview: { flex: 1 },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+  pdf: {
+    flex: 1,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height - 100,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 10,
+    backgroundColor: "#fff",
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  disabledButton: {
+    backgroundColor: "#ccc",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  pageText: {
+    fontSize: 16,
+    alignSelf: "center",
+  },
+  finishButton: {
+    backgroundColor: "#ff3b30",
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+    alignItems: "center",
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// DESCARGA EL PDF PERO NO LO VISUALIZA
-// import React, { useRef, useState } from 'react';
-// import { View, StyleSheet, Button, Dimensions } from 'react-native';
-// import { WebView } from 'react-native-webview';
-
-// export default function LeerLibro({ route }) {
-//   const { libro } = route.params;
-
-//   const fileId = libro.enlace.match(/\/d\/(.*)\//)[1]; // Extrae el ID del archivo
-//   const directPdfUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-
-//   // const pdfUrl = libro.enlace.replace("view", "preview"); // Modifica la URL
-
-//   const webViewRef = useRef(null);
-//   const screenHeight = Dimensions.get('window').height; // Altura de la pantalla
-//   const [currentPage, setCurrentPage] = useState(1);
-
-//   // Inyectar CSS para bloquear el scroll manual
-//   const disableScrollScript = `
-//     document.body.style.overflow = 'hidden'; 
-//     true;
-//   `;
-
-//   // Función para hacer scroll en WebView
-//   const scrollToPage = (direction) => {
-//     const newPage = direction === "next" ? currentPage + 1 : currentPage - 1;
-//     if (newPage < 1) return; // No ir antes de la primera página
-
-//     const script = `window.scrollTo({ top: ${screenHeight * (newPage - 1)}, behavior: 'smooth' }); true;`;
-//     webViewRef.current.injectJavaScript(script);
-//     setCurrentPage(newPage);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <WebView 
-//         ref={webViewRef}
-//         source={{ uri: directPdfUrl }} 
-//         style={styles.webview} 
-//         javaScriptEnabled={true}
-//         domStorageEnabled={true}
-//         injectedJavaScript={disableScrollScript} // Bloquea el scroll manual
-//         scrollEnabled={false} // Evita el scroll en Android/iOS
-//       />
-
-//       {/* Botones de navegación */}
-//       <View style={styles.buttonContainer}>
-//         <Button title="← Anterior" onPress={() => scrollToPage("prev")} disabled={currentPage === 1} />
-//         <Button title="Siguiente →" onPress={() => scrollToPage("next")} />
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   webview: {
-//     flex: 1,
-//   },
-//   buttonContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     padding: 10,
-//   },
-// });
-
 
