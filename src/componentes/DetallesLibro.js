@@ -42,6 +42,12 @@ export default function DetallesLibro({ route }) {
   const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
   const backendUrl = 'http://10.0.2.2:3000';
 
+  //  📌 Variables para mostrar la sinopsis del libro
+  const MAX_LINES = 6;  
+  const MAX_CHARACTERS = 250;
+  const esResumenCorto = libro.resumen.length <= MAX_CHARACTERS;
+
+
   // 📌 Efectos de carga
   useEffect(() => {
     if (libro.autor !== "Anónimo") {
@@ -89,7 +95,12 @@ export default function DetallesLibro({ route }) {
         throw new Error("Error al obtener las valoraciones del libro " + libro.nombre + ": " + response.error);
       }
       const data = await response.json();
-      setValoraciones(data);
+      // Transformar fecha eliminando lo sobrante
+      const dataTransformada = data.map(item => ({
+        ...item,
+        fecha: item.fecha?.split("T")[0] || item.fecha,
+      }));
+      setValoraciones(dataTransformada);
     } catch(error) {
       console.error(error);
     }
@@ -281,16 +292,18 @@ export default function DetallesLibro({ route }) {
         </Text>
         <Text 
           style={[stylesGeneral.resumen, { color: colors.text }]}
-          numberOfLines={mostrarResumenCompleto ? undefined : 6} 
+          numberOfLines={mostrarResumenCompleto ? undefined : MAX_LINES}
           ellipsizeMode="tail"
         >
           {libro.resumen}
         </Text>
-        <TouchableOpacity onPress={() => setMostrarResumenCompleto(!mostrarResumenCompleto)}>
-          <Text style={{ color: colors.button, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
-            {mostrarResumenCompleto ? "Ver menos" : "Ver más"}
-          </Text>
-        </TouchableOpacity>
+        {!esResumenCorto && (
+          <TouchableOpacity onPress={() => setMostrarResumenCompleto(!mostrarResumenCompleto)}>
+            <Text style={{ color: colors.button, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
+              {mostrarResumenCompleto ? "Ver menos" : "Ver más"}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]}/>
@@ -406,9 +419,11 @@ export default function DetallesLibro({ route }) {
           {valoraciones.length > 0 ? (
             <View>
               {valoraciones.map((item) => (
+                
                 <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}`}>
                   <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
+                  <Text style={{ color: "gray" }}>{item.usuario_id}{item.fecha}</Text>
                 </View>
               ))}
             </View>
@@ -425,7 +440,6 @@ export default function DetallesLibro({ route }) {
             <Text style={[stylesGeneral.modalTitle, { color: colors.text }]}>Selecciona una lista</Text>
             <FlatList
               data={listasUsuario}
-              //keyExtractor={(item) => item.id_lista.toString()}
               keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : index.toString())}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -442,7 +456,6 @@ export default function DetallesLibro({ route }) {
           </View>
         </View>
       </Modal>
-    {/* </View> */}
     </ScrollView>
   );
 }
