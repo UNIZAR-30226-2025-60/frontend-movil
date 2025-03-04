@@ -3,14 +3,21 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
 import Pdf from "react-native-pdf";
 import RNFetchBlob from "react-native-blob-util";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function LeerLibro({ route }) {
   const { libro } = route.params;
   const [pdfPath, setPdfPath] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(libro.num_paginas || null);
-  const [pdfKey, setPdfKey] = useState(0); // 🔥 Se usa para forzar el renderizado
+  const [pdfKey, setPdfKey] = useState(0);
+  const [scale, setScale] = useState(1.0);
+  const [paginasMarcadas, setPaginasMarcadas] = useState([]); // 🔥 Vector de páginas marcadas
+
   const pdfRef = useRef(null);
+
+  const increaseZoom = () => setScale((prev) => Math.min(prev + 0.2, 3));
+  const decreaseZoom = () => setScale((prev) => Math.max(prev - 0.2, 1));
 
   useEffect(() => {
     const downloadPdf = async () => {
@@ -32,21 +39,30 @@ export default function LeerLibro({ route }) {
         Alert.alert("Error", "No se pudo descargar el PDF: " + error.message);
       }
     };
-
     downloadPdf();
   }, [libro]);
 
-  // 🚀 Función para cambiar la página
+  // 🚀 Cambia la página y verifica si está marcada
   const changePage = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      setPdfKey((prevKey) => prevKey + 1); // 🔥 Forzar recarga del PDF
+      setPdfKey((prevKey) => prevKey + 1);
     }
+  };
+
+  // ✅ Agrega o quita la página actual del vector de marcadas
+  const toggleBookmark = () => {
+    setPaginasMarcadas((prevMarcadas) =>
+      prevMarcadas.includes(currentPage)
+        ? prevMarcadas.filter((page) => page !== currentPage) // Si ya está, la quitamos
+        : [...prevMarcadas, currentPage] // Si no está, la agregamos
+    );
   };
 
   // Función para finalizar lectura
   const finalizarLectura = () => {
     console.log(`Lectura finalizada en la página: ${currentPage}`);
+    console.log("Páginas marcadas:", paginasMarcadas);
     Alert.alert("Lectura Finalizada", `Terminaste en la página ${currentPage}`);
   };
 
@@ -54,11 +70,50 @@ export default function LeerLibro({ route }) {
     <View style={styles.container}>
       {pdfPath ? (
         <>
+          <View>
+            {/* Botón Finalizar Lectura */}
+            <TouchableOpacity style={styles.finishButton} onPress={finalizarLectura}>
+              <Text style={styles.buttonText}>Finalizar Lectura</Text>
+            </TouchableOpacity>
+
+            {/* Control del Zoom y Marcador */}
+            <View style={styles.zoomContainer}>
+              <TouchableOpacity
+                style={[styles.zoomButton, scale <= 1 && styles.disabledButton]}
+                onPress={decreaseZoom}
+                disabled={scale <= 1}
+              >
+                <Icon name="search-minus" size={20} color={scale <= 1 ? "#888" : "#fff"} />
+              </TouchableOpacity>
+
+              <Text style={styles.zoomText}>{(scale * 100).toFixed(0)}%</Text>
+
+              <TouchableOpacity
+                style={[styles.zoomButton, scale >= 3 && styles.disabledButton]}
+                onPress={increaseZoom}
+                disabled={scale >= 3}
+              >
+                <Icon name="search-plus" size={20} color={scale >= 3 ? "#888" : "#fff"} />
+              </TouchableOpacity>
+
+              {/* Botón de Marcador */}
+              <TouchableOpacity style={styles.bookmarkButton} onPress={toggleBookmark}>
+                <Icon
+                  name={paginasMarcadas.includes(currentPage) ? "bookmark" : "bookmark-o"}
+                  size={24}
+                  color={paginasMarcadas.includes(currentPage) ? "#FFD700" : "#444"}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* PDF del libro */}
           <Pdf
-            key={pdfKey} // 🔥 Forzamos el redibujado del PDF al cambiar la página
+            key={pdfKey}
             ref={pdfRef}
             source={{ uri: pdfPath, cache: true }}
-            page={currentPage} // 📌 Se asegura de mostrar la página correcta
+            page={currentPage}
+            scale={scale}
             style={styles.pdf}
             onLoadComplete={(numberOfPages) => {
               setTotalPages(numberOfPages || libro.num_paginas);
@@ -91,11 +146,6 @@ export default function LeerLibro({ route }) {
               <Text style={styles.buttonText}>Siguiente</Text>
             </TouchableOpacity>
           </View>
-
-          {/* Botón Finalizar Lectura */}
-          <TouchableOpacity style={styles.finishButton} onPress={finalizarLectura}>
-            <Text style={styles.buttonText}>Finalizar Lectura</Text>
-          </TouchableOpacity>
         </>
       ) : (
         <View style={styles.loadingContainer}>
@@ -151,5 +201,25 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
   },
+  zoomContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#fff",
+  },
+  zoomButton: {
+    backgroundColor: "#007AFF",
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  zoomText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  bookmarkButton: {
+    marginLeft: 10,
+    padding: 5,
+  },
 });
-
