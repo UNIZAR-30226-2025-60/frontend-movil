@@ -15,7 +15,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Text } from 'react-native'; // Asegúrate de importar Text
 
 // Importación de pantallas principales
-import DetallesLibro from './src/componentes/DetallesLibro';
+import DetallesLibro from './src/pantallas/DetallesLibro';
 import LibrosDeLista from './src/componentes/LibrosDeLista';
 
 import MenuUsuario from "./src/pantallas/MenuUsuario";

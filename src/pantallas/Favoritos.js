@@ -11,7 +11,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
-import DetallesLibro  from '../componentes/DetallesLibro';
+import DetallesLibro  from '../pantallas/DetallesLibro';
 import { useThemeColors } from "../componentes/Tema";
 
 export default function Favoritos() {
