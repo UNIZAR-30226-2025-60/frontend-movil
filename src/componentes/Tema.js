@@ -23,6 +23,7 @@ export const useThemeColors = () => {
         categoriaButtonSec: "#d45682",
         border: "#ffffff",
         star: "#ffe300",
+        arrowBackground: "#fef9d2",
       }
     : { // TEMA CLARO
         backgroundHeader: "#be954e",
@@ -39,5 +40,6 @@ export const useThemeColors = () => {
         categoriaButtonSec: "#007bff",
         border: "#000000",
         star: "#ffe300",
+        arrowBackground: "#cacac9",
       };
 };

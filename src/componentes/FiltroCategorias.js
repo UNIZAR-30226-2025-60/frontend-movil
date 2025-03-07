@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from "react";
+// FiltroCategorias.js
+import React, { useEffect, useState, useRef } from "react";
 import { ScrollView, TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from "react-native";
 import { useThemeColors } from "../componentes/Tema";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function FiltroCategorias({ onSelectCategoria }) {
     const [categorias, setCategorias] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null); // Nuevo estado para gestionar la categoría seleccionada
+    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
     const colors = useThemeColors();
+    
+    const scrollViewRef = useRef(null);  
+    const scrollOffset = useRef(0); // Para almacenar la posición actual del scroll
 
     useEffect(() => {
         const fetchCategorias = async () => {
             try {
                 const response = await fetch("http://10.0.2.2:3000/api/libros/tematicas");
                 const data = await response.json();
-                setCategorias(data); // Suponiendo que 'data' es un array de objetos con 'tematica'
+                setCategorias(data);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching categories:", error);
@@ -25,48 +30,82 @@ export default function FiltroCategorias({ onSelectCategoria }) {
     }, []);
 
     const handleCategoriaPress = (tematica) => {
-        // Cambia la categoría seleccionada o la desactiva si ya está seleccionada
         if (categoriaSeleccionada === tematica) {
-            setCategoriaSeleccionada(null); // Si la categoría ya está seleccionada, la desactiva
-            onSelectCategoria(null); // Limpia los resultados de búsqueda
+            setCategoriaSeleccionada(null);
+            onSelectCategoria(null);
         } else {
-            setCategoriaSeleccionada(tematica); // Marca la categoría como seleccionada
-            onSelectCategoria(tematica); // Realiza la búsqueda de libros por esta categoría
+            setCategoriaSeleccionada(tematica);
+            onSelectCategoria(tematica);
+        }
+    };
+
+    const scrollTo = (direction) => {
+        if (scrollViewRef.current) {
+            const scrollStep = 200; // Cuánto desplazarse en cada pulsación
+            let newOffset = scrollOffset.current + (direction === "left" ? -scrollStep : scrollStep);
+
+            // Asegurarnos de no salirnos de los límites
+            newOffset = Math.max(0, newOffset); 
+
+            scrollViewRef.current.scrollTo({ x: newOffset, animated: true });
+
+            // Actualizar la posición almacenada
+            scrollOffset.current = newOffset;
         }
     };
 
     if (loading) {
         return (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasContainer}>
-            <ActivityIndicator size="large" color={colors.icon} />
-        </ScrollView>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasContainer}>
+                <ActivityIndicator size="large" color={colors.icon} />
+            </ScrollView>
         );
     }
 
     return (
         <View style={styles.categoriasWrapper}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasContainer}>
-            {categorias.map((categoria) => (
-                <TouchableOpacity
-                    key={categoria.tematica}
-                    style={[
-                    styles.categoriaButton,
-                    {
-                        backgroundColor: categoriaSeleccionada === categoria.tematica ? colors.categoriaButtonSec : colors.categoriaButton, // Cambia el color si la categoría está seleccionada
-                    },
-                    ]}
-                    onPress={() => handleCategoriaPress(categoria.tematica)}
-                >
-                    <Text
-                    style={{
-                        color: categoriaSeleccionada === categoria.tematica ? colors.buttonText : colors.icon, // Cambia el texto según la categoría seleccionada
-                    }}
+            <TouchableOpacity style={[styles.arrowButtonLeft, { left: 0, backgroundColor: colors.arrowBackground }]} onPress={() => scrollTo("left")}>
+                <Icon name="chevron-left" size={20} color={colors.icon} />
+            </TouchableOpacity>
+
+            <ScrollView
+                ref={scrollViewRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.categoriasContainer}
+                contentContainerStyle={styles.categoriasInnerContainer}
+                onScroll={(event) => {
+                    scrollOffset.current = event.nativeEvent.contentOffset.x; // Guardar la posición actual
+                }}
+                scrollEventThrottle={16} // Hacer el evento más fluido
+            >
+                {categorias.map((categoria) => (
+                    <TouchableOpacity
+                        key={categoria.tematica}
+                        style={[
+                            styles.categoriaButton,
+                            {
+                                backgroundColor: categoriaSeleccionada === categoria.tematica
+                                    ? colors.categoriaButtonSec
+                                    : colors.categoriaButton,
+                            },
+                        ]}
+                        onPress={() => handleCategoriaPress(categoria.tematica)}
                     >
-                    {categoria.tematica}
-                    </Text>
-                </TouchableOpacity>
-            ))}
-        </ScrollView>
+                        <Text style={{
+                            color: categoriaSeleccionada === categoria.tematica
+                                ? colors.buttonText
+                                : colors.icon,
+                        }}>
+                            {categoria.tematica}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+
+            <TouchableOpacity style={[styles.arrowButtonRight, { right: 0, backgroundColor: colors.arrowBackground }]} onPress={() => scrollTo("right")}>
+                <Icon name="chevron-right" size={20} color={colors.icon} />
+            </TouchableOpacity>
         </View>
     );
 }
@@ -74,18 +113,38 @@ export default function FiltroCategorias({ onSelectCategoria }) {
 const styles = StyleSheet.create({
     categoriasWrapper: {
         paddingHorizontal: 10,
-        flexDirection: 'row', // Para asegurarnos de que los botones se alineen horizontalmente
-        flexWrap: 'wrap', // Para permitir que los botones se ajusten cuando se alcance el final de la línea
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
     },
     categoriasContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap', // Hace que los botones se envuelvan en la siguiente fila si no caben
+        flexDirection: "row",
+    },
+    categoriasInnerContainer: {
+        flexDirection: "row",
+        paddingHorizontal: 10,
     },
     categoriaButton: {
         paddingVertical: 8,
         paddingHorizontal: 15,
         borderRadius: 20,
         marginRight: 10,
-        marginBottom: 10, // Espacio entre botones en la fila
+        marginBottom: 10,
     },
+  arrowButtonLeft: {
+    top: "25%",
+    marginRight: 10,
+    transform: [{ translateY: -15 }],
+    zIndex: 1,
+    padding: 10,
+    borderRadius: 50,
+  },
+  arrowButtonRight: {
+    top: "25%",
+    marginLeft: 10,
+    transform: [{ translateY: -15 }],
+    zIndex: 1,
+    padding: 10,
+    borderRadius: 50,
+  },
 });
