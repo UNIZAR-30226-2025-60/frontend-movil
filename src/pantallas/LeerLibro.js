@@ -1,6 +1,6 @@
 // LeerLibro.js
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import Pdf from "react-native-pdf";
 import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -262,6 +262,7 @@ export default function LeerLibro({ route, correoUsuario }) {
       ) : (
         <View style={styles.loadingContainer}>
           <Text>Cargando PDF...</Text>
+          <ActivityIndicator size="large" color="#0000ff" />
         </View>
       )}
     </View>

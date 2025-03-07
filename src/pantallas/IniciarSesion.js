@@ -56,18 +56,21 @@ export default function IniciarSesion({ setCorreoUsuario }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
       <Text style={[styles.titulo, { color: colors.text }]}>Iniciar Sesión</Text>
 
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
-        placeholder="Correo electrónico"
+        placeholder="ejemplo@ejemplo.com"
         placeholderTextColor={colors.text}
         value={correo}
         onChangeText={setCorreo}
         autoCapitalize="none"
+        keyboardType="email-address"
       />
 
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
-        placeholder="Contraseña"
+        placeholder="1234abc@"
         placeholderTextColor={colors.text}
         value={contrasena}
         onChangeText={setContrasena}
@@ -86,13 +89,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
     padding: 20,
   },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  tituloCampo: {
+    textAlign: 'left',
+    marginBottom: 5,
   },
   input: {
     width: '100%',

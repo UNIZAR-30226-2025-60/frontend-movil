@@ -29,6 +29,7 @@ import Foro from './src/pantallas/Foro';
 import Favoritos from './src/pantallas/Favoritos';
 import MisListas from './src/pantallas/MisListas';
 import CrearLista from './src/pantallas/CrearLista';
+import AñadirValoracion from './src/componentes/AñadirValoracion';
 
 // Importación del tema de colores
 import { useThemeColors } from './src/componentes/Tema';
@@ -205,6 +206,16 @@ function MenuStack({ correoUsuario }) {
         }}
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
+
+      <Stack.Screen name="AñadirValoracion"
+        options={{ 
+          title: "Añadir valoración",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        }}
+      >
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
     </Stack.Navigator>
   );

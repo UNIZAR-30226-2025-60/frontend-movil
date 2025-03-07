@@ -32,11 +32,12 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const [librosDelAutor, setLibrosDelAutor] = useState([]);
   const [menuVisible, setMenuVisible] = useState(false);
   const [mostrarResumenCompleto, setMostrarResumenCompleto] = useState(false);
+
   const [valoraciones, setValoraciones] = useState([]);
   const [promedio, setPromedio] = useState(null);
   const [conteo, setConteo] = useState([]);
   const [totalValoraciones, setTotalValoraciones] = useState(null);
-  
+
   // 📌 Variables generales
   // const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
   const backendUrl = 'http://10.0.2.2:3000';
@@ -58,6 +59,13 @@ export default function DetallesLibro({ route, correoUsuario }) {
       verificarSiEsFavorito();
     }
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      obtenerValoraciones();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   // 📌 Efecto para calcular estadísticas de valoraciones
   useEffect(() => {
@@ -213,7 +221,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   };
 
   const handleAñadirValoracion = () => {
-
+    navigation.navigate("AñadirValoracion", { libro, correoUsuario });
   };
 
   // 📌 Abrir modal y cargar listas si no están cargadas
