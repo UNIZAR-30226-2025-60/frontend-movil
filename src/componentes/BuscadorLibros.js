@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, TextInput, StyleSheet, Alert } from "react-native";
 import { useThemeColors } from "./Tema"; // Importamos los colores del tema
+import { API_URL } from "../../config";
 
 // Función debounce para retrasar la ejecución de la búsqueda
 function useDebounce(value, delay) {
@@ -31,16 +32,17 @@ export default function BuscadorLibros({ setResultados, categoria }) {
             let url;
             
             if (categoria && debouncedTerminoBusqueda.trim()) {
-                url = `http://10.0.2.2:3000/api/libros/tematicaTitulo/${encodeURIComponent(categoria)}/${encodeURIComponent(debouncedTerminoBusqueda)}`;
+                url = `${API_URL}/libros/tematicaTitulo/${encodeURIComponent(categoria)}/${encodeURIComponent(debouncedTerminoBusqueda)}`;
             }
             else if (categoria) {
-                url = `http://10.0.2.2:3000/api/libros/tematica/${encodeURIComponent(categoria)}`;
+                url = `${API_URL}/libros/tematica/${encodeURIComponent(categoria)}`;
             }
             else if (debouncedTerminoBusqueda.trim()) {
-                url = `http://10.0.2.2:3000/api/libros/obtenerTitulo/${encodeURIComponent(debouncedTerminoBusqueda)}`;
+                url = `${API_URL}/obtenerTitulo/${encodeURIComponent(debouncedTerminoBusqueda)}`;
             }
             else {
-                url = "http://10.0.2.2:3000/api/libros";
+                // url = "http://10.0.2.2:3000/api/libros";
+                url = `${API_URL}/libros`;
             }
 
             try {
