@@ -4,9 +4,12 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from "rea
 import Pdf from "react-native-pdf";
 import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 
-export default function LeerLibro({ route }) {
+export default function LeerLibro({ route, correoUsuario }) {
   const { libro } = route.params;
+  const navigation = useNavigation();
+
   const [pdfPath, setPdfPath] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(libro.num_paginas || null);
@@ -40,7 +43,59 @@ export default function LeerLibro({ route }) {
       }
     };
     downloadPdf();
+
+    if (correoUsuario) {
+      obtenerPrimeraPagina();
+      obtenerPaginasDestacadas();
+    }  
   }, [libro]);
+
+  const obtenerPrimeraPagina = async () => {
+    try {
+      console.log("ENLACE:", libro.enlace);
+      const url = `http://10.0.2.2:3000/api/libros/enproceso/${correoUsuario}`;
+      const respuesta = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (respuesta.ok) {
+        const data = await respuesta.json();
+        if (data.length !== 0) {
+          const libroEnProceso = data.find(item => item.enlace === libro.enlace);
+          if (libroEnProceso) {
+            setCurrentPage(libroEnProceso.pagina);
+            console.log("PRIMERA PÁGINA:", libroEnProceso.pagina);
+          }
+        }
+      }
+    } catch(error) {
+      console.log("Error al obtener la página en proceso:", error);
+    }
+  };
+
+  const obtenerPaginasDestacadas = async () => {
+    try {
+      const url = `http://10.0.2.2:3000/api/fragmentos?correo=${correoUsuario}&enlace=${encodeURIComponent(libro.enlace)}`;
+      const respuesta = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!respuesta.ok) {
+        console.log(`Error al obtener las páginas destacadas: ` + respuesta.error);
+        throw new Error(`Error al obtener las páginas destacadas: ` + respuesta.error);
+      }
+      console.log(`Páginas destacadas obtenidas correctamente`);
+
+      const data = await respuesta.json();
+      const paginas = data.map(item => item.pagina);
+      setPaginasMarcadas(paginas);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // 🚀 Cambia la página y verifica si está marcada
   const changePage = (newPage) => {
@@ -51,20 +106,75 @@ export default function LeerLibro({ route }) {
   };
 
   // ✅ Agrega o quita la página actual del vector de marcadas
-  const toggleBookmark = () => {
+  const toggleBookmark = async () => {
+    const isMarked = paginasMarcadas.includes(currentPage);
     setPaginasMarcadas((prevMarcadas) =>
-      prevMarcadas.includes(currentPage)
-        ? prevMarcadas.filter((page) => page !== currentPage) // Si ya está, la quitamos
-        : [...prevMarcadas, currentPage] // Si no está, la agregamos
+      isMarked
+        ? prevMarcadas.filter((page) => page !== currentPage)
+        : [...prevMarcadas, currentPage]
     );
+
+      try {
+        const respuesta = await fetch("http://10.0.2.2:3000/api/fragmentos", {
+          method: isMarked ? "DELETE" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            correo: correoUsuario,
+            enlace: libro.enlace,
+            pagina: currentPage}),
+        });
+  
+        if (!respuesta.ok) {
+          console.log(`Error al ${isMarked ? "eliminar" : "guardar"} el bookmark: ` + respuesta.error);
+          throw new Error(`Error al ${isMarked ? "eliminar" : "guardar"} el bookmark: ` + respuesta.error);
+        }
+        Alert.alert(`✅ Página ${currentPage} ${isMarked ? "eliminada de destacados" : "destacada"} correctamente`);
+        console.log(`Bookmark correctamente ${isMarked ? "eliminado" : "guardado"}`);
+  
+  
+      } catch (error) {
+        console.log("Error al guardar la guardar la página: " + error);
+      }
   };
 
   // Función para finalizar lectura
-  const finalizarLectura = () => {
-    console.log(`Lectura finalizada en la página: ${currentPage}`);
-    console.log("Páginas marcadas:", paginasMarcadas);
-    Alert.alert("Lectura Finalizada", `Terminaste en la página ${currentPage}`);
+  const finalizarLectura = async () => {
+    try {
+      if (correoUsuario) {
+        const respuesta = await fetch("http://10.0.2.2:3000/api/libros/enproceso", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            correo: correoUsuario,
+            enlace: libro.enlace,
+            pagina: currentPage
+          }),
+        });
+    
+        if (!respuesta.ok) {
+          throw new Error(respuesta.error);
+        }
+      }
+
+      console.log("Lectura finalizada correctamente en la página " + currentPage);
+      Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPage}`, [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+
+    } catch (error) {
+      console.log("Error al guardar la página de finalización de la lectura", respuesta.error);
+      Alert.alert("⚠️ Error al guardar la página de finalización de la lectura", respuesta.error, [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    }
   };
+
 
   return (
     <View style={styles.container}>
@@ -97,13 +207,15 @@ export default function LeerLibro({ route }) {
               </TouchableOpacity>
 
               {/* Botón de Marcador */}
-              <TouchableOpacity style={styles.bookmarkButton} onPress={toggleBookmark}>
-                <Icon
-                  name={paginasMarcadas.includes(currentPage) ? "bookmark" : "bookmark-o"}
-                  size={24}
-                  color={paginasMarcadas.includes(currentPage) ? "#FFD700" : "#444"}
-                />
-              </TouchableOpacity>
+              {correoUsuario && (
+                <TouchableOpacity style={styles.bookmarkButton} onPress={toggleBookmark}>
+                  <Icon
+                    name={paginasMarcadas.includes(currentPage) ? "bookmark" : "bookmark-o"}
+                    size={24}
+                    color={paginasMarcadas.includes(currentPage) ? "#FFD700" : "#444"}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
 

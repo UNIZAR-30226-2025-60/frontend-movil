@@ -20,11 +20,10 @@ import { useThemeColors } from "../componentes/Tema";
 
 // NECESITA QUE LE PASES EL LIBRO COMPLETO (enlace, sinopsis, autor, nombre, etc)
 // 📌 Componente principal
-export default function DetallesLibro({ route }) {
+export default function DetallesLibro({ route, correoUsuario }) {
   const { libro } = route.params;
   const navigation = useNavigation();
   const colors = useThemeColors();
-  const botonRef = useRef(null);
 
   // 📌 Estados
   const [esFavorito, setEsFavorito] = useState(false);
@@ -39,7 +38,7 @@ export default function DetallesLibro({ route }) {
   const [totalValoraciones, setTotalValoraciones] = useState(null);
   
   // 📌 Variables generales
-  const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
+  // const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
   const backendUrl = 'http://10.0.2.2:3000';
 
   //  📌 Variables para mostrar la sinopsis del libro
@@ -54,8 +53,10 @@ export default function DetallesLibro({ route }) {
       obtenerMasLibrosDelAutor();
     }
     obtenerValoraciones();
-    obtenerListasUsuario();
-    verificarSiEsFavorito();
+    if (correoUsuario) {
+      obtenerListasUsuario();
+      verificarSiEsFavorito();
+    }
   }, []);
 
   // 📌 Efecto para calcular estadísticas de valoraciones
@@ -108,7 +109,7 @@ export default function DetallesLibro({ route }) {
 
   const obtenerListasUsuario = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
+      const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}`);
       const datos = await respuesta.json();
       setListasUsuario(datos);
     } catch (error) {
@@ -119,7 +120,7 @@ export default function DetallesLibro({ route }) {
   // 📌 Funciones para manejar favoritos
   const verificarSiEsFavorito = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos/${usuarioCorreo}`);
+      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos/${correoUsuario}`);
       const textoRespuesta = await respuesta.text(); // 📌 Leer como texto primero
   
       // 📌 Verificar si la respuesta es JSON antes de intentar parsearla
@@ -143,7 +144,7 @@ export default function DetallesLibro({ route }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario_id: usuarioCorreo,
+          usuario_id: correoUsuario,
           enlace_libro: libro.enlace,
         }),
       });
@@ -164,7 +165,7 @@ export default function DetallesLibro({ route }) {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario_id: usuarioCorreo,
+          usuario_id: correoUsuario,
           enlace_libro: libro.enlace,
         }),
       });
@@ -186,11 +187,11 @@ export default function DetallesLibro({ route }) {
   // 📌 Funciones para manejar listas
   const añadirLibroALista = async (idLista) => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`, {
+      const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario_id: usuarioCorreo,
+          usuario_id: correoUsuario,
           id_lista: idLista,
           enlace_libro: libro.enlace,
         }),
@@ -208,7 +209,7 @@ export default function DetallesLibro({ route }) {
   };
 
   const handleLeer = () => {
-    navigation.navigate("LeerLibro", { libro });
+    navigation.navigate("LeerLibro", { libro, correoUsuario });
   };
 
   const handleAñadirValoracion = () => {
@@ -252,13 +253,15 @@ export default function DetallesLibro({ route }) {
               <Text style={[stylesGeneral.titulo, { color: colors.text }]}>de: {libro.autor}</Text>
             </View>
             <View>
-              <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
+              {correoUsuario && (
+                <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
                   <FontAwesomeIcon
                     icon={esFavorito ? faHeartSolid : faHeartRegular}
                     size={30}
                     color={esFavorito ? 'red' : 'gray'}
                   />
-              </TouchableOpacity>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
           {/* Botones leer y añadir a lista */}
@@ -269,12 +272,15 @@ export default function DetallesLibro({ route }) {
             >
               <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-              onPress={handleAñadirALista}
-            >
-              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
-            </TouchableOpacity>
+
+            {correoUsuario && (
+              <TouchableOpacity 
+                style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+                onPress={handleAñadirALista}
+              >
+                <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
@@ -404,22 +410,23 @@ export default function DetallesLibro({ route }) {
           );
         })}
 
-        <TouchableOpacity 
-          style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-          onPress={handleAñadirValoracion}
-        >
-          <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir valoración</Text>
-        </TouchableOpacity>
+        {correoUsuario && (
+          <TouchableOpacity 
+            style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
+            onPress={handleAñadirValoracion}
+          >
+            <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir valoración</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Todas las reseñas del libro */}
       <View>
         <View>
-          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
           {valoraciones.length > 0 ? (
             <View>
+              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
               {valoraciones.map((item) => (
-                
                 <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}`}>
                   <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
@@ -428,7 +435,7 @@ export default function DetallesLibro({ route }) {
               ))}
             </View>
           ) : (
-            <Text style={{ color: colors.text, textAlign: 'center' }}>Aún no hay valoraciones.</Text>
+            <Text style={{ color: colors.text }}>Aún no hay valoraciones.</Text>
           )}
         </View>
       </View>

@@ -105,6 +105,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerTintColor: colors.text,
         }}
       />
+
       <Stack.Screen
         name="MenuPerfil"
         component={MenuPerfil}
@@ -115,6 +116,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.text, }}
       />
+
       <Stack.Screen
         name="CambioContrasena"
         component={CambioContrasena}
@@ -185,20 +187,25 @@ function MenuStack({ correoUsuario }) {
       <Stack.Screen name="Menu" options={{ headerShown: false }}>
         {(props) => <Menu {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
-      <Stack.Screen name="Detalles" component={DetallesLibro} 
-        options={{
+      <Stack.Screen name="Detalles"
+        options={{ 
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.text, // Color del texto del título
         }}
-      />
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
       <Stack.Screen name="MisListasScreen" component={MisListas} options={{ title: "Mis Listas" }} />
-      <Stack.Screen name="LeerLibro" component={LeerLibro} 
-        options={{ title: "Leyendo...",
+      <Stack.Screen name="LeerLibro"
+        options={{ 
+          title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.text, // Color del texto del título
         }}
-      />
+      >
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

@@ -37,7 +37,7 @@ export default function IniciarSesion({ setCorreoUsuario }) {
         body: JSON.stringify({ correo, contrasena }),
       });
 
-      if (!respuesta.ok) throw new Error("Correo o contraseña incorrectos");
+      if (!respuesta.ok) throw new Error(respuesta.error);
 
       const usuario = await respuesta.json();
       Alert.alert("✅ Inicio de sesión exitoso", `Bienvenido, ${usuario.nombre}`);
