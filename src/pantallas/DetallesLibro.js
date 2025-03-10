@@ -59,6 +59,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       verificarSiEsFavorito();
     }
   }, []);
+  
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {

@@ -1,10 +1,11 @@
 // LeerLibro.js
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
 import Pdf from "react-native-pdf";
 import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import cargandoGif from "../../assets/animacion_cargando.gif";
 
 export default function LeerLibro({ route, correoUsuario }) {
   const { libro } = route.params;
@@ -262,7 +263,7 @@ export default function LeerLibro({ route, correoUsuario }) {
       ) : (
         <View style={styles.loadingContainer}>
           <Text>Cargando PDF...</Text>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <Image source={cargandoGif} style={styles.loadingImage}/>
         </View>
       )}
     </View>
@@ -278,11 +279,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height - 100,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -334,5 +330,14 @@ const styles = StyleSheet.create({
   bookmarkButton: {
     marginLeft: 10,
     padding: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingImage: {
+    width: 160,
+    height: 160,
   },
 });

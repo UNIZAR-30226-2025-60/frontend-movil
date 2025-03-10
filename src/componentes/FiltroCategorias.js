@@ -1,8 +1,9 @@
 // FiltroCategorias.js
 import React, { useEffect, useState, useRef } from "react";
-import { ScrollView, TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from "react-native";
+import { ScrollView, TouchableOpacity, Text, Image, StyleSheet, ActivityIndicator, View } from "react-native";
 import { useThemeColors } from "../componentes/Tema";
 import Icon from "react-native-vector-icons/FontAwesome";
+import cargandoGif from "../../assets/animacion_cargando.gif";
 
 export default function FiltroCategorias({ onSelectCategoria }) {
     const [categorias, setCategorias] = useState([]);
@@ -56,9 +57,12 @@ export default function FiltroCategorias({ onSelectCategoria }) {
 
     if (loading) {
         return (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasContainer}>
-                <ActivityIndicator size="large" color={colors.icon} />
-            </ScrollView>
+            <View>
+                <Image source={cargandoGif}/>
+            </View>
+            // <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasContainer}>
+            //     <ActivityIndicator size="large" color={colors.icon} />
+            // </ScrollView>
         );
     }
 
