@@ -11,10 +11,11 @@
 // 📌 Importaciones necesarias
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
-import { Menu, Provider, ProgressBar } from 'react-native-paper';
+import { ProgressBar } from 'react-native-paper';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartSolid, faHeart as faHeartRegular } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 
@@ -30,8 +31,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [listasUsuario, setListasUsuario] = useState([]);
   const [librosDelAutor, setLibrosDelAutor] = useState([]);
-  const [menuVisible, setMenuVisible] = useState(false);
   const [mostrarResumenCompleto, setMostrarResumenCompleto] = useState(false);
+  const [listasSeleccionadas, setListasSeleccionadas] = useState(new Set());
 
   const [valoraciones, setValoraciones] = useState([]);
   const [promedio, setPromedio] = useState(null);
@@ -208,7 +209,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       const data = await respuesta.json(); // Obtener el cuerpo de la respuesta
       if (respuesta.ok) {
         Alert.alert('Añadido', 'El libro se ha añadido a la lista seleccionada');
-        setMenuVisible(false);
+        setModalVisible(false);
       } else {
         Alert.alert('Error', 'No se pudo añadir el libro a la lista');
       }
@@ -217,27 +218,30 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   };
 
+  const toggleListaSeleccionada = (idLista) => {
+    const nuevasListas = new Set(listasSeleccionadas);
+    if (nuevasListas.has(idLista)) {
+      nuevasListas.delete(idLista);
+    } else {
+      nuevasListas.add(idLista);
+    }
+    setListasSeleccionadas(nuevasListas);
+  };
+
+  const handleGuardarEnListas = async () => {
+    for (const idLista of listasSeleccionadas) {
+      await añadirLibroALista(idLista);
+    }
+    setModalVisible(false);
+    Alert.alert('Guardado', 'El libro ha sido añadido a las listas seleccionadas.');
+  };
+
   const handleLeer = () => {
     navigation.navigate("LeerLibro", { libro, correoUsuario });
   };
 
   const handleAñadirValoracion = () => {
     navigation.navigate("AñadirValoracion", { libro, correoUsuario });
-  };
-
-  // 📌 Abrir modal y cargar listas si no están cargadas
-  const handleAñadirALista = () => {
-    {listasUsuario.length > 0 ? (
-      listasUsuario.map((item) => (
-        <Menu.Item 
-          key={item.id_lista} // Asegúrate de que cada elemento tenga un "key" único
-          onPress={() => añadirLibroALista(item.id_lista)} 
-          title={item.nombre} 
-        />
-      ))
-    ) : (
-      <Menu.Item title="No tienes listas creadas" disabled />
-    )}
   };
 
   // 📌 Renderización del componente
@@ -285,7 +289,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             {correoUsuario && (
               <TouchableOpacity 
                 style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-                onPress={handleAñadirALista}
+                onPress={() => setModalVisible(true)}
               >
                 <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
               </TouchableOpacity>
@@ -449,32 +453,109 @@ export default function DetallesLibro({ route, correoUsuario }) {
         </View>
       </View>
 
-      {/* Modal para seleccionar la lista */}
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={stylesGeneral.modalContainer}>
-          <View style={[stylesGeneral.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[stylesGeneral.modalTitle, { color: colors.text }]}>Selecciona una lista</Text>
+      {/* Modal para seleccionar listas */}
+      <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+        <View style={stylesModal.modalOverlay}>
+          <View style={stylesModal.modalContainer}>
+            <Text style={stylesModal.modalTitle}>Guardar en...</Text>
+
             <FlatList
-              data={listasUsuario}
-              keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : index.toString())}
+              data={Array.isArray(listasUsuario) ? listasUsuario : []}
+              keyExtractor={(item, index) => item?.id_lista ? item.id_lista.toString() : `temp-key-${index}`}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[stylesGeneral.boton, { backgroundColor: colors.button }]}
-                  onPress={() => añadirLibroALista(item.id_lista)}
+                <TouchableOpacity 
+                  style={stylesModal.listaItem}
+                  onPress={() => toggleListaSeleccionada(item.id_lista)}
                 >
-                  <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>{item.nombre}</Text>
+                  <Text style={stylesModal.listaTexto}>{item.nombre}</Text>
+                  <Text style={stylesModal.checkIcon}>
+                    {listasSeleccionadas.has(item.id_lista) ? "✔️" : ""}
+                  </Text>
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity style={stylesGeneral.botonCerrar} onPress={() => setModalVisible(false)}>
-              <Text style={{ color: colors.buttonText }}>Cerrar</Text>
+
+            <TouchableOpacity style={stylesModal.guardarBtn} onPress={handleGuardarEnListas}>
+              <Text style={stylesModal.guardarTexto}>Guardar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={stylesModal.cerrarBtn} onPress={() => setModalVisible(false)}>
+              <Text style={stylesModal.cerrarTexto}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+
     </ScrollView>
   );
 }
+
+const stylesModal = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo oscuro translúcido
+  },
+  modalContainer: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  listaItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  listaTexto: {
+    fontSize: 16,
+  },
+  checkIcon: {
+    fontSize: 16,
+  },
+  nuevaListaBtn: {
+    width: '100%',
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  nuevaListaTexto: {
+    fontSize: 16,
+    color: '#007AFF',
+  },
+  guardarBtn: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  guardarTexto: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  cerrarBtn: {
+    marginTop: 10,
+    paddingVertical: 8,
+  },
+  cerrarTexto: {
+    fontSize: 16,
+    color: '#007AFF',
+  },
+});
+
 
 // 📌 Estilos para la sección "Acerca de este libro"
 const stylesAcercaDe = StyleSheet.create({
