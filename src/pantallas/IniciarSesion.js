@@ -4,6 +4,7 @@ import { StyleSheet, Text, Image, View, TouchableOpacity, Alert, TextInput } fro
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import logoGoogle from "../../assets/logo_google.png";
+import { API_URL } from "../../config";
 
 export default function IniciarSesion({ setCorreoUsuario }) {
   const [correo, setCorreo] = useState("");
@@ -31,7 +32,8 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
     setCargando(true);
     try {
-      const respuesta = await fetch("http://10.0.2.2:3000/api/usuarios/login", {
+      // const respuesta = await fetch("http://10.0.2.2:3000/api/usuarios/login", {
+      const respuesta = await fetch( `${API_URL}/usuarios/loginM`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo, contrasena }),
