@@ -41,7 +41,6 @@ export default function BuscadorLibros({ setResultados, categoria }) {
                 url = `${API_URL}/obtenerTitulo/${encodeURIComponent(debouncedTerminoBusqueda)}`;
             }
             else {
-                // url = "http://10.0.2.2:3000/api/libros";
                 url = `${API_URL}/libros`;
             }
 

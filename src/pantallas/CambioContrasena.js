@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useThemeColors } from "../componentes/Tema"; 
+import { API_URL } from "../../config";
 
 export default function CambioContrasena({ route, navigation }) {
   const { correoUsuario } = route.params;  // Recibimos el correo del usuario
@@ -25,7 +26,7 @@ export default function CambioContrasena({ route, navigation }) {
 
     try {
       // Realizamos la petición al backend para cambiar la contraseña
-      const response = await fetch("http://10.0.2.2:3000/api/usuarios/usuario/cambiar-contrasena", {
+      const response = await fetch(`${API_URL}/usuarios/usuario/cambiar-contrasena`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

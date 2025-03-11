@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
-
+import { API_URL } from "../../config";
 
 export default function Registrarse({ setCorreoUsuario }) {
   const [nombre, setNombre] = useState("");
@@ -39,7 +39,7 @@ export default function Registrarse({ setCorreoUsuario }) {
     setCargando(true);
 
     try {
-      const respuesta = await fetch("http://10.0.2.2:3000/api/usuarios/registro", {
+      const respuesta = await fetch(`${API_URL}/usuarios/registro`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, correo, contrasena }),
@@ -58,28 +58,6 @@ export default function Registrarse({ setCorreoUsuario }) {
     } finally {
       setCargando(false);
     }
-
-    // setCargando(true);
-    // try {
-    //   const respuesta = await fetch("http://10.0.2.2:3000/api/usuarios/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ correo, contrasena }),
-    //   });
-
-    //   if (!respuesta.ok) throw new Error("Correo o contraseña incorrectos");
-
-    //   const usuario = await respuesta.json();
-    //   Alert.alert("✅ Registro exitoso", `Bienvenido, ${usuario.nombre}`);
-
-    //   setCorreoUsuario(usuario.correo); // ✅ Guarda el correo del usuario
-    //   navigation.navigate("Drawer"); // ✅ Redirige al menú principal
-
-    // } catch (error) {
-    //   Alert.alert("⚠️ Error", error.message);
-    // } finally {
-    //   setCargando(false);
-    // }
   };
 
   return (

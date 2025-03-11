@@ -6,6 +6,8 @@ import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import cargandoGif from "../../assets/animacion_cargando.gif";
+import { API_URL } from "../../config";
+
 
 export default function LeerLibro({ route, correoUsuario }) {
   const { libro } = route.params;
@@ -54,7 +56,7 @@ export default function LeerLibro({ route, correoUsuario }) {
   const obtenerPrimeraPagina = async () => {
     try {
       console.log("ENLACE:", libro.enlace);
-      const url = `http://10.0.2.2:3000/api/libros/enproceso/${correoUsuario}`;
+      const url = `${API_URL}/libros/enproceso/${correoUsuario}`;
       const respuesta = await fetch(url, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -77,7 +79,7 @@ export default function LeerLibro({ route, correoUsuario }) {
 
   const obtenerPaginasDestacadas = async () => {
     try {
-      const url = `http://10.0.2.2:3000/api/fragmentos?correo=${correoUsuario}&enlace=${encodeURIComponent(libro.enlace)}`;
+      const url = `${API_URL}/fragmentos?correo=${correoUsuario}&enlace=${encodeURIComponent(libro.enlace)}`;
       const respuesta = await fetch(url, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -116,7 +118,7 @@ export default function LeerLibro({ route, correoUsuario }) {
     );
 
       try {
-        const respuesta = await fetch("http://10.0.2.2:3000/api/fragmentos", {
+        const respuesta = await fetch(`${API_URL}/fragmentos`, {
           method: isMarked ? "DELETE" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
@@ -142,7 +144,7 @@ export default function LeerLibro({ route, correoUsuario }) {
   const finalizarLectura = async () => {
     try {
       if (correoUsuario) {
-        const respuesta = await fetch("http://10.0.2.2:3000/api/libros/enproceso", {
+        const respuesta = await fetch(`${API_URL}/libros/enproceso`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 

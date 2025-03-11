@@ -17,6 +17,7 @@ import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartSolid, faHeart as faHeartRegular } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
+import { API_URL } from "../../config";
 
 // NECESITA QUE LE PASES EL LIBRO COMPLETO (enlace, sinopsis, autor, nombre, etc)
 // 📌 Componente principal
@@ -37,10 +38,6 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const [promedio, setPromedio] = useState(null);
   const [conteo, setConteo] = useState([]);
   const [totalValoraciones, setTotalValoraciones] = useState(null);
-
-  // 📌 Variables generales
-  // const usuarioCorreo = 'amador@gmail.com'; // Simulación, debería venir de autenticación
-  const backendUrl = 'http://10.0.2.2:3000';
 
   //  📌 Variables para mostrar la sinopsis del libro
   const MAX_LINES = 6;  
@@ -86,7 +83,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Funciones para obtener datos
   const obtenerMasLibrosDelAutor = async () => {
     try {
-      const response = await fetch(`${backendUrl}/api/libros/autor/${libro.autor}`);
+      const response = await fetch(`${API_URL}/libros/autor/${libro.autor}`);
       if (!response.ok) {
         throw new Error("Error al obtener libros del autor " + libro.autor + ": " + response.error);
       }
@@ -100,7 +97,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const obtenerValoraciones = async () => {
     try {
       const enlaceCodificado = encodeURIComponent(libro.enlace);
-      const response = await fetch(`${backendUrl}/api/opiniones/${enlaceCodificado}`);
+      const response = await fetch(`${API_URL}/opiniones/${enlaceCodificado}`);
       if (!response.ok) {
         throw new Error("Error al obtener las valoraciones del libro " + libro.nombre + ": " + response.error);
       }
@@ -118,7 +115,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
   const obtenerListasUsuario = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}`);
+      const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`);
       const datos = await respuesta.json();
       setListasUsuario(datos);
     } catch (error) {
@@ -129,7 +126,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Funciones para manejar favoritos
   const verificarSiEsFavorito = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos/${correoUsuario}`);
+      const respuesta = await fetch(`${API_URL}/listas/favoritos/${correoUsuario}`);
       const textoRespuesta = await respuesta.text(); // 📌 Leer como texto primero
   
       // 📌 Verificar si la respuesta es JSON antes de intentar parsearla
@@ -149,7 +146,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
   const añadirAFavoritos = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
+      const respuesta = await fetch(`${API_URL}/listas/favoritos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -170,7 +167,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
   const eliminarDeFavoritos = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/favoritos`, {
+      const respuesta = await fetch(`${API_URL}/listas/favoritos`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -196,7 +193,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Funciones para manejar listas
   const añadirLibroALista = async (idLista) => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}`, {
+      const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -4,6 +4,7 @@ import { ScrollView, TouchableOpacity, Text, Image, StyleSheet, ActivityIndicato
 import { useThemeColors } from "../componentes/Tema";
 import Icon from "react-native-vector-icons/FontAwesome";
 import cargandoGif from "../../assets/animacion_cargando.gif";
+import { API_URL } from "../../config";
 
 export default function FiltroCategorias({ onSelectCategoria }) {
     const [categorias, setCategorias] = useState([]);
@@ -17,7 +18,7 @@ export default function FiltroCategorias({ onSelectCategoria }) {
     useEffect(() => {
         const fetchCategorias = async () => {
             try {
-                const response = await fetch("http://10.0.2.2:3000/api/libros/tematicas");
+                const response = await fetch(`${API_URL}/libros/tematicas`);
                 const data = await response.json();
                 setCategorias(data);
                 setLoading(false);
@@ -56,14 +57,11 @@ export default function FiltroCategorias({ onSelectCategoria }) {
     };
 
     if (loading) {
-        return (
-            <View>
-                <Image source={cargandoGif}/>
-            </View>
-            // <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasContainer}>
-            //     <ActivityIndicator size="large" color={colors.icon} />
-            // </ScrollView>
-        );
+      return (
+        <View>
+          <Image source={cargandoGif}/>
+        </View>
+      );
     }
 
     return (

@@ -13,6 +13,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import DetallesLibro  from '../pantallas/DetallesLibro';
 import { useThemeColors } from "../componentes/Tema";
+import { API_URL } from "../../config";
+
 
 export default function Favoritos() {
     const [librosFavoritos, setLibrosFavoritos] = useState([]);
@@ -23,7 +25,7 @@ export default function Favoritos() {
     const obtenerDetallesLibro = async (enlaceLibro) => {
       try {
         const enlaceCodificado = encodeURIComponent(enlaceLibro);
-        const respuesta = await fetch(`http://10.0.2.2:3000/api/libros/libro/${enlaceCodificado}`);
+        const respuesta = await fetch(`${API_URL}/libros/libro/${enlaceCodificado}`);
         if (respuesta.ok) {
           const datos = await respuesta.json();
           return datos;
@@ -37,7 +39,7 @@ export default function Favoritos() {
 
     const obtenerFavoritos = async () => {
       try {
-        const respuesta = await fetch('http://10.0.2.2:3000/api/listas/favoritos/amador@gmail.com');
+        const respuesta = await fetch(`${API_URL}/listas/favoritos/amador@gmail.com`);
     
         const textoRespuesta = await respuesta.text(); // 📌 Leer la respuesta como texto primero
     
@@ -67,7 +69,7 @@ export default function Favoritos() {
     // Eliminar libro de favoritos
     const eliminarDeFavoritos = async (enlaceLibro) => {
         try {
-          const respuesta = await fetch('http://10.0.2.2:3000/api/listas/favoritos', {
+          const respuesta = await fetch(`${API_URL}/listas/favoritos`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

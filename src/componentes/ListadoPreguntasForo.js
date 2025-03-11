@@ -1,6 +1,7 @@
 // ListadoPreguntasForo.js
 import { StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from "react";
+import { API_URL } from "../../config";
 
 export default function ListadoPreguntasForo() {
   const [preguntas, setPreguntas] = useState([]);
@@ -11,7 +12,7 @@ export default function ListadoPreguntasForo() {
 
   const getPreguntas = async () => {
     try {
-      const response = await fetch("http://10.0.2.2:3000/api/preguntas");
+      const response = await fetch(`${API_URL}/preguntas`);
       if (!response.ok) {
         throw new Error("Error al obtener las preguntas del foro" + response.error);
       }

@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import { useThemeColors } from "../componentes/Tema";
+import { API_URL } from "../../config";
 
 export default function MisListas() {
   // 📌 Datos de navegación y tema
@@ -30,7 +31,6 @@ export default function MisListas() {
 
   // 📌 Datos simulados del usuario (debería provenir de autenticación)
   const usuarioCorreo = 'amador@gmail.com';
-  const backendUrl = 'http://10.0.2.2:3000';
 
   /**
    * 📌 Hook para obtener las listas cuando la pantalla recibe foco.
@@ -47,7 +47,7 @@ export default function MisListas() {
    */
   const obtenerListas = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
+      const respuesta = await fetch(`${API_URL}/listas/${usuarioCorreo}`);
       const datos = await respuesta.json();
 
       console.log('🔎 Respuesta completa del backend:', JSON.stringify(datos, null, 2));
@@ -76,7 +76,7 @@ export default function MisListas() {
    */
   const añadirLibroALista = async (idLista) => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/libro`, {
+      const respuesta = await fetch(`${API_URL}/listas/libro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,7 +103,7 @@ export default function MisListas() {
     if (!nuevaLista.trim()) return;
 
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas`, {
+      const respuesta = await fetch(`${API_URL}/listas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -143,7 +143,7 @@ export default function MisListas() {
           style: "destructive",
           onPress: async () => {
             try {
-              const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}/${nombreLista}`, {
+              const respuesta = await fetch(`${API_URL}/listas/${usuarioCorreo}/${nombreLista}`, {
                 method: "DELETE",
               });
   
@@ -196,7 +196,7 @@ export default function MisListas() {
               if (item.nombre === "Mis Favoritos") { navigation.navigate("Mis favoritos"); }
               else if (libro) { añadirLibroALista(item.id_lista); }
               else {
-                navigation.navigate("LibrosDeListaScreen", { nombreLista: item.nombre, url: `${backendUrl}/api/listas/${usuarioCorreo}/${item.nombre}/libros` });
+                navigation.navigate("LibrosDeListaScreen", { nombreLista: item.nombre, url: `${API_URL}/listas/${usuarioCorreo}/${item.nombre}/libros` });
               }
             }
           }}

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "../componentes/Tema";
+import { API_URL } from "../../config";
+
 
 export default function MenuPerfil({ route, navigation }) {
   const { correoUsuario, setCorreoUsuario } = route.params;
@@ -11,7 +13,7 @@ export default function MenuPerfil({ route, navigation }) {
   useEffect(() => {
     const obtenerDatosUsuario = async () => {
       try {
-        const response = await fetch(`http://10.0.2.2:3000/api/usuarios/usuario/${encodeURIComponent(correoUsuario)}`);
+        const response = await fetch(`${API_URL}/usuarios/usuario/${encodeURIComponent(correoUsuario)}`);
         if (!response.ok) throw new Error("Usuario no autenticado");
 
         const data = await response.json();

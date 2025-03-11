@@ -12,6 +12,8 @@ import { Alert, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOp
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from '../componentes/Tema';
+import { API_URL } from "../../config";
+
 
 export default function CrearLista() {
     const [nombre, setNombre] = useState('');
@@ -50,7 +52,7 @@ export default function CrearLista() {
     // BORRAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
 
     try {
-        const respuesta = await fetch('http://10.0.2.2:3000/api/listas', {
+        const respuesta = await fetch(`${API_URL}/listas`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

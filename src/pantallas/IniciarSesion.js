@@ -1,9 +1,9 @@
 // IniciarSesión.js
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, Image, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
-
+import logoGoogle from "../../assets/logo_google.png";
 
 export default function IniciarSesion({ setCorreoUsuario }) {
   const [correo, setCorreo] = useState("");
@@ -52,6 +52,10 @@ export default function IniciarSesion({ setCorreoUsuario }) {
     }
   };
 
+  const handleLoginGoogle = async () => {
+
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
       <Text style={[styles.titulo, { color: colors.text }]}>Iniciar Sesión</Text>
@@ -78,7 +82,12 @@ export default function IniciarSesion({ setCorreoUsuario }) {
       />
 
       <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleLogin} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Continuar"}</Text>
+        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Confirmar"}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]} onPress={handleLoginGoogle} disabled={cargando}>
+        <Image source={logoGoogle} style={{ width: 20, height: 20, marginRight: 10 }} />
+        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Continuar con Google"}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -118,6 +127,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
+    marginTop: 10,
+    marginBottom: 10,
   },
   textoBoton: {
     fontSize: 18,
