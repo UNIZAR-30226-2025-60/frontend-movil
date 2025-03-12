@@ -10,11 +10,13 @@
 
 // 📌 Importaciones necesarias
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
-import { Menu, Provider, ProgressBar } from 'react-native-paper';
+import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, FlatList } from 'react-native';
+import Modal from 'react-native-modal';
+import { ProgressBar } from 'react-native-paper';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartSolid, faHeart as faHeartRegular } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
@@ -26,13 +28,13 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  // 📌 Estados
+  // 📌 Estados para manejo de la UI y datos
   const [esFavorito, setEsFavorito] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [listasUsuario, setListasUsuario] = useState([]);
   const [librosDelAutor, setLibrosDelAutor] = useState([]);
-  const [menuVisible, setMenuVisible] = useState(false);
   const [mostrarResumenCompleto, setMostrarResumenCompleto] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [listasSeleccionadas, setListasSeleccionadas] = useState(new Set());
 
   const [valoraciones, setValoraciones] = useState([]);
   const [promedio, setPromedio] = useState(null);
@@ -45,11 +47,9 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const esResumenCorto = libro.resumen.length <= MAX_CHARACTERS;
 
 
-  // 📌 Efectos de carga
+  // 📌 Efectos para cargar datos al montar el componente
   useEffect(() => {
-    if (libro.autor !== "Anónimo") {
-      obtenerMasLibrosDelAutor();
-    }
+    if (libro.autor !== "Anónimo") { obtenerMasLibrosDelAutor(); }
     obtenerValoraciones();
     if (correoUsuario) {
       obtenerListasUsuario();
@@ -57,7 +57,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   }, []);
   
-
+  // 📌 Efecto para actualizar valoraciones al reenfocar la pantalla
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       obtenerValoraciones();
@@ -80,7 +80,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     setPromedio(promedioAux);
   }, [valoraciones]);
 
-  // 📌 Funciones para obtener datos
+  // 📌 Función para obtener más libros del mismo autor
   const obtenerMasLibrosDelAutor = async () => {
     try {
       const response = await fetch(`${API_URL}/libros/autor/${libro.autor}`);
@@ -94,6 +94,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   }
 
+  // 📌 Función para obtener valoraciones del libro
   const obtenerValoraciones = async () => {
     try {
       const enlaceCodificado = encodeURIComponent(libro.enlace);
@@ -113,9 +114,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   }
 
+  // 📌 Función para obtener listas personalizadas del usuario
   const obtenerListasUsuario = async () => {
     try {
-      const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`);
+      const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}`);
+      if (!respuesta.ok) {
+        // Manejo de error: podría ser 404 si no hay listas, etc.
+        throw new Error('No se pudieron obtener las listas del usuario');
+      }
       const datos = await respuesta.json();
       setListasUsuario(datos);
     } catch (error) {
@@ -123,7 +129,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   };
 
-  // 📌 Funciones para manejar favoritos
+  // 📌 Función para verificar si el libro está marcado como favorito
   const verificarSiEsFavorito = async () => {
     try {
       const respuesta = await fetch(`${API_URL}/listas/favoritos/${correoUsuario}`);
@@ -144,6 +150,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   };
 
+  // 📌 Función para añadir libro a favoritos
   const añadirAFavoritos = async () => {
     try {
       const respuesta = await fetch(`${API_URL}/listas/favoritos`, {
@@ -165,6 +172,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   };
 
+  // 📌 Función para eliminar libro de favoritos
   const eliminarDeFavoritos = async () => {
     try {
       const respuesta = await fetch(`${API_URL}/listas/favoritos`, {
@@ -186,63 +194,90 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   };
 
+  // 📌 Función para alternar estado de favorito
   const handleCorazonPress = () => {
     esFavorito ? eliminarDeFavoritos() : añadirAFavoritos();
   };
 
-  // 📌 Funciones para manejar listas
-  const añadirLibroALista = async (idLista) => {
+  // 📌 Función para añadir un libro a una lista personalizada del usuario
+  const añadirLibroAListaPorNombre = async (nombreLista) => {
     try {
-      const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`, {
+      const response = await fetch(`${backendUrl}/api/listas/${encodeURIComponent(nombreLista)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario_id: correoUsuario,
-          id_lista: idLista,
-          enlace_libro: libro.enlace,
+          usuario_id: correoUsuario,    // el correo del usuario
+          libro_id: libro.enlace       // el enlace del libro que el backend espera en "libro_id"
         }),
       });
-      const data = await respuesta.json(); // Obtener el cuerpo de la respuesta
-      if (respuesta.ok) {
-        Alert.alert('Añadido', 'El libro se ha añadido a la lista seleccionada');
-        setMenuVisible(false);
-      } else {
-        Alert.alert('Error', 'No se pudo añadir el libro a la lista');
+  
+      if (!response.ok) {
+        // Por ejemplo, si el libro ya existe en esa lista, tu backend retorna 409
+        if (response.status === 409) {
+          const msg = await response.text();
+          Alert.alert('Aviso', msg); 
+        } else {
+          throw new Error('Error al añadir el libro a la lista');
+        }
       }
+  
     } catch (error) {
       console.error('Error al añadir libro a la lista:', error);
+      Alert.alert('Error', 'No se pudo añadir el libro a la lista');
     }
   };
 
+  // 📌 Función para alternar la selección de una lista
+  const toggleListaSeleccionada = (nombreLista) => {
+    setListasSeleccionadas((prevSeleccionadas) => {
+      const nuevoSet = new Set(prevSeleccionadas); // Creamos una copia del Set
+      
+      if (nuevoSet.has(nombreLista)) {
+        nuevoSet.delete(nombreLista); // Si ya está seleccionada, la eliminamos
+      } else {
+        nuevoSet.add(nombreLista); // Si no está seleccionada, la añadimos
+      }
+  
+      return new Set(nuevoSet); // Devolvemos una nueva referencia para forzar el re-render
+    });
+  };
+
+  // 📌 Función para guardar el libro en múltiples listas seleccionadas
+  const handleGuardarEnListas = async () => {
+    try {
+      // Recorres cada nombre de lista que el usuario marcó
+      for (const nombreLista of listasSeleccionadas) {
+        await añadirLibroAListaPorNombre(nombreLista);
+      }
+      Alert.alert('Guardado', 'El libro ha sido añadido a las listas seleccionadas.');
+    } catch (error) {
+      console.error('Error al guardar en listas:', error);
+      Alert.alert('Error', 'No se pudo guardar el libro en las listas seleccionadas.');
+    } finally {
+      // Cerrar modal y limpiar selección
+      setModalVisible(false);
+      setListasSeleccionadas(new Set());
+    }
+  };
+
+  // 📌 Navegar a la pantalla de lectura del libro
   const handleLeer = () => {
     navigation.navigate("LeerLibro", { libro, correoUsuario });
   };
 
+  // 📌 Navegar a la pantalla para añadir una valoración al libro
   const handleAñadirValoracion = () => {
     navigation.navigate("AñadirValoracion", { libro, correoUsuario });
-  };
-
-  // 📌 Abrir modal y cargar listas si no están cargadas
-  const handleAñadirALista = () => {
-    {listasUsuario.length > 0 ? (
-      listasUsuario.map((item) => (
-        <Menu.Item 
-          key={item.id_lista} // Asegúrate de que cada elemento tenga un "key" único
-          onPress={() => añadirLibroALista(item.id_lista)} 
-          title={item.nombre} 
-        />
-      ))
-    ) : (
-      <Menu.Item title="No tienes listas creadas" disabled />
-    )}
   };
 
   // 📌 Renderización del componente
   return (
     <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
-    {/* <View style={[stylesGeneral.container, { backgroundColor: colors.background }]}> */}
+
+      {/* 📌 SECCIÓN PRINCIPAL del libro: Portada + Información */}
       <View style={stylesGeneral.containerPrincipio}>
-        {/* Portada */}
+
+        {/* 📌 Portada del libro */}
         <View style={stylesGeneral.columnaIzquierda}>
           <Image 
             source={{ uri: libro.imagen_portada }}
@@ -250,9 +285,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
           />
         </View>
 
-        {/* Título y botones: corazón, leer y añadir a lista */}
+        {/* 📌 Información del libro y botones */}
         <View style={stylesGeneral.columnaDerecha}>
-          {/* Título y botón corazón */}
+
+          {/* 📌 Título y botón de favorito */}
           <View style={stylesGeneral.fila}>
             <View style={stylesGeneral.tituloContainer}>
               <Text style={[stylesGeneral.titulo, { color: colors.text }]}>{libro.nombre}</Text>
@@ -270,7 +306,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
               )}
             </View>
           </View>
-          {/* Botones leer y añadir a lista */}
+          
+          {/* 📌 Botones: Leer */}
           <View style={stylesGeneral.fila}>
             <TouchableOpacity 
               style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
@@ -279,10 +316,11 @@ export default function DetallesLibro({ route, correoUsuario }) {
               <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Leer</Text>
             </TouchableOpacity>
 
+            {/* 📌 Botones: Añadir a lista */}
             {correoUsuario && (
               <TouchableOpacity 
                 style={[stylesGeneral.boton, { backgroundColor: colors.button }]} 
-                onPress={handleAñadirALista}
+                onPress={() => setModalVisible(true)}
               >
                 <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>Añadir a lista</Text>
               </TouchableOpacity>
@@ -291,11 +329,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
         </View>
       </View>
 
-
+      {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
-
-      {/* Sinopsis */}
+      {/* 📌 Sinopsis del libro */}
       <View>
         <Text 
           style={[stylesGeneral.titulo, { color: colors.text }]}
@@ -318,13 +355,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
         )}
       </View>
 
+      {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]}/>
 
-      {/* Acerca de este libro */}
+      {/* 📌 Sección de información adicional del libro */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Acerca de este libro</Text>
         <View style={stylesAcercaDe.columnas3}>
-          {/* Columna del número de páginas */}
+          
+          {/* 📌 Número de páginas */}
           <View style={stylesAcercaDe.columna}>
             <FontAwesomeIcon icon={faBook} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
@@ -332,7 +371,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
               <Text style={{ color: colors.text }}>páginas</Text>
             </View>
           </View>
-          {/* Columna del número de horas de lectura */}
+          
+          {/* 📌 Tiempo estimado de lectura */}
           <View style={stylesAcercaDe.columna}>
             <FontAwesomeIcon icon={faClock} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
@@ -340,7 +380,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
               <Text style={{ color: colors.text }}>horas de lectura</Text>
             </View>
           </View>
-          {/* Columna del número total de palabras */}
+          
+          {/* 📌 Cantidad total de palabras */}
           <View style={stylesAcercaDe.columna}>
           <FontAwesomeIcon icon={faFileWord} style={[stylesAcercaDe.icono, { color: colors.text }]} />
             <View style={stylesAcercaDe.textoSubcolumna}>
@@ -351,11 +392,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
         </View>
       </View>
 
-
+      {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.text }]} />
 
-
-      {/* Más libros del autor */}
+      {/* 📌 Más libros del autor */}
       {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
         <View>
           <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
@@ -388,7 +428,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       )}
 
 
-      {/* Valoraciones del libro */}
+      {/* 📌 Sección de valoraciones */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
         <View>
@@ -397,7 +437,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
             {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))}
           </Text>
         </View>
-        {/* Barras de progreso */}
+        
+        {/* 📌 Barras de progreso de valoraciones */}
         {totalValoraciones > 0 && [5, 4, 3, 2, 1].map((num) => {
           const porcentaje = ((conteo[num] || 0) / totalValoraciones) * 100; // Calcula el porcentaje
           return (
@@ -426,7 +467,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
         )}
       </View>
 
-      {/* Todas las reseñas del libro */}
+      {/* 📌 Todas las reseñas del libro */}
       <View>
         <View>
           {valoraciones.length > 0 ? (
@@ -446,29 +487,80 @@ export default function DetallesLibro({ route, correoUsuario }) {
         </View>
       </View>
 
-      {/* Modal para seleccionar la lista */}
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={stylesGeneral.modalContainer}>
-          <View style={[stylesGeneral.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[stylesGeneral.modalTitle, { color: colors.text }]}>Selecciona una lista</Text>
-            <FlatList
-              data={listasUsuario}
-              keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : index.toString())}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[stylesGeneral.boton, { backgroundColor: colors.button }]}
-                  onPress={() => añadirLibroALista(item.id_lista)}
-                >
-                  <Text style={[stylesGeneral.textoBoton, { color: colors.buttonText }]}>{item.nombre}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity style={stylesGeneral.botonCerrar} onPress={() => setModalVisible(false)}>
-              <Text style={{ color: colors.buttonText }}>Cerrar</Text>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        style={{ justifyContent: 'flex-end', margin: 0 }} // Coloca el modal en la parte inferior
+      >
+        <View style={{ backgroundColor: 'white', padding: 16, borderTopLeftRadius: 12, borderTopRightRadius: 12, maxHeight: '50%', }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Guardar en...</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>X</Text>
             </TouchableOpacity>
           </View>
+
+          <FlatList
+            data={listasUsuario.filter((lista) => lista.nombre !== "Mis Favoritos")}
+            keyExtractor={(item) => item.nombre}
+            renderItem={({ item }) => {
+              const isSelected = listasSeleccionadas.has(item.nombre);
+
+              return (
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginVertical: 10,
+                  }}
+                  onPress={() => toggleListaSeleccionada(item.nombre)}
+                >
+                  {/* Caja visual para simular un checkbox */}
+                  <View
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 4,
+                      borderWidth: 2,
+                      borderColor: '#aaa',
+                      marginRight: 8,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      // Si está seleccionado, fondo azul, si no, transparente
+                      backgroundColor: isSelected ? '#007BFF' : 'transparent',
+                    }}
+                  >
+                    {/* Si está seleccionado, muestra un check (puedes usar texto o un ícono) */}
+                    {isSelected && (
+                      <Text style={{ color: '#fff', fontWeight: 'bold' }}>✓</Text>
+                    )}
+                  </View>
+
+                  {/* Nombre de la lista */}
+                  <Text style={{ flex: 1 }}>{item.nombre}</Text>
+                  
+                  {/* Mostrar candado si la lista es privada (según tu lógica) */}
+                  {!item.publica && <Text>🔒</Text>}
+                </TouchableOpacity>
+              );
+            }}
+          />
+
+          <TouchableOpacity
+            style={{
+              marginTop: 10,
+              padding: 12,
+              backgroundColor: '#007BFF',
+              borderRadius: 6,
+              alignItems: 'center',
+            }}
+            onPress={handleGuardarEnListas}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>Nueva lista</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
+
     </ScrollView>
   );
 }

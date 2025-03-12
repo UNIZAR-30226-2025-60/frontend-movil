@@ -16,12 +16,12 @@ import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 
-export default function Favoritos() {
+export default function Favoritos({ correoUsuario }) {
     const [librosFavoritos, setLibrosFavoritos] = useState([]);
     const navigation = useNavigation();
     const colors = useThemeColors();
 
-    // Obtener detalles del libro a partir de su enlace
+    // 📌 Función para obtener detalles del libro a partir de su enlace
     const obtenerDetallesLibro = async (enlaceLibro) => {
       try {
         const enlaceCodificado = encodeURIComponent(enlaceLibro);
@@ -37,17 +37,20 @@ export default function Favoritos() {
       }
     };
 
+    // 📌 Función para obtener favoritos para 'correoUsuario'
     const obtenerFavoritos = async () => {
       try {
-        const respuesta = await fetch(`${API_URL}/listas/favoritos/amador@gmail.com`);
+        const url = `http://10.0.2.2:3000/api/listas/favoritos/${encodeURIComponent(correoUsuario)}`;
+        const respuesta = await fetch(url);
     
-        const textoRespuesta = await respuesta.text(); // 📌 Leer la respuesta como texto primero
+        const textoRespuesta = await respuesta.text(); // Leer la respuesta como texto primero
     
-        // 📌 Verificar si la respuesta es JSON antes de intentar parsearla
+        // Verificar si la respuesta es JSON antes de intentar parsearla
         if (textoRespuesta.startsWith("{") || textoRespuesta.startsWith("[")) {
           const datos = JSON.parse(textoRespuesta); // Convertir en JSON si es válido
     
           if (Array.isArray(datos)) {
+            // Cargar detalles de cada libro
             const librosConDetalles = await Promise.all(
               datos.map(async (libro) => {
                 const detalles = await obtenerDetallesLibro(libro.enlace_libro);
@@ -66,14 +69,14 @@ export default function Favoritos() {
       }
     };
 
-    // Eliminar libro de favoritos
+    // 📌 Función para eliminar libro favorito también usando 'correoUsuario'
     const eliminarDeFavoritos = async (enlaceLibro) => {
         try {
           const respuesta = await fetch(`${API_URL}/listas/favoritos`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              usuario_id: 'amador@gmail.com',
+              usuario_id: correoUsuario,
               enlace_libro: enlaceLibro,
             }),
           });
@@ -94,11 +97,11 @@ export default function Favoritos() {
     useFocusEffect(
       useCallback(() => {
         obtenerFavoritos();
-      }, [])
+      }, [correoUsuario])
     );
 
     const verDetallesLibro = (libro) => {
-      navigation.navigate("DetallesLibro", { libro });
+      navigation.navigate("Detalles", { libro });
     };
 
     useEffect(() => {

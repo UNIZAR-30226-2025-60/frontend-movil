@@ -15,14 +15,12 @@ import { useThemeColors } from '../componentes/Tema';
 import { API_URL } from "../../config";
 
 
-export default function CrearLista() {
+export default function CrearLista({ correoUsuario, navigation }) {
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [privacidad, setPrivacidad] = useState('Privada');
     const [portadaSeleccionada, setPortadaSeleccionada] = useState(null);
-    const navigation = useNavigation();
     const colors = useThemeColors();
-    const usuarioCorreo = 'amador@gmail.com';
 
     // 📌 Lista de imágenes desde Google Drive
     const imagenesPortada = [
@@ -40,24 +38,13 @@ export default function CrearLista() {
         return;
     }
 
-    // BORRAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
-    const datosLista = {
-        nombre,
-        usuario_id: usuarioCorreo,
-        descripcion: descripcion || "",
-        publica: privacidad === 'Pública',
-        portada: portadaSeleccionada || null
-    };
-    console.log("📤 Enviando datos al backend:", datosLista);
-    // BORRAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
-
     try {
         const respuesta = await fetch(`${API_URL}/listas`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 nombre,
-                usuario_id: usuarioCorreo,
+                usuario_id: correoUsuario,
                 descripcion: descripcion || "",
                 publica: privacidad === 'Pública',
                 portada: portadaSeleccionada || null
