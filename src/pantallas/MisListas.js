@@ -15,12 +15,11 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import Encabezado from '../componentes/Encabezado';
 import { useThemeColors } from "../componentes/Tema";
 
-export default function MisListas() {
+export default function MisListas({ correoUsuario, navigation, route }) {
   // 📌 Datos de navegación y tema
-  const navigation = useNavigation();
+  const backendUrl = 'http://10.0.2.2:3000';
   const colors = useThemeColors();
-  const route = useRoute();
-  const { libro } = route.params || {};
+  const libro = route.params?.libro;
 
   // 📌 Estado de listas y control de modal
   const [listas, setListas] = useState([]);
@@ -28,18 +27,16 @@ export default function MisListas() {
   const [nuevaLista, setNuevaLista] = useState("");
   const [menuVisibleId, setMenuVisibleId] = useState(null);
 
-  // 📌 Datos simulados del usuario (debería provenir de autenticación)
-  const usuarioCorreo = 'amador@gmail.com';
-  const backendUrl = 'http://10.0.2.2:3000';
-
   /**
    * 📌 Hook para obtener las listas cuando la pantalla recibe foco.
    */
   useFocusEffect(
     useCallback(() => {
-      obtenerListas();
+      if (correoUsuario) {
+        obtenerListas();
+      }
       setMenuVisibleId(null);
-    }, [])
+    }, [correoUsuario])
   );
 
   /**
@@ -47,25 +44,35 @@ export default function MisListas() {
    */
   const obtenerListas = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}`);
+      const respuesta = await fetch(`${backendUrl}/api/listas/${encodeURIComponent(correoUsuario)}`);
       const datos = await respuesta.json();
-
-      console.log('🔎 Respuesta completa del backend:', JSON.stringify(datos, null, 2));
-      // Verifica si los datos contienen IDs
-      const listasConId = datos.map(lista => ({
-        id: lista.id_lista || `temp-${Math.random()}`, // Genera un ID temporal si falta
-        nombre: lista.nombre
-      }));
-      console.log('📌 Listas procesadas:', JSON.stringify(listasConId, null, 2));
-
-      // Ordenar: "Mis Favoritos" primero y el resto alfabéticamente
-      const listasOrdenadas = datos.sort((a, b) => {
-        if (a.nombre === 'Mis Favoritos') return -1;
-        if (b.nombre === 'Mis Favoritos') return 1;
-        return a.nombre.localeCompare(b.nombre); // Orden alfabético
-      });
-
-      setListas(listasOrdenadas);
+  
+      // 1) Filtrar la lista "Mis Favoritos"
+      let listasSinFavoritos = datos.filter(lista => lista.nombre !== 'Mis Favoritos');
+  
+      // 2) “Secuestrar” Leídos y En proceso, si existen
+      let leidos = listasSinFavoritos.find(l => l.nombre === 'Leídos');
+      let enProceso = listasSinFavoritos.find(l => l.nombre === 'En proceso');
+  
+      // 3) Quitar esas dos del array general
+      listasSinFavoritos = listasSinFavoritos.filter(
+        l => l.nombre !== 'Leídos' && l.nombre !== 'En proceso'
+      );
+  
+      // 4) Ordenar alfabéticamente lo que quede
+      listasSinFavoritos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  
+      // 5) Crear un nuevo array, colocando primero Leídos y En proceso (si existen)
+      const listasFinal = [];
+      if (leidos) listasFinal.push(leidos);
+      if (enProceso) listasFinal.push(enProceso);
+  
+      // 6) Luego agregas el resto ya ordenado
+      listasFinal.push(...listasSinFavoritos);
+  
+      // 7) Guardar en estado
+      setListas(listasFinal);
+  
     } catch (error) {
       console.error('Error al obtener listas:', error);
     }
@@ -74,27 +81,31 @@ export default function MisListas() {
   /**
    * 📌 Añadir un libro a la lista seleccionada.
    */
-  const añadirLibroALista = async (idLista) => {
-    try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/libro`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuario_id: usuarioCorreo,
-          id_lista: idLista,
-          enlace_libro: libro.enlace, // Añadimos el libro
-        }),
-      });
-      if (respuesta.ok) {
-        Alert.alert('Éxito', `El libro se ha añadido a la lista seleccionada.`);
-        navigation.goBack(); // Volvemos a la pantalla anterior
-      } else {
-        Alert.alert('Error', 'No se pudo añadir el libro a la lista.');
-      }
-    } catch (error) {
-      console.error('Error al añadir libro a la lista:', error);
-    }
-  };
+  // const añadirLibroALista = async (nombreLista) => {
+  //   try {
+  //     const respuesta = await fetch( `${backendUrl}/api/listas/${encodeURIComponent(nombreLista)}`,
+  //       {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({
+  //           usuario_id: correoUsuario,
+  //           libro_id: libro.enlace,
+  //         }),
+  //       }
+  //     );
+  
+  //     if (respuesta.ok) {
+  //       Alert.alert('Éxito', 'El libro se ha añadido a la lista.');
+  //       navigation.goBack();
+  //     } else {
+  //       const errorText = await respuesta.text();
+  //       Alert.alert('Error', errorText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error al añadir libro a la lista:', error);
+  //     Alert.alert('Error', 'No se pudo añadir el libro a la lista.');
+  //   }
+  // };
 
   /**
    * 📌 Crea una nueva lista.
@@ -107,7 +118,7 @@ export default function MisListas() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario_id: usuarioCorreo,
+          usuario_id: correoUsuario,
           nombre_lista: nuevaLista,
         }),
       });
@@ -143,7 +154,7 @@ export default function MisListas() {
           style: "destructive",
           onPress: async () => {
             try {
-              const respuesta = await fetch(`${backendUrl}/api/listas/${usuarioCorreo}/${nombreLista}`, {
+              const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}/${nombreLista}`, {
                 method: "DELETE",
               });
   
@@ -167,67 +178,75 @@ export default function MisListas() {
   /**
    * 📌 Alterna la visibilidad del menú de una única lista.
    */
-  const toggleMenu = (idLista) => {
-    setMenuVisibleId(prevId => (prevId === idLista ? null : idLista));
+  const toggleMenu = (nombreLista) => {
+    setMenuVisibleId((prev) => (prev === nombreLista ? null : nombreLista));
   };
 
   /**
    * 📌 Función para renderizar cada elemento de la lista.
    */
   const renderItem = ({ item }) => {
-    // Añade log para depuración
-    console.log(
-      'Renderizando lista:',
-      item.nombre,
-      'ID:', item.id,
-    );
-    const isMenuVisible = menuVisibleId === item.id_lista && item.nombre !== "Mis Favoritos";
-    
+    // Determinar si el menú está visible para esta lista
+    const isMenuVisible = menuVisibleId === item.nombre; // usas el nombre como “ID”
+  
     return (
       <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
-
-        {/* 📌 Contenedor del contenido de la lista */}
         <TouchableOpacity
           onPress={() => {
+            // Cierra menú si estaba abierto
             if (menuVisibleId !== null) {
-              setMenuVisibleId(null); // Solo cerrar el menú si está abierto
-            }
-            else {
-              if (item.nombre === "Mis Favoritos") { navigation.navigate("Mis favoritos"); }
-              else if (libro) { añadirLibroALista(item.id_lista); }
-              else {
-                navigation.navigate("LibrosDeListaScreen", { nombreLista: item.nombre, url: `${backendUrl}/api/listas/${usuarioCorreo}/${item.nombre}/libros` });
+              setMenuVisibleId(null);
+            } else {
+              // Lógica al pulsar la tarjeta
+              // Ejemplo: si tienes un libro para añadir:
+              if (libro) {
+                añadirLibroALista(item.nombre); 
+              } else {
+                // O navegar a ver los libros de esa lista
+                navigation.navigate("LibrosDeListaScreen", {
+                  nombreLista: item.nombre,
+                  descripcionLista: item.descripcion,
+                  esPublica: item.publica,
+                  url: `${backendUrl}/api/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
+                });
               }
             }
           }}
           style={styles.listaContenido}
         >
           <Ionicons name="book-outline" size={50} color={colors.icon} />
-          <Text style={[styles.nombreLista, { color: colors.text }]}>{item.nombre}</Text>
+          <Text style={[styles.nombreLista, { color: colors.text }]}>
+            {item.nombre}
+          </Text>
         </TouchableOpacity>
-
-        {/* 📌 Botón de menú con tres puntos */}
-        {item.nombre !== "Mis Favoritos" && (
-          <TouchableOpacity
-            onPress={(event) => {
-              event.stopPropagation(); // Evita que el evento se propague y cierre el menú inmediatamente
-              toggleMenu(item.id_lista);
-            }}
-            style={styles.botonMenu}
-          >
-            <Ionicons name="ellipsis-vertical" size={24} color={colors.icon} />
-          </TouchableOpacity>
-        )}
-
-        {/* 📌 Menú desplegable con opciones de "Eliminar" y "Editar" */}
+  
+        {/* Menú de tres puntos, si no es “Mis Favoritos” (pero ya lo filtramos) */}
+        <TouchableOpacity
+          onPress={(event) => {
+            event.stopPropagation();
+            toggleMenu(item.nombre); // pasamos el nombre
+          }}
+          style={styles.botonMenu}
+        >
+          <Ionicons name="ellipsis-vertical" size={24} color={colors.icon} />
+        </TouchableOpacity>
+  
+        {/* Menú desplegable */}
         {isMenuVisible && (
           <View style={styles.menuOpciones}>
-            <TouchableOpacity activeOpacity={1} onPress={() => eliminarLista(item.nombre)} style={styles.opcionEliminar}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => eliminarLista(item.nombre)}
+              style={styles.opcionEliminar}
+            >
               <Ionicons name="trash-outline" size={20} color="red" />
               <Text style={styles.textoOpcion}>Eliminar</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={1} onPress={() => console.log("Editar lista")} style={styles.opcionEliminar}>
+  
+            <TouchableOpacity
+              activeOpacity={1}
+              style={styles.opcionEliminar}
+            >
               <Ionicons name="create-outline" size={20} color="blue" />
               <Text style={[styles.textoOpcion, { color: "blue" }]}>Editar</Text>
             </TouchableOpacity>
@@ -246,28 +265,28 @@ export default function MisListas() {
         
         {/* 📌 Lista de listas */}
         <FlatList
-          data={[...listas, { id_lista: 'nueva', nombre: 'Crear lista', esNueva: true }]}
-          renderItem={({ item, index }) => {
-            // Si el ítem es "Crear lista", aseguramos que no se expanda a dos columnas
-            const isLastItemAlone = index === listas.length && listas.length % 2 === 0;
-
-            return item.esNueva ? (
-              <TouchableOpacity
-                style={[
-                  styles.itemContainer,
-                  styles.addContainer,
-                  isLastItemAlone && { flex: 0.5 } // Evita que "Crear lista" ocupe dos espacios
-                ]}
-                onPress={() => navigation.navigate("CrearLista")}
-              >
-                <Ionicons name="add-circle-outline" size={50} color={colors.icon} />
-                <Text style={[styles.nombreLista, { color: colors.text }]}>Crear lista</Text>
-              </TouchableOpacity>
-            ) : (
-              renderItem({ item }) // Renderiza la lista normal
-            );
+          // Agrega un item "Crear lista"
+          data={[...listas, { nombre: 'Crear lista', esNueva: true }]}
+          keyExtractor={(item, index) =>
+            item.esNueva ? 'nueva' : item.nombre  // Usa el nombre como clave
+          }
+          renderItem={({ item }) => {
+            if (item.esNueva) {
+              return (
+                <TouchableOpacity
+                  style={[styles.itemContainer, styles.addContainer]}
+                  onPress={() => navigation.navigate("CrearLista")}
+                >
+                  <Ionicons name="add-circle-outline" size={50} color={colors.icon} />
+                  <Text style={[styles.nombreLista, { color: colors.text }]}>
+                    Crear lista
+                  </Text>
+                </TouchableOpacity>
+              );
+            } else {
+              return renderItem({ item });
+            }
           }}
-          keyExtractor={(item, index) => (item.id_lista ? item.id_lista.toString() : `lista-${index}`)}
           numColumns={2}
           contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
         />
@@ -287,7 +306,7 @@ const styles = StyleSheet.create({
 
   // 📌 Contenedor de cada lista
   itemContainer: {
-    flex: 1,
+    width: '48%', //flex: 1, HACEMOS MANUALMENTE QUE OBLIGATORIAMENTE OCUPA LA MITAD DE LA PANTALLA
     margin: 5,
     height: 120,
     borderRadius: 10,

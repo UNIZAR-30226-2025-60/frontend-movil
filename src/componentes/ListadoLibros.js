@@ -7,6 +7,7 @@
  *  - Permite navegar a la pantalla de detalles del libro
  */
 
+import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   itemContainer: {
-    flex: 1, // Hace que las celdas de cada fila tengan el mismo tamaño
+    width: '48%',  // flex: 1,  OBLIGO MANUALMENTE A QUE OCUPE LA MITAD DE LA PANTALLA
     minHeight: 220, // Asegura que todas las filas tengan la misma altura
     margin: 5,
     alignItems: 'center',

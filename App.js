@@ -8,6 +8,12 @@
  *  - Pilas de navegación para cada sección de la app
  */
 
+/**********************************************************************************/
+// DUDAAAAAAAAAAAAAAAAAAAAAAAAAA:
+// ¿Meter en una función lo que tiene que ver con los detalles de un libro?
+// Asi, la llamamos desde Menú, Mis Listas, En proceso, Leídos y Mis favoritos
+/**********************************************************************************/
+
 import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -152,25 +158,16 @@ function DrawerNavigator({ correoUsuario }) {
         <>
           <Drawer.Screen 
             name="Mis Listas" 
-            component={MisListasStack}
-            options={{
-              headerShown: false,
-              listeners: ({ navigation }) => ({
-                drawerItemPress: (e) => {
-                  e.preventDefault();
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'MisListasScreen' }],
-                  });
-                },
-              }),
-            }}
-          />
-          <Drawer.Screen 
-            name="Mis favoritos" 
-            component={FavoritosStack}
-            options={{ headerShown: false }} 
-          />
+            options={{ headerShown: false }}
+          >
+            {(props) => <MisListasStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
+          <Drawer.Screen
+            name="Mis favoritos"
+            options={{ headerShown: false }}
+          >
+            {props => <FavoritosStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
         </>
       )}
     </Drawer.Navigator>
@@ -246,11 +243,33 @@ function EstadisticasStack() {
 /**
  * 📌 FavoritosStack: Pila de navegación para la sección de favoritos
  */
-function FavoritosStack() {
+function FavoritosStack({ correoUsuario }) {
+  const colors = useThemeColors();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="FavoritosScreen" component={Favoritos} />
-      <Stack.Screen name="DetallesLibro" component={DetallesLibro} />
+      <Stack.Screen name="FavoritosScreen">
+      {(props) => (<Favoritos {...props} correoUsuario={correoUsuario} />
+        )}
+      </Stack.Screen>
+      <Stack.Screen name="Detalles"
+        options={{
+          headerShown: true,
+          title: "Detalles del libro",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+      <Stack.Screen name="LeerLibro"
+        options={{ 
+          title: "Leyendo...",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        }}
+      >
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -280,13 +299,46 @@ function EnProcesoStack() {
 /**
  * 📌 MisListasStack: Pila de navegación para las listas de usuario
  */
-function MisListasStack() {
+function MisListasStack({ correoUsuario }) {
+  const colors = useThemeColors();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="MisListasScreen" component={MisListas} />
-      <Stack.Screen name="CrearLista" component={CrearLista} />
+      <Stack.Screen name="MisListasScreen">
+        {(props) => (<MisListas {...props} correoUsuario={correoUsuario} />)}
+      </Stack.Screen>
+      <Stack.Screen name="CrearLista">
+        {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
+      </Stack.Screen>
       <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
-      <Stack.Screen name="LibrosDeListaScreen" component={LibrosDeLista} />
+      <Stack.Screen name="LibrosDeListaScreen"
+        options={({ route }) => ({
+          headerShown: true,
+          title: "Mis Listas",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        })}
+      >
+        {(props) => (<LibrosDeLista {...props} correoUsuario={correoUsuario} />)}
+      </Stack.Screen>
+      <Stack.Screen name="Detalles" 
+        options={{
+          headerShown: true,
+          title: "Detalles del libro",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+      <Stack.Screen name="LeerLibro"
+        options={{ 
+          title: "Leyendo...",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        }}
+      >
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
