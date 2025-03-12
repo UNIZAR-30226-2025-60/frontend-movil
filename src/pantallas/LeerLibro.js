@@ -22,8 +22,8 @@ export default function LeerLibro({ route, correoUsuario }) {
 
   const pdfRef = useRef(null);
 
-  const increaseZoom = () => setScale((prev) => Math.min(prev + 0.2, 3));
-  const decreaseZoom = () => setScale((prev) => Math.max(prev - 0.2, 1));
+  const increaseZoom = () => setScale((prev) => Math.min(prev + 0.1, 2));
+  const decreaseZoom = () => setScale((prev) => Math.max(prev - 0.1, 1));
 
   useEffect(() => {
     const downloadPdf = async () => {
@@ -202,11 +202,11 @@ export default function LeerLibro({ route, correoUsuario }) {
               <Text style={styles.zoomText}>{(scale * 100).toFixed(0)}%</Text>
 
               <TouchableOpacity
-                style={[styles.zoomButton, scale >= 3 && styles.disabledButton]}
+                style={[styles.zoomButton, scale >= 2 && styles.disabledButton]}
                 onPress={increaseZoom}
                 disabled={scale >= 3}
               >
-                <Icon name="search-plus" size={20} color={scale >= 3 ? "#888" : "#fff"} />
+                <Icon name="search-plus" size={20} color={scale >= 2 ? "#888" : "#fff"} />
               </TouchableOpacity>
 
               {/* Botón de Marcador */}
