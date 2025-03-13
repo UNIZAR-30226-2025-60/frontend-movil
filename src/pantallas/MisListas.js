@@ -18,7 +18,6 @@ import { API_URL } from "../../config";
 
 export default function MisListas({ correoUsuario, navigation, route }) {
   // 📌 Datos de navegación y tema
-  const backendUrl = 'http://10.0.2.2:3000';
   const colors = useThemeColors();
   const libro = route.params?.libro;
 
@@ -45,7 +44,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
    */
   const obtenerListas = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${encodeURIComponent(correoUsuario)}`);
+      const respuesta = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
       const datos = await respuesta.json();
   
       // 1) Filtrar la lista "Mis Favoritos"
@@ -121,6 +120,9 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         body: JSON.stringify({
           usuario_id: correoUsuario,
           nombre_lista: nuevaLista,
+          descripcion: "",
+          publica: true,
+          portada: ""
         }),
       });
 
@@ -155,7 +157,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
           style: "destructive",
           onPress: async () => {
             try {
-              const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}/${nombreLista}`, {
+              const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}/${nombreLista}`, {
                 method: "DELETE",
               });
   
@@ -208,7 +210,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                   nombreLista: item.nombre,
                   descripcionLista: item.descripcion,
                   esPublica: item.publica,
-                  url: `${backendUrl}/api/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
+                  url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
                 });
               }
             }

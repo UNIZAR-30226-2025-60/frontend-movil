@@ -10,7 +10,7 @@
 
 // 📌 Importaciones necesarias
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity, Alert, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, Text, TextInput, Switch, Image, View, TouchableOpacity, Alert, FlatList } from 'react-native';
 import Modal from 'react-native-modal';
 import { ProgressBar } from 'react-native-paper';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -35,11 +35,16 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const [mostrarResumenCompleto, setMostrarResumenCompleto] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [listasSeleccionadas, setListasSeleccionadas] = useState(new Set());
-
+  const [showCrearListaModal, setShowCrearListaModal] = useState(false);
   const [valoraciones, setValoraciones] = useState([]);
   const [promedio, setPromedio] = useState(null);
   const [conteo, setConteo] = useState([]);
   const [totalValoraciones, setTotalValoraciones] = useState(null);
+
+  // Datos del formulario para crear una lista rápidamente
+  const [nombreNuevaLista, setNombreNuevaLista] = useState("");
+  const [descripcionNuevaLista, setDescripcionNuevaLista] = useState("");
+  const [publicaNuevaLista, setPublicaNuevaLista] = useState(false);
 
   //  📌 Variables para mostrar la sinopsis del libro
   const MAX_LINES = 6;  
@@ -54,6 +59,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     if (correoUsuario) {
       obtenerListasUsuario();
       verificarSiEsFavorito();
+      obtenerListasDondeEstaLibro();
     }
   }, []);
   
@@ -117,7 +123,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Función para obtener listas personalizadas del usuario
   const obtenerListasUsuario = async () => {
     try {
-      const respuesta = await fetch(`${backendUrl}/api/listas/${correoUsuario}`);
+      const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`);
       if (!respuesta.ok) {
         // Manejo de error: podría ser 404 si no hay listas, etc.
         throw new Error('No se pudieron obtener las listas del usuario');
@@ -126,6 +132,26 @@ export default function DetallesLibro({ route, correoUsuario }) {
       setListasUsuario(datos);
     } catch (error) {
       console.error('Error al obtener listas del usuario:', error);
+    }
+  };
+
+  // 📌 Obtener las listas que YA contienen este libro
+  const obtenerListasDondeEstaLibro = async () => {
+    try {
+      const enlaceCodificado = encodeURIComponent(libro.enlace);
+      const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}/${enlaceCodificado}/listas`);
+      if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener las listas donde ya está el libro');  // 404 si no hay, 500 si error interno, etc.
+      }
+      const datos = await respuesta.json(); // datos será un array de objetos { nombre_lista, descripcion, publica, ... }
+
+      // De esos objetos, extraemos nombre_lista para guardar en un Set
+      const nombresListas = datos.map(item => item.nombre_lista);
+
+      // Almacenamos en listasSeleccionadas (que es un Set) los nombres de listas que ya lo tienen
+      setListasSeleccionadas(new Set(nombresListas));
+    } catch (error) {
+      console.error('Error al obtener las listas que ya tienen este libro:', error);
     }
   };
 
@@ -202,7 +228,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Función para añadir un libro a una lista personalizada del usuario
   const añadirLibroAListaPorNombre = async (nombreLista) => {
     try {
-      const response = await fetch(`${backendUrl}/api/listas/${encodeURIComponent(nombreLista)}`, {
+      const response = await fetch(`${API_URL}/listas/${encodeURIComponent(nombreLista)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -227,18 +253,40 @@ export default function DetallesLibro({ route, correoUsuario }) {
     }
   };
 
-  // 📌 Función para alternar la selección de una lista
-  const toggleListaSeleccionada = (nombreLista) => {
-    setListasSeleccionadas((prevSeleccionadas) => {
-      const nuevoSet = new Set(prevSeleccionadas); // Creamos una copia del Set
-      
-      if (nuevoSet.has(nombreLista)) {
-        nuevoSet.delete(nombreLista); // Si ya está seleccionada, la eliminamos
-      } else {
-        nuevoSet.add(nombreLista); // Si no está seleccionada, la añadimos
+  // 📌 Crea la función para eliminar de una lista:
+  const eliminarLibroDeListaPorNombre = async (nombreLista) => {
+    try {
+      const response = await fetch(`${API_URL}/listas/${encodeURIComponent(nombreLista)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: correoUsuario,
+          libro_id: libro.enlace,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Error al eliminar el libro de la lista');
       }
-  
-      return new Set(nuevoSet); // Devolvemos una nueva referencia para forzar el re-render
+    } catch (error) {
+      console.error('Error al eliminar libro de la lista:', error);
+      Alert.alert('Error', 'No se pudo eliminar el libro de la lista');
+    }
+  };
+
+  // 📌 Función para alternar la selección de una lista EN EL MOMENTO
+  const toggleListaSeleccionada = async (nombreLista) => {
+    setListasSeleccionadas((prevSeleccionadas) => {
+      const nuevoSet = new Set(prevSeleccionadas);
+      if (nuevoSet.has(nombreLista)) {
+        // Estaba marcado => desmarcamos => ELIMINAR
+        nuevoSet.delete(nombreLista);
+        eliminarLibroDeListaPorNombre(nombreLista); 
+      } else {
+        // No estaba => marcamos => AÑADIR
+        nuevoSet.add(nombreLista);
+        añadirLibroAListaPorNombre(nombreLista); 
+      }
+      return nuevoSet;
     });
   };
 
@@ -269,6 +317,50 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const handleAñadirValoracion = () => {
     navigation.navigate("AñadirValoracion", { libro, correoUsuario });
   };
+
+  const handleCrearLista = async () => {
+    if (!nombreNuevaLista.trim()) {
+      Alert.alert("Error", "Por favor, ingresa un título para la lista");
+      return;
+    }
+  
+    try {
+      const resp = await fetch(`${API_URL}/listas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: correoUsuario,
+          nombre_lista: nombreNuevaLista,
+          descripcion: descripcionNuevaLista,
+          publica: publicaNuevaLista,
+          portada: ""
+        }),
+      });
+  
+      if (!resp.ok) {
+        throw new Error("No se pudo crear la listaaaaaa");
+      }
+  
+      // Si se creó con éxito
+      const nuevaLista = await resp.json(); 
+      Alert.alert("Éxito", `Lista "${nuevaLista.nombre}" creada.`);
+  
+      // Actualiza tu estado con la nueva lista
+      // O vuelves a llamar a obtenerListasUsuario()
+      obtenerListasUsuario();
+  
+      // Limpia campos y cierra sub-modal
+      setNombreNuevaLista("");
+      setDescripcionNuevaLista("");
+      setPublicaNuevaLista(false);
+      setShowCrearListaModal(false);
+  
+    } catch (error) {
+      console.error("Error al crear lista:", error);
+      Alert.alert("Error", "Hubo un problema al crear la lista");
+    }
+  };
+  
 
   // 📌 Renderización del componente
   return (
@@ -554,10 +646,70 @@ export default function DetallesLibro({ route, correoUsuario }) {
               borderRadius: 6,
               alignItems: 'center',
             }}
-            onPress={handleGuardarEnListas}
+            onPress={() => setShowCrearListaModal(true)}
           >
-            <Text style={{ color: '#fff', fontWeight: 'bold' }}>Nueva lista</Text>
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>+ Nueva lista</Text>
           </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={showCrearListaModal}
+        onBackdropPress={() => setShowCrearListaModal(false)}
+      >
+        <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 12 }}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Nueva lista</Text>
+          
+          <TextInput
+            placeholder="Elige un título"
+            value={nombreNuevaLista}
+            onChangeText={setNombreNuevaLista}
+            style={{
+              borderWidth: 1, 
+              borderColor: '#ccc', 
+              marginVertical: 8,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          />
+
+          <TextInput
+            placeholder="Descripción (opcional)"
+            value={descripcionNuevaLista}
+            onChangeText={setDescripcionNuevaLista}
+            style={{
+              borderWidth: 1, 
+              borderColor: '#ccc', 
+              marginVertical: 8,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          />
+
+          {/* Toggle para público/privado */}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* Texto "Privado" a la izquierda */}
+            <Text style={{ marginRight: 8 }}>Privado</Text>
+
+            <Switch
+              value={publicaNuevaLista}
+              onValueChange={(nuevoValor) => setPublicaNuevaLista(nuevoValor)}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={publicaNuevaLista ? '#f5dd4b' : '#f4f3f4'}
+            />
+
+            {/* Texto "Público" a la derecha */}
+            <Text style={{ marginLeft: 8 }}>Público</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <TouchableOpacity onPress={() => setShowCrearListaModal(false)}>
+              <Text style={{ marginRight: 16 }}>Cancelar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCrearLista}>
+              <Text style={{ fontWeight: 'bold' }}>Crear</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
 
