@@ -18,8 +18,8 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  const { nombreLista, descripcionLista, esPublica } = route.params;
-  const finalUrl = `http://10.0.2.2:3000/api/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(nombreLista)}/libros`;
+  const { nombreLista, descripcionLista, esPublica, usuarioId } = route.params;
+  const finalUrl = `http://10.0.2.2:3000/api/listas/${encodeURIComponent(usuarioId)}/${encodeURIComponent(nombreLista)}/libros`;
   const finalTitulo = tituloProp || nombreLista || 'Lista de Libros';
   
 

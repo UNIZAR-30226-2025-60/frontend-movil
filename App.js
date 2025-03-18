@@ -33,7 +33,10 @@ import Menu from './src/pantallas/Menu';
 import LeerLibro from './src/pantallas/LeerLibro';
 import Foro from './src/pantallas/Foro';
 import Favoritos from './src/pantallas/Favoritos';
+import Leidos from './src/pantallas/Leidos';
+import EnProceso from './src/pantallas/EnProceso';
 import MisListas from './src/pantallas/MisListas';
+import ListasPublicas from './src/pantallas/ListasPublicas';
 import CrearLista from './src/pantallas/CrearLista';
 import AñadirValoracion from './src/componentes/AñadirValoracion';
 
@@ -46,8 +49,6 @@ const Drawer = createDrawerNavigator();
 
 // ELIMINAR ESTO CUANDO ESTÉN LAS PANTALLAS
 const Estadisticas = () => <Text>Estadísticas</Text>;
-const Leidos = () => <Text>Leídos</Text>;
-const EnProceso = () => <Text>En Proceso</Text>;
 
 /**
  * 📌 Componente principal de la aplicación
@@ -148,25 +149,33 @@ function DrawerNavigator({ correoUsuario }) {
       <Drawer.Screen name="Inicio" options={{ headerShown: false }}>
         {(props) => <MenuStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
-      <Drawer.Screen 
-        name="Foro" 
-        component={ForoStack} 
-        options={{ headerShown: false }}
-      />
+
+      <Drawer.Screen name="Foro" component={ForoStack} options={{ headerShown: false }}/>
       
       {correoUsuario && (
         <>
-          <Drawer.Screen 
-            name="Mis Listas" 
-            options={{ headerShown: false }}
-          >
+          <Drawer.Screen name="Estadísticas" options={{ headerShown: false }}>
+            {(props) => <EstadisticasStack {...props} />}
+          </Drawer.Screen>
+
+          <Drawer.Screen name="Listas públicas" options={{ headerShown: false }}>
+            {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
+
+          <Drawer.Screen name="Mis Listas" options={{ headerShown: false }}>
             {(props) => <MisListasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
-          <Drawer.Screen
-            name="Mis favoritos"
-            options={{ headerShown: false }}
-          >
+
+          <Drawer.Screen name="Mis favoritos" options={{ headerShown: false }}>
             {props => <FavoritosStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
+
+          <Drawer.Screen name="Leídos" options={{ headerShown: false }}>
+            {(props) => <LeidosStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
+          
+          <Drawer.Screen name="En Proceso" options={{ headerShown: false }}>
+            {(props) => <EnProcesoStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
         </>
       )}
@@ -248,9 +257,9 @@ function FavoritosStack({ correoUsuario }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="FavoritosScreen">
-      {(props) => (<Favoritos {...props} correoUsuario={correoUsuario} />
-        )}
+        {(props) => (<Favoritos {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
+
       <Stack.Screen name="Detalles"
         options={{
           headerShown: true,
@@ -259,8 +268,10 @@ function FavoritosStack({ correoUsuario }) {
           headerTintColor: colors.text,
         }}
       >
+
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
+
       <Stack.Screen name="LeerLibro"
         options={{ 
           title: "Leyendo...",
@@ -277,10 +288,37 @@ function FavoritosStack({ correoUsuario }) {
 /**
  * 📌 LeidosStack
  */
-function LeidosStack() {
+function LeidosStack({ correoUsuario }) {
+  const colors = useThemeColors();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="LeidosScreen" component={Leidos} />
+      <Stack.Screen name="LeidosScreen">
+        {(props) => <Leidos {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="Detalles"
+        options={{
+          headerShown: true,
+          title: "Detalles del libro",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="LeerLibro"
+        options={{
+          headerShown: true,
+          title: "Leyendo...",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -288,10 +326,37 @@ function LeidosStack() {
 /**
  * 📌 EnProcesoStack
  */
-function EnProcesoStack() {
+function EnProcesoStack({ correoUsuario }) {
+  const colors = useThemeColors();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="EnProcesoScreen" component={EnProceso} />
+      <Stack.Screen name="EnProcesoScreen">
+        {(props) => <EnProceso {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="Detalles"
+        options={{
+          headerShown: true,
+          title: "Detalles del libro",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="LeerLibro"
+        options={{
+          headerShown: true,
+          title: "Leyendo...",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -306,10 +371,13 @@ function MisListasStack({ correoUsuario }) {
       <Stack.Screen name="MisListasScreen">
         {(props) => (<MisListas {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
+
       <Stack.Screen name="CrearLista">
         {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
+
       <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
+
       <Stack.Screen name="LibrosDeListaScreen"
         options={({ route }) => ({
           headerShown: true,
@@ -320,6 +388,7 @@ function MisListasStack({ correoUsuario }) {
       >
         {(props) => (<LibrosDeLista {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
+
       <Stack.Screen name="Detalles" 
         options={{
           headerShown: true,
@@ -330,6 +399,7 @@ function MisListasStack({ correoUsuario }) {
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
+
       <Stack.Screen name="LeerLibro"
         options={{ 
           title: "Leyendo...",
@@ -343,3 +413,41 @@ function MisListasStack({ correoUsuario }) {
   );
 }
 
+/**
+ * 📌 ListasPublicasStack
+ */
+function ListasPublicasStack({ correoUsuario }) {
+  const colors = useThemeColors();
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+
+      <Stack.Screen name="ListasPublicasScreen">
+        {(props) => <ListasPublicas {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+      
+      <Stack.Screen
+        name="LibrosDeListaScreen"
+        options={{
+          headerShown: true,
+          title: "Libros de la lista",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <LibrosDeLista {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="Detalles"
+        options={{
+          headerShown: true,
+          title: "Detalles del libro",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+        }}
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
+}

@@ -24,6 +24,8 @@ export const useThemeColors = () => {
         border: "#ffffff",
         star: "#ffe300",
         arrowBackground: "#fef9d2",
+        subtitleBackground: "#dab572",  // Justo lo que hay debajo del encabezado principal
+        subtitleText: "#000000",
       }
     : { // TEMA CLARO
         backgroundHeader: "#be954e",
@@ -41,5 +43,7 @@ export const useThemeColors = () => {
         border: "#000000",
         star: "#ffe300",
         arrowBackground: "#cacac9",
+        subtitleBackground: "#dab572",  // Justo lo que hay debajo del encabezado principal
+        subtitleText: "#000000",
       };
 };

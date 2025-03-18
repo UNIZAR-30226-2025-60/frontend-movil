@@ -19,9 +19,6 @@ export default function Encabezado({ titulo, correoUsuario }) {
   const route = useRoute(); // Detecta la pantalla actual
   const colors = useThemeColors();
 
-  // Define pantallas donde quiero que se muestre el subtítulo
-  const pantallasConTitulo = ["Mis Favoritos", "Mis Listas", "Foro", "Leídos"];
-
   const manejarNavegacionUsuario = () => {
     if (correoUsuario) {
       navigation.navigate("MenuPerfil", { correoUsuario });
@@ -33,25 +30,25 @@ export default function Encabezado({ titulo, correoUsuario }) {
   return (
     <SafeAreaView style={{ backgroundColor: colors.backgroundHeader }}>
       <View style={[styles.header, { backgroundColor: colors.backgroundHeader }]}>
+
         {/* Botón de Menú */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Ionicons name="menu" size={30} color={colors.icon} />
         </TouchableOpacity>
 
-        {/* Título */}
+        {/* Título principal */}
         <Text style={[styles.title, { color: colors.text }]}>{ "BOOKLY" }</Text>
 
         {/* Icono de Usuario */}
-        {/* <TouchableOpacity onPress={() => navigation.navigate("IniciarSesion")}> */}
         <TouchableOpacity onPress={manejarNavegacionUsuario}>
         <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
         </TouchableOpacity>
       </View>
 
-      {/* Mostrar título solo si la pantalla está en la lista */}
-      {pantallasConTitulo.includes(route.name) && (
-        <View style={styles.subtituloContainer}>
-          <Text style={[styles.subtitulo, { color: colors.text }]}>{titulo}</Text>
+      {/* Subtítulo, solo si 'titulo' está definido */}
+      {titulo && (
+        <View style={[styles.subtituloContainer, { backgroundColor: colors.subtitleBackground }]}>
+          <Text style={[styles.subtitulo, { color: colors.subtitleText }]}>{titulo}</Text>
         </View>
       )}
     </SafeAreaView>

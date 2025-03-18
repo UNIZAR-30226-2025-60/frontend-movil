@@ -47,31 +47,19 @@ export default function MisListas({ correoUsuario, navigation, route }) {
       const respuesta = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
       const datos = await respuesta.json();
   
-      // 1) Filtrar la lista "Mis Favoritos"
-      let listasSinFavoritos = datos.filter(lista => lista.nombre !== 'Mis Favoritos');
-  
-      // 2) “Secuestrar” Leídos y En proceso, si existen
-      let leidos = listasSinFavoritos.find(l => l.nombre === 'Leídos');
-      let enProceso = listasSinFavoritos.find(l => l.nombre === 'En proceso');
-  
-      // 3) Quitar esas dos del array general
-      listasSinFavoritos = listasSinFavoritos.filter(
-        l => l.nombre !== 'Leídos' && l.nombre !== 'En proceso'
+      // Filtrar todas las listas que NO sean "Mis Favoritos", "Leídos" o "En proceso"
+      const listasFiltradas = datos.filter(
+        (lista) => 
+          lista.nombre !== 'Mis Favoritos' &&
+          lista.nombre !== 'Leídos' &&
+          lista.nombre !== 'En proceso'
       );
+
+      // Ordenar alfabéticamente las listas restantes
+      listasFiltradas.sort((a, b) => a.nombre.localeCompare(b.nombre));
   
-      // 4) Ordenar alfabéticamente lo que quede
-      listasSinFavoritos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-  
-      // 5) Crear un nuevo array, colocando primero Leídos y En proceso (si existen)
-      const listasFinal = [];
-      if (leidos) listasFinal.push(leidos);
-      if (enProceso) listasFinal.push(enProceso);
-  
-      // 6) Luego agregas el resto ya ordenado
-      listasFinal.push(...listasSinFavoritos);
-  
-      // 7) Guardar en estado
-      setListas(listasFinal);
+      // Guardar en estado
+     setListas(listasFiltradas);
   
     } catch (error) {
       console.error('Error al obtener listas:', error);
