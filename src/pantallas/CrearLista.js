@@ -7,27 +7,65 @@
  *  - Conexión con la API para crear la lista en el backend
  */
 
-import React, { useState } from 'react';
-import { Alert, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, FlatList } from 'react-native';
 import { useThemeColors } from '../componentes/Tema';
 import { API_URL } from "../../config";
-
 
 export default function CrearLista({ correoUsuario, navigation }) {
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [privacidad, setPrivacidad] = useState('Privada');
     const [portadaSeleccionada, setPortadaSeleccionada] = useState(null);
+    const [imagenesPortada, setImagenesPortada] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
     const colors = useThemeColors();
 
-    // 📌 Lista de imágenes desde Google Drive
-    const imagenesPortada = [
-        { id: 'autoayuda', url: 'https://drive.google.com/uc?export=view&id=1qESYBakLBurBbfsjn9r1iKkf7dk8PMMw' },
-        { id: 'aventura', url: 'https://drive.google.com/uc?export=view&id=1WZv-JmvC0aMoeqQ4_Fnucb58rDImYV8o' },
-        { id: 'biografia', url: 'https://drive.google.com/uc?export=view&id=10tHuwP668O05fehhWu2t92DX4A0AGwI3' }
-    ];
+    function filtrarDuplicados(array) {
+        const seen = new Set();
+        return array.filter(item => {
+            if (seen.has(item.foto)) {
+                return false;
+            }
+            seen.add(item.foto);
+            return true;
+        });
+    }
+
+    // Convierte links de Drive “/view?usp=sharing” a “uc?id=...”
+    function convertirDriveLink(url) {
+        if (url.includes("uc?id=")) return url;
+        const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//);
+        if (match) {
+        const fileId = match[1];
+        return `https://drive.google.com/uc?id=${fileId}`;
+        }
+        return url;
+    }
+
+    /**
+     * 📌 Al montar el componente, pedimos la lista de portadas al backend: GET /listas/portadas-temas
+     */
+    useEffect(() => {
+    const cargarPortadas = async () => {
+      try {
+        const resp = await fetch(`${API_URL}/listas/portadas-temas`);
+        const data = await resp.json();
+        console.log("Datos del backend:", data); // Revisa si hay duplicados
+
+        // Convertir y (opcional) filtrar duplicados
+        const fotosConvertidas = data.map(item => ({
+          foto: convertirDriveLink(item.foto)
+        }));
+        const sinDuplicados = filtrarDuplicados(fotosConvertidas); // Quita duplicados si los hay
+        setImagenesPortada(sinDuplicados);
+
+      } catch (error) {
+        console.error("Error al obtener portadas:", error);
+      }
+    };
+    cargarPortadas();
+  }, []);
 
     /**
      * 📌 Función para enviar la solicitud al backend y crear la lista.
@@ -67,6 +105,105 @@ export default function CrearLista({ correoUsuario, navigation }) {
     };
 
     /**
+     * 📌 Renderiza la fila de imágenes (solo las 3 primeras)
+     */
+    function renderImagenesPrincipales() {
+        const primeras3 = imagenesPortada.slice(0, 3);
+        return (
+          <View style={styles.imagenesContainer}>
+            {primeras3.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  if (portadaSeleccionada === item.foto) {
+                    setPortadaSeleccionada(null);
+                  } else {
+                    setPortadaSeleccionada(item.foto);
+                  }
+                }}
+              >
+                <Image
+                  source={{ uri: item.foto }}
+                  style={[
+                    styles.imagenPortada,
+                    portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
+                  ]}
+                />
+              </TouchableOpacity>
+            ))}
+    
+            {/* Botón "Ver más" si hay más de 3 */}
+            {imagenesPortada.length > 3 && (
+              <TouchableOpacity
+                style={styles.verMasContainer}
+                onPress={() => setModalVisible(true)}
+              >
+                {/* Muestra "+X" o solo "+" */}
+                <Text style={styles.verMasTexto}>+{imagenesPortada.length - 3}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        );
+      }
+
+    /**
+     * 📌 Renderiza el modal con las imágenes que NO están en las primeras 3 (y tampoco la seleccionada si está entre esas 3).
+     */
+    function renderModalTodasImagenes() {
+        const resto = imagenesPortada.slice(3);
+        return (
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitulo}>Selecciona una imagen</Text>
+    
+                <FlatList
+                  data={resto}
+                  keyExtractor={(_, idx) => idx.toString()}
+                  numColumns={3}
+                  style={{ maxHeight: '80%' }} // Modal más grande
+                  showsVerticalScrollIndicator
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (portadaSeleccionada === item.foto) {
+                          setPortadaSeleccionada(null);
+                        } else {
+                          setPortadaSeleccionada(item.foto);
+                        }
+                        // No cerramos el modal
+                      }}
+                    >
+                      <Image
+                        source={{ uri: item.foto }}
+                        style={[
+                          styles.imagenPortadaModal,
+                          portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
+                        ]}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  contentContainerStyle={styles.listaModal}
+                />
+    
+                <TouchableOpacity
+                  style={styles.botonCerrarModal}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.textoBotonCerrar}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        );
+      }
+
+    /**
      * 📌 Renderización del formulario para crear una lista
      */
     return (
@@ -84,31 +221,10 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 onChangeText={setNombre}
             />
 
-            {/* Selección de imagen de portada */}
+            {/* Imágenes principales (3 primeras) y botón "Ver más" */}
             <Text style={[styles.label, { color: colors.text }]}>Elige una imagen para la portada:</Text>
-            <View style={styles.imagenesContainer}>
-                {imagenesPortada.map((imagen) => (
-                    <TouchableOpacity
-                        key={imagen.id}
-                        onPress={() => {
-                            // Si la imagen ya está seleccionada, deseleccionar
-                            if (portadaSeleccionada === imagen.url) {
-                                setPortadaSeleccionada(null);
-                            } else {
-                                setPortadaSeleccionada(imagen.url);
-                            }
-                        }}
-                    >
-                        <Image 
-                            source={{ uri: imagen.url }}  
-                            style={[
-                                styles.imagenPortada, 
-                                portadaSeleccionada === imagen.url ? styles.imagenSeleccionada : {}
-                            ]}
-                        />
-                    </TouchableOpacity>
-                ))}
-            </View>
+            {renderImagenesPrincipales()}
+            {renderModalTodasImagenes()}
 
             {/* Campo de descripción */}
             <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
@@ -149,20 +265,117 @@ export default function CrearLista({ correoUsuario, navigation }) {
     );
 }
 
+// ---- ESTILOS ----
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, justifyContent: 'center' },
-    titulo: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-    label: { fontSize: 16, marginBottom: 5 },
-    input: { borderWidth: 1, padding: 10, borderRadius: 5, marginBottom: 15 },
-    textarea: { borderWidth: 1, padding: 10, borderRadius: 5, height: 80, marginBottom: 15 },
+    container: { 
+        flex: 1, 
+        padding: 20, 
+        justifyContent: 'center' 
+    },
+    titulo: { 
+        fontSize: 22, 
+        fontWeight: 'bold', 
+        marginBottom: 20, 
+        textAlign: 'center' 
+    },
+    label: { 
+        fontSize: 16, 
+        marginBottom: 5 
+    },
+    input: { 
+        borderWidth: 1, 
+        padding: 10, 
+        borderRadius: 5, 
+        marginBottom: 15 
+    },
+    textarea: { 
+        borderWidth: 1, 
+        padding: 10, 
+        borderRadius: 5, 
+        height: 80, 
+        marginBottom: 15 
+    },
 
     // 📌 Estilos para las imágenes de portada
-    imagenesContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 20 },
-    imagenPortada: { width: 80, height: 80, marginHorizontal: 5, borderRadius: 5 },
+    imagenesContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',     // Asegura que estén verticalmente centrados
+        marginBottom: 20,
+    },
+    imagenPortada: {
+        width: 80,
+        height: 80,
+        marginHorizontal: 5,
+        borderRadius: 5
+    },
     imagenSeleccionada: {
         borderWidth: 3,
         borderColor: 'blue',
-        opacity: 0.7, // Resalta la imagen seleccionada
+        opacity: 4.5, // Resalta la imagen seleccionada
+    },
+    verMasContainer: {
+        width: 80,
+        height: 80,
+        marginRight: 5,
+        borderRadius: 5,
+        backgroundColor: '#eee',
+        borderStyle: 'dashed',
+        borderWidth: 2,
+        borderColor: '#aaa',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    verMasTexto: {
+        fontSize: 18, // un + grande
+        fontWeight: 'bold',
+        color: 'grey',
+    },
+
+    // Modal overlay (fondo semitransparente)
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    // Contenido principal del modal
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        padding: 16,
+        width: '80%',
+        maxHeight: '80%',
+        alignItems: 'center',
+    },
+    modalTitulo: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: 'center', // Centra el texto horizontalmente
+    },
+
+    // Estilo de la lista dentro del modal
+    imagenPortadaModal: {
+        width: 80,
+        height: 80,
+        margin: 5,
+        borderRadius: 5,
+    },
+    listaModal: {
+        justifyContent: 'center',
+    },
+
+     // Botón para cerrar el modal
+    botonCerrarModal: {
+        marginTop: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: '#ccc',
+        borderRadius: 5,
+    },
+    textoBotonCerrar: {
+        fontWeight: 'bold',
     },
 
     // 📌 Estilos para el selector de privacidad

@@ -9,9 +9,9 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert, TouchableWithoutFeedback, Pressable } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert, TouchableWithoutFeedback, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
@@ -205,10 +205,12 @@ export default function MisListas({ correoUsuario, navigation, route }) {
           }}
           style={styles.listaContenido}
         >
-          <Ionicons name="book-outline" size={50} color={colors.icon} />
-          <Text style={[styles.nombreLista, { color: colors.text }]}>
-            {item.nombre}
-          </Text>
+          {item.portada ? (
+            <Image source={{ uri: item.portada }} style={styles.listaImagen} />
+          ) : (
+            <Ionicons name="book-outline" size={70} color={colors.icon} />
+          )}
+          <Text style={[styles.nombreLista, { color: colors.text }]}>{item.nombre}</Text>
         </TouchableOpacity>
   
         {/* Menú de tres puntos, si no es “Mis Favoritos” (pero ya lo filtramos) */}
@@ -237,6 +239,12 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             <TouchableOpacity
               activeOpacity={1}
               style={styles.opcionEliminar}
+              onPress={() => {
+                // Cierra el menú
+                setMenuVisibleId(null);
+                // Navega a la pantalla EditarLista
+                navigation.navigate("EditarLista", { lista: item, correoUsuario: correoUsuario });
+              }}
             >
               <Ionicons name="create-outline" size={20} color="blue" />
               <Text style={[styles.textoOpcion, { color: "blue" }]}>Editar</Text>
@@ -299,7 +307,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: '48%', //flex: 1, HACEMOS MANUALMENTE QUE OBLIGATORIAMENTE OCUPA LA MITAD DE LA PANTALLA
     margin: 5,
-    height: 120,
+    height: 150,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -311,6 +319,13 @@ const styles = StyleSheet.create({
     alignItems: "center", 
     justifyContent: "center", // Asegura que los elementos estén centrados verticalmente
     width: "100%", // Asegura que el contenedor se expanda correctamente
+  },
+
+  listaImagen: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    resizeMode: 'cover',
   },
 
   // 📌 Nombre de la lista

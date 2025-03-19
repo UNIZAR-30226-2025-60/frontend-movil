@@ -90,6 +90,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const obtenerMasLibrosDelAutor = async () => {
     try {
       const response = await fetch(`${API_URL}/libros/autor/${libro.autor}`);
+
       if (!response.ok) {
         throw new Error("Error al obtener libros del autor " + libro.autor + ": " + response.error);
       }
@@ -105,6 +106,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     try {
       const enlaceCodificado = encodeURIComponent(libro.enlace);
       const response = await fetch(`${API_URL}/opiniones/${enlaceCodificado}`);
+
       if (!response.ok) {
         throw new Error("Error al obtener las valoraciones del libro " + libro.nombre + ": " + response.error);
       }
@@ -124,6 +126,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const obtenerListasUsuario = async () => {
     try {
       const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`);
+
       if (!respuesta.ok) {
         // Manejo de error: podría ser 404 si no hay listas, etc.
         throw new Error('No se pudieron obtener las listas del usuario');
@@ -140,6 +143,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     try {
       const enlaceCodificado = encodeURIComponent(libro.enlace);
       const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}/${enlaceCodificado}/listas`);
+
       if (!respuesta.ok) {
         throw new Error('No se pudieron obtener las listas donde ya está el libro');  // 404 si no hay, 500 si error interno, etc.
       }
@@ -160,7 +164,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
     try {
       const respuesta = await fetch(`${API_URL}/listas/favoritos/${correoUsuario}`);
       const textoRespuesta = await respuesta.text(); // 📌 Leer como texto primero
-  
+
       // 📌 Verificar si la respuesta es JSON antes de intentar parsearla
       if (textoRespuesta.startsWith("{") || textoRespuesta.startsWith("[")) {
         const favoritos = JSON.parse(textoRespuesta); // Convertir en JSON si es válido
@@ -236,7 +240,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
           libro_id: libro.enlace       // el enlace del libro que el backend espera en "libro_id"
         }),
       });
-  
+
       if (!response.ok) {
         // Por ejemplo, si el libro ya existe en esa lista, tu backend retorna 409
         if (response.status === 409) {
@@ -246,6 +250,9 @@ export default function DetallesLibro({ route, correoUsuario }) {
           throw new Error('Error al añadir el libro a la lista');
         }
       }
+
+      // Recargar listas para que se refleje el cambio
+      obtenerListasDondeEstaLibro();
   
     } catch (error) {
       console.error('Error al añadir libro a la lista:', error);
@@ -281,7 +288,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
         // Estaba marcado => desmarcamos => ELIMINAR
         nuevoSet.delete(nombreLista);
         eliminarLibroDeListaPorNombre(nombreLista); 
-      } else {
+      }
+      else {
         // No estaba => marcamos => AÑADIR
         nuevoSet.add(nombreLista);
         añadirLibroAListaPorNombre(nombreLista); 
@@ -330,37 +338,41 @@ export default function DetallesLibro({ route, correoUsuario }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           usuario_id: correoUsuario,
-          nombre_lista: nombreNuevaLista,
+          nombre: nombreNuevaLista,
           descripcion: descripcionNuevaLista,
           publica: publicaNuevaLista,
-          portada: ""
+          portada: null
         }),
       });
-  
+
+      const data = await resp.json();
+
       if (!resp.ok) {
-        throw new Error("No se pudo crear la listaaaaaa");
+        throw new Error(data?.error || 'Error al crear la lista');
       }
-  
-      // Si se creó con éxito
-      const nuevaLista = await resp.json(); 
-      Alert.alert("Éxito", `Lista "${nuevaLista.nombre}" creada.`);
-  
-      // Actualiza tu estado con la nueva lista
-      // O vuelves a llamar a obtenerListasUsuario()
-      obtenerListasUsuario();
-  
-      // Limpia campos y cierra sub-modal
+
+      // Añadir el libro a la nueva lista recién creada
+      await añadirLibroAListaPorNombre(nombreNuevaLista);
+      Alert.alert("Éxito", `Lista "${data.nombre}" creada.`);
+      // Agregar la lista al estado para que se vea reflejada en la UI
+      setListasUsuario(prev => [...prev, data]);
+
+      // Cierro modal y limpio
+      setShowCrearListaModal(false);
       setNombreNuevaLista("");
       setDescripcionNuevaLista("");
       setPublicaNuevaLista(false);
-      setShowCrearListaModal(false);
-  
+      
     } catch (error) {
       console.error("Error al crear lista:", error);
       Alert.alert("Error", "Hubo un problema al crear la lista");
     }
   };
   
+  const handleCerrarModal = () => {
+    setModalVisible(false);
+    obtenerListasDondeEstaLibro(); // 📌 Recargar listas al cerrar
+  };
 
   // 📌 Renderización del componente
   return (
@@ -655,7 +667,12 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
       <Modal
         isVisible={showCrearListaModal}
-        onBackdropPress={() => setShowCrearListaModal(false)}
+        onBackdropPress={handleCerrarModal}
+        onModalHide={() => {
+          setNombreNuevaLista("");
+          setDescripcionNuevaLista("");
+          setPublicaNuevaLista(false);
+        }}
       >
         <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 12 }}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Nueva lista</Text>

@@ -38,6 +38,7 @@ import EnProceso from './src/pantallas/EnProceso';
 import MisListas from './src/pantallas/MisListas';
 import ListasPublicas from './src/pantallas/ListasPublicas';
 import CrearLista from './src/pantallas/CrearLista';
+import EditarLista from './src/pantallas/EditarLista';
 import AñadirValoracion from './src/componentes/AñadirValoracion';
 
 // Importación del tema de colores
@@ -375,6 +376,8 @@ function MisListasStack({ correoUsuario }) {
       <Stack.Screen name="CrearLista">
         {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
+
+      <Stack.Screen name="EditarLista" component={EditarLista} />
 
       <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
 

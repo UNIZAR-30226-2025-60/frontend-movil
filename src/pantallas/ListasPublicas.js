@@ -1,13 +1,8 @@
 // ListasPublicas.js
 
-import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList
-} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -25,17 +20,18 @@ export default function ListasPublicas() {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  /**
-   * Al montar el componente, obtenemos las listas públicas.
-   */
-  useEffect(() => {
-    obtenerListasPublicas();
-  }, []);
+  // Llama a obtenerListasPublicas cada vez que la pantalla se enfoca
+  useFocusEffect(
+    useCallback(() => {
+      obtenerListasPublicas();
+    }, [])
+  );
 
   /**
    * Función para llamar al endpoint y obtener las listas públicas.
    */
   const obtenerListasPublicas = async () => {
+    setIsLoading(true);
     try {
       const respuesta = await fetch(`${API_URL}/listas/publicas`);
       if (!respuesta.ok) {
@@ -82,7 +78,16 @@ export default function ListasPublicas() {
           style={styles.listaContenido}
           onPress={() => manejarListaPress(item)}
         >
-          <Ionicons name="book-outline" size={50} color={colors.icon} />
+          
+          {item.portada ? (
+            <Image 
+              source={{ uri: item.portada }}
+              style={styles.listaImagen}
+            />
+          ) : (
+            <Ionicons name="book-outline" size={70} color={colors.icon} />
+          )}
+
           <Text style={[styles.nombreLista, { color: colors.text }]}>
             {item.nombre}
           </Text>
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: '48%',
     margin: 5,
-    height: 120,
+    height: 160,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -141,6 +146,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%'
+  },
+  listaImagen: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    resizeMode: 'cover',
   },
   nombreLista: {
     marginTop: 8,
