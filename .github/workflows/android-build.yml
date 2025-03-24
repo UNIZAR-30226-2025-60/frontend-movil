@@ -1,8 +1,8 @@
-name: Android APK Build (Local)
+name: Android Build Check
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -20,34 +20,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install latest EAS CLI
-        run: npm install -g eas-cli
-
-      - name: Check EAS CLI version
-        run: eas --version
-
       - name: Install Expo CLI
         run: npm install -g expo-cli
-      
-      - name: Generate android folder (prebuild)
-        run: expo prebuild --platform android
 
-      - name: Set up JDK 17
+      - name: Prebuild Expo project (generate native code)
+        run: npx expo prebuild --platform android --clean
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: '17'
 
-      - name: Remove duplicated .webp launcher icons
-        run: |
-          echo "Removing .webp launcher icons..."
-          find android/app/src/main/res/ -regex '.*mipmap-.*/ic_launcher.*\.webp' -exec rm -v {} \;
-        
-      - name: Build Android APK
-        run: cd android && ./gradlew assembleRelease
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+      - name: Build Android project (Gradle compile)
+        run: ./android/gradlew assembleDebug
