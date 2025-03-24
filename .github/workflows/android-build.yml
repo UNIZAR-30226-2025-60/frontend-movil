@@ -38,10 +38,10 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      - name: Check for duplicate launcher assets
+      - name: Remove duplicated .webp launcher icons
         run: |
-          echo "Checking for duplicate ic_launcher assets..."
-          find android/app/src/main/res/ -regex '.*mipmap-.*/ic_launcher.*\.\(png\|webp\)' -exec basename {} \; | sort | uniq -d || echo "No duplicates found."
+          echo "Removing .webp launcher icons..."
+          find android/app/src/main/res/ -regex '.*mipmap-.*/ic_launcher.*\.webp' -exec rm -v {} \;
         
       - name: Build Android APK
         run: cd android && ./gradlew assembleRelease
