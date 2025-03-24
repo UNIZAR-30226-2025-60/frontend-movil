@@ -26,8 +26,11 @@ jobs:
       - name: Check EAS CLI version
         run: eas --version
 
+      - name: Install Expo CLI
+        run: npm install -g expo-cli
+      
       - name: Generate android folder (prebuild)
-        run: eas prebuild --platform android
+        run: expo prebuild --platform android
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
