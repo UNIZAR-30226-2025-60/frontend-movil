@@ -23,8 +23,7 @@ jobs:
       - name: Instalar EAS CLI
         run: npm install -g eas-cli
 
-      - name: Autenticarse en Expo
-        run: eas whoami || eas login --token ${{ secrets.EXPO_TOKEN }}
-        
       - name: Ejecutar EAS Build local (solo compilación Android)
-        run: eas build --platform android --local --no-wait
+        run: eas build --platform android --local --non-interactive
+        env:
+            EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
