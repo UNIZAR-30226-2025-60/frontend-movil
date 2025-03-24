@@ -38,6 +38,11 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Check for duplicate launcher assets
+        run: |
+          echo "Checking for duplicate ic_launcher assets..."
+          find android/app/src/main/res/ -regex '.*mipmap-.*/ic_launcher.*\.\(png\|webp\)' -exec basename {} \; | sort | uniq -d || echo "No duplicates found."
+        
       - name: Build Android APK
         run: cd android && ./gradlew assembleRelease
 
