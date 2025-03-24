@@ -33,4 +33,5 @@ jobs:
           java-version: '17'
 
       - name: Build Android project (Gradle compile)
-        run: ./android/gradlew assembleDebug
+        run: ./gradlew assembleDebug
+        working-directory: android
