@@ -51,7 +51,6 @@ export default function CrearLista({ correoUsuario, navigation }) {
       try {
         const resp = await fetch(`${API_URL}/listas/portadas-temas`);
         const data = await resp.json();
-        console.log("Datos del backend:", data); // Revisa si hay duplicados
 
         // Convertir y (opcional) filtrar duplicados
         const fotosConvertidas = data.map(item => ({
@@ -88,9 +87,6 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 portada: portadaSeleccionada || null
             }),
         });
-
-        const respuestaTexto = await respuesta.text(); // Para debug
-        console.log("Respuesta del servidor:", respuestaTexto);
 
         if (respuesta.ok) {
             Alert.alert('Éxito', 'Lista creada correctamente.');

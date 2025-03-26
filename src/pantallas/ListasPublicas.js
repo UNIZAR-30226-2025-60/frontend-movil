@@ -1,4 +1,7 @@
-// ListasPublicas.js
+/**
+ * Archivo: ListasPublicas.js
+ * Descripción: Muestra una galería de listas públicas creadas por mí y por otros usuarios.
+ */
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,13 +17,13 @@ import { API_URL } from '../../config';
  * Pantalla para mostrar todas las listas públicas existentes en el sistema.
  */
 export default function ListasPublicas() {
-  const [listasPublicas, setListasPublicas] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [listasPublicas, setListasPublicas] = useState([]); // Listado de listas públicas
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  // Llama a obtenerListasPublicas cada vez que la pantalla se enfoca
+  // Se ejecuta cada vez que se enfoca la pantalla
   useFocusEffect(
     useCallback(() => {
       obtenerListasPublicas();
@@ -28,7 +31,7 @@ export default function ListasPublicas() {
   );
 
   /**
-   * Función para llamar al endpoint y obtener las listas públicas.
+   * 📌 Llama al backend para traer todas las listas públicas.
    */
   const obtenerListasPublicas = async () => {
     setIsLoading(true);
@@ -52,8 +55,7 @@ export default function ListasPublicas() {
   };
 
   /**
-   * Maneja el toque en una lista pública para navegar a la pantalla
-   * que muestra sus libros (por ejemplo, "LibrosDeListaScreen").
+   * 📌 Navega a la pantalla "LibrosDeLista" con los datos de la lista seleccionada.
    */
   const manejarListaPress = (lista) => {
     // Aquí necesitas el usuario_id y el nombre de la lista
@@ -69,7 +71,7 @@ export default function ListasPublicas() {
   };
 
   /**
-   * Renderiza cada ítem de la lista (tarjeta).
+   * 📌 Renderiza cada elemento de la lista pública como una tarjeta.
    */
   const renderItem = ({ item }) => {
     return (
@@ -78,7 +80,7 @@ export default function ListasPublicas() {
           style={styles.listaContenido}
           onPress={() => manejarListaPress(item)}
         >
-          
+          {/* 📌 Si hay portada, la muestra; si no, muestra un ícono */}
           {item.portada ? (
             <Image 
               source={{ uri: item.portada }}
@@ -91,7 +93,8 @@ export default function ListasPublicas() {
           <Text style={[styles.nombreLista, { color: colors.text }]}>
             {item.nombre}
           </Text>
-          {/* Podrías mostrar el "usuario_id" para indicar quién es el dueño */}
+
+          {/* 📌 Nombre del dueño de la lista */}
           <Text style={[styles.usuarioLista, { color: colors.text }]}>
             de {item.usuario_id}
           </Text>
@@ -102,9 +105,10 @@ export default function ListasPublicas() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* Encabezado personalizado */}
+      {/* 📌 Encabezado superior de la pantalla */}
       <Encabezado titulo="Listas Públicas" />
 
+      {/* 📌 Muestra un texto de carga mientras se obtienen los datos */}
       {isLoading ? (
         <Text style={{ margin: 20, color: colors.text }}>Cargando...</Text>
       ) : (

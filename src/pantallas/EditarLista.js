@@ -95,9 +95,6 @@ export default function EditarLista({ route, navigation }) {
         }),
       });
 
-      const textoResp = await respuesta.text(); // Para debug
-      console.log('Respuesta del servidor (editar):', textoResp);
-
       if (respuesta.ok) {
         Alert.alert('Éxito', 'Lista actualizada correctamente.');
         navigation.goBack(); // O navigation.navigate("MisListasScreen"), etc.
