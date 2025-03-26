@@ -232,7 +232,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Función para añadir un libro a una lista personalizada del usuario
   const añadirLibroAListaPorNombre = async (nombreLista) => {
     try {
-      const response = await fetch(`${API_URL}/listas/${encodeURIComponent(nombreLista)}`, {
+      const url = `${API_URL}/listas/${encodeURIComponent(nombreLista)}`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -263,7 +264,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Crea la función para eliminar de una lista:
   const eliminarLibroDeListaPorNombre = async (nombreLista) => {
     try {
-      const response = await fetch(`${API_URL}/listas/${encodeURIComponent(nombreLista)}`, {
+      const url = `${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(nombreLista)}`;
+      const response = await fetch(url, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

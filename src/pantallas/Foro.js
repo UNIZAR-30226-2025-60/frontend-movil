@@ -1,14 +1,17 @@
 // Foro.js
+
+import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import Encabezado from '../componentes/Encabezado';
 import ListadoPreguntasForo from '../componentes/ListadoPreguntasForo';
 
-export default function Foro() {
+export default function Foro({ correoUsuario }) {
   return (
     <View style={{ flex: 1 }}>
       <Encabezado titulo="Foro"/>
-      <ScrollView contentContainerStyle={styles.container}>
-        <ListadoPreguntasForo />
+      {/* ScrollView con tu ListadoPreguntasForo */}
+      <ScrollView>
+        <ListadoPreguntasForo correoUsuario={correoUsuario} />
       </ScrollView>
     </View>
   );
@@ -16,7 +19,11 @@ export default function Foro() {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 10,
+    flex: 1,
+    backgroundColor: '#fff'
   },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 10
+  }
 });

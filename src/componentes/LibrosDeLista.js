@@ -7,25 +7,25 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import Encabezado from '../componentes/Encabezado'; // ???????????????????????????????????????????????????????????????????????
 import ListadoLibros from '../componentes/ListadoLibros';
 import { useThemeColors } from "../componentes/Tema";
+import { API_URL } from '../../config';
 
 export default function LibrosDeLista({ correoUsuario, tituloProp }) {
-  const route = useRoute();
-  const navigation = useNavigation();
-  const colors = useThemeColors();
+  const route = useRoute(); // Accede a los parámetros pasados por navegación
+  const navigation = useNavigation(); // Para navegar entre pantallas
+  const colors = useThemeColors();  // Colores personalizados según el tema
 
-  const { nombreLista, descripcionLista, esPublica, usuarioId } = route.params;
-  const finalUrl = `http://10.0.2.2:3000/api/listas/${encodeURIComponent(usuarioId)}/${encodeURIComponent(nombreLista)}/libros`;
-  const finalTitulo = tituloProp || nombreLista || 'Lista de Libros';
-  
+  // Extraemos los datos que se pasaron como parámetros a la pantalla
+  const { url, nombreLista, descripcionLista, esPublica } = route.params;
+  const finalUrl = url;
 
-  const [libros, setLibros] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [libros, setLibros] = useState([]); // Lista de libros
+  const [cargando, setCargando] = useState(true); // Estado de carga
 
+  // Cada vez que la pantalla se enfoca, se vuelve a obtener la lista de libros
   useFocusEffect(
     useCallback(() => {
       if (finalUrl) {
@@ -34,7 +34,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
     }, [finalUrl])
   );
 
-  // Función que obtiene la lista de libros
+  // 📌 Función que obtiene los libros de la lista desde la API
   const obtenerLibros = async () => {
     try {
       setCargando(true);
@@ -46,19 +46,25 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
         return;
       }
 
-      const datos = JSON.parse(textoRespuesta); // [{ enlace_libro, nombre_lista }, ... ]
-      
-      const librosConDetalles = await Promise.all(
-        datos.map(async (libro) => {
-          const detalles = await obtenerDetallesLibro(libro.enlace_libro);
-          // Devuelve todo mezclado
-          return detalles 
-            ? { ...libro, ...detalles }
-            : libro;
+      const datos = JSON.parse(textoRespuesta);
+    
+      // 🔁 Obtener detalles de cada libro usando el enlace
+      const librosDetallados = await Promise.all(
+        datos.map(async (item) => {
+          const enlaceCodificado = encodeURIComponent(item.enlace_libro);
+          const detalle = await fetch(`${API_URL}/libros/libro/${enlaceCodificado}`);
+          if (detalle.ok) {
+            return await detalle.json();
+          } else {
+            return null;
+          }
         })
       );
-      
-      setLibros(librosConDetalles);
+
+      // 📌 Filtrar los que fallaron
+      const filtrados = librosDetallados.filter((libro) => libro !== null);
+      setLibros(filtrados);
+
     } catch (error) {
       console.error('Error al obtener libros:', error);
       setLibros([]);
@@ -67,11 +73,11 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
     }
   };
 
-  // Función para obtener detalles individuales
+  // 📌 Obtiene los detalles de un libro individual desde la API
   const obtenerDetallesLibro = async (enlaceLibro) => {
     try {
       const enlaceCodificado = encodeURIComponent(enlaceLibro);
-      const respuesta = await fetch(`http://10.0.2.2:3000/api/libros/libro/${enlaceCodificado}`);
+      const respuesta = await fetch(`${API_URL}/libros/libro/${enlaceCodificado}`);
       if (respuesta.ok) {
         return await respuesta.json(); 
       }
@@ -82,10 +88,12 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
     }
   };
 
+  // 📌 Navega a la pantalla de detalles del libro
   const verDetallesLibro = (libro) => {
     navigation.navigate("Detalles", { libro });
   };
 
+  // Si los datos están cargando, muestra un spinner
   if (cargando) {
     return <ActivityIndicator size="large" color={colors.icon} style={{ marginTop: 20 }} />;
   }
@@ -93,22 +101,20 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   return (
     <View style={styles.container}>
 
-      {/* Encabezado de lista, tipo banner */}
+      {/* 📌 Encabezado de la lista */}
       <View style={styles.headerLista}>
         <Text style={styles.tituloLista}>{nombreLista || 'Título de la lista'}</Text>
 
-        {/* Usa la descripción real o un fallback */}
         <Text style={styles.descripcionLista}>
           {descripcionLista?.trim() || 'Sin descripción'}
         </Text>
 
-        {/* Muestra "Pública" o "Privada" según el valor booleano */}
         <Text style={styles.privacidad}>
           {esPublica ? 'Pública' : 'Privada'}
         </Text>
       </View>
 
-      {/** Aquí usamos el componente reutilizable */}
+      {/* 📌 Componente que muestra los libros en forma de lista */}
       <ListadoLibros libros={libros} onPressLibro={verDetallesLibro} />
     </View>
   );
@@ -125,8 +131,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  imagen_portada_libro: { width: 100, height: 150, marginBottom: 5 },
-  bookTitle: { textAlign: 'center', width: 100, marginTop: 5, fontSize: 14 },
+  imagen_portada_libro: {
+    width: 100,
+    height: 150,
+    marginBottom: 5
+  },
+  bookTitle: {
+    textAlign: 'center',
+    width: 100,
+    marginTop: 5,
+    fontSize: 14
+  },
   backButton: {
     padding: 10,
     margin: 10,

@@ -32,6 +32,7 @@ import CambioContrasena from './src/pantallas/CambioContrasena';
 import Menu from './src/pantallas/Menu';
 import LeerLibro from './src/pantallas/LeerLibro';
 import Foro from './src/pantallas/Foro';
+import RespuestasForo from './src/pantallas/RespuestasForo';
 import Favoritos from './src/pantallas/Favoritos';
 import Leidos from './src/pantallas/Leidos';
 import EnProceso from './src/pantallas/EnProceso';
@@ -151,7 +152,9 @@ function DrawerNavigator({ correoUsuario }) {
         {(props) => <MenuStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
 
-      <Drawer.Screen name="Foro" component={ForoStack} options={{ headerShown: false }}/>
+      <Drawer.Screen name="Foro" options={{ headerShown: false }}>
+        {props => <ForoStack {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
       
       {correoUsuario && (
         <>
@@ -231,10 +234,29 @@ function MenuStack({ correoUsuario }) {
 /**
  * 📌 ForoStack: Pila de navegación del foro
  */
-function ForoStack() {
+function ForoStack({ correoUsuario }) {
+  const colors = useThemeColors();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="ForoScreen" component={Foro} />
+      <Stack.Screen 
+        name="ForoScreen"
+        options={{ headerShown: false }}
+      >
+        {props => <Foro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen 
+        name="RespuestasForo"
+        options={{
+          title: 'Respuestas',
+          headerShown: true,
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.text,
+          headerTitleStyle: { fontWeight: 'bold' }
+        }}
+      >
+        {props => <RespuestasForo {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

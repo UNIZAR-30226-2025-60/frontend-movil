@@ -23,8 +23,8 @@ export default function MisListas({ correoUsuario, navigation, route }) {
 
   // 📌 Estado de listas y control de modal
   const [listas, setListas] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [nuevaLista, setNuevaLista] = useState("");
+  const [modoSeleccion, setModoSeleccion] = useState(false);
+  const [listasSeleccionadas, setListasSeleccionadas] = useState(new Set());
   const [menuVisibleId, setMenuVisibleId] = useState(null);
 
   /**
@@ -67,103 +67,40 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   };
 
   /**
-   * 📌 Añadir un libro a la lista seleccionada.
-   */
-  // const añadirLibroALista = async (nombreLista) => {
-  //   try {
-  //     const respuesta = await fetch( `${backendUrl}/api/listas/${encodeURIComponent(nombreLista)}`,
-  //       {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({
-  //           usuario_id: correoUsuario,
-  //           libro_id: libro.enlace,
-  //         }),
-  //       }
-  //     );
-  
-  //     if (respuesta.ok) {
-  //       Alert.alert('Éxito', 'El libro se ha añadido a la lista.');
-  //       navigation.goBack();
-  //     } else {
-  //       const errorText = await respuesta.text();
-  //       Alert.alert('Error', errorText);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error al añadir libro a la lista:', error);
-  //     Alert.alert('Error', 'No se pudo añadir el libro a la lista.');
-  //   }
-  // };
-
-  /**
-   * 📌 Crea una nueva lista.
-   */
-  const crearLista = async () => {
-    if (!nuevaLista.trim()) return;
-
-    try {
-      const respuesta = await fetch(`${API_URL}/listas`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuario_id: correoUsuario,
-          nombre_lista: nuevaLista,
-          descripcion: "",
-          publica: true,
-          portada: ""
-        }),
-      });
-
-      if (respuesta.ok) {
-        setNuevaLista("");
-        setModalVisible(false);
-        obtenerListas();
-      } else {
-        Alert.alert('Error', 'No se pudo crear la lista.');
-      }
-    } catch (error) {
-      console.error('Error al crear lista:', error);
-    }
-  };
-
-  /**
    * 📌 Elimina una lista, excepto "Mis Favoritos".
    */
-  const eliminarLista = async (nombreLista) => {
-    if (nombreLista === "Mis Favoritos") {
-      Alert.alert("Error", "No puedes eliminar la lista 'Mis Favoritos'.");
-      return;
-    }
+  const eliminarLista = async (nombreLista, sinConfirmacion = false) => {
+    if (nombreLista === "Mis Favoritos") return;
   
-    Alert.alert(
-      "Eliminar lista",
-      `¿Estás seguro de que quieres eliminar la lista "${nombreLista}"?`,
-      [
+    const ejecutarEliminacion = async () => {
+      try {
+        //const res = await fetch(`${API_URL}/listas/${correoUsuario}/${nombreLista}`, {
+        const res = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(nombreLista)}`, {
+          method: "DELETE",
+        });
+  
+        if (!res.ok) {
+          const msg = await res.text();
+          Alert.alert("Error", msg);
+        } else {
+          await obtenerListas();
+          setMenuVisibleId(null);
+          setListasSeleccionadas(new Set());
+        }
+      } catch (err) {
+        console.error("Error al eliminar lista:", err);
+        Alert.alert("Error", "Hubo un problema al eliminar la lista.");
+      }
+    };
+  
+    if (sinConfirmacion) {
+      await ejecutarEliminacion();
+    } else {
+      Alert.alert("Eliminar lista", `¿Eliminar "${nombreLista}"?`, [
         { text: "Cancelar", style: "cancel" },
-        {
-          text: "Eliminar",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}/${nombreLista}`, {
-                method: "DELETE",
-              });
-  
-              if (respuesta.ok) {
-                Alert.alert("Éxito", "Lista eliminada correctamente.");
-                obtenerListas(); // Recargar las listas
-              } else {
-                const textoError = await respuesta.text();
-                Alert.alert("Error", `No se pudo eliminar la lista. Servidor: ${textoError}`);
-              }
-            } catch (error) {
-              console.error("Error al eliminar lista:", error);
-              Alert.alert("Error", "Hubo un problema al eliminar la lista.");
-            }
-          },
-        },
-      ]
-    );
+        { text: "Eliminar", style: "destructive", onPress: ejecutarEliminacion }
+      ]);
+    }
   };
 
   /**
@@ -184,27 +121,55 @@ export default function MisListas({ correoUsuario, navigation, route }) {
       <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
         <TouchableOpacity
           onPress={() => {
-            // Cierra menú si estaba abierto
-            if (menuVisibleId !== null) {
-              setMenuVisibleId(null);
-            } else {
-              // Lógica al pulsar la tarjeta
-              // Ejemplo: si tienes un libro para añadir:
-              if (libro) {
-                añadirLibroALista(item.nombre); 
+            if (modoSeleccion) {
+              const nuevas = new Set(listasSeleccionadas);
+              if (nuevas.has(item.nombre)) {
+                nuevas.delete(item.nombre);
               } else {
-                // O navegar a ver los libros de esa lista
-                navigation.navigate("LibrosDeListaScreen", {
-                  nombreLista: item.nombre,
-                  descripcionLista: item.descripcion,
-                  esPublica: item.publica,
-                  url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
-                });
+                nuevas.add(item.nombre);
+              }
+              setListasSeleccionadas(nuevas);
+            } else {
+              if (menuVisibleId !== null) {
+                setMenuVisibleId(null);
+              } else {
+                if (libro) {
+                  añadirLibroALista(item.nombre); 
+                } else {
+                  navigation.navigate("LibrosDeListaScreen", {
+                    usuarioId: correoUsuario,
+                    nombreLista: item.nombre,
+                    descripcionLista: item.descripcion,
+                    esPublica: item.publica,
+                    //url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
+                    url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
+                  });
+                }
               }
             }
           }}
           style={styles.listaContenido}
         >
+          {modoSeleccion && (
+            <View style={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              width: 20,
+              height: 20,
+              borderRadius: 4,
+              borderWidth: 2,
+              borderColor: '#555',
+              backgroundColor: listasSeleccionadas.has(item.nombre) ? '#007BFF' : 'transparent',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1
+            }}>
+              {listasSeleccionadas.has(item.nombre) && (
+                <Text style={{ color: '#fff', fontSize: 12 }}>✓</Text>
+              )}
+            </View>
+          )}
           {item.portada ? (
             <Image source={{ uri: item.portada }} style={styles.listaImagen} />
           ) : (
@@ -261,6 +226,29 @@ export default function MisListas({ correoUsuario, navigation, route }) {
 
         {/* 📌 Encabezado de la pantalla */}
         <Encabezado titulo="Mis Listas" />
+
+        <View style={{ 
+          flexDirection: 'row', 
+          justifyContent: 'flex-end', 
+          paddingHorizontal: 16, 
+          alignItems: 'center',
+          height: 40,
+          backgroundColor: '#e5d9b6'
+        }}>
+
+          {modoSeleccion ? (
+            <TouchableOpacity onPress={() => {
+              setModoSeleccion(false);
+              setListasSeleccionadas(new Set());
+            }}>
+              <Text style={{ color: 'red' }}>Cancelar</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => setModoSeleccion(true)}>
+              <Ionicons name="trash-outline" size={24} color={colors.icon} />
+            </TouchableOpacity>
+          )}
+        </View>
         
         {/* 📌 Lista de listas */}
         <FlatList
@@ -289,6 +277,43 @@ export default function MisListas({ correoUsuario, navigation, route }) {
           numColumns={2}
           contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
         />
+
+        {modoSeleccion && listasSeleccionadas.size > 0 && (
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              bottom: 30,
+              alignSelf: 'center',
+              backgroundColor: 'red',
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              borderRadius: 8,
+            }}
+            onPress={() => {
+              Alert.alert(
+                'Eliminar listas',
+                `¿Deseas eliminar ${listasSeleccionadas.size} lista(s)?`,
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  {
+                    text: 'Eliminar',
+                    style: 'destructive',
+                    onPress: async () => {
+                      for (const nombre of listasSeleccionadas) {
+                        await eliminarLista(nombre, true);
+                      }
+                      setModoSeleccion(false);
+                      setListasSeleccionadas(new Set());
+                      obtenerListas();
+                    }
+                  }
+                ]
+              );
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Eliminar seleccionadas</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
