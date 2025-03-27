@@ -38,7 +38,7 @@ export default function BuscadorLibros({ setResultados, categoria }) {
                 url = `${API_URL}/libros/tematica/${encodeURIComponent(categoria)}`;
             }
             else if (debouncedTerminoBusqueda.trim()) {
-                url = `${API_URL}/obtenerTitulo/${encodeURIComponent(debouncedTerminoBusqueda)}`;
+                url = `${API_URL}/libros/obtenerTitulo/${encodeURIComponent(debouncedTerminoBusqueda)}`;
             }
             else {
                 url = `${API_URL}/libros`;
