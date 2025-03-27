@@ -17,6 +17,7 @@
     "@fortawesome/react-native-fontawesome": "^0.3.2",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/progress-bar-android": "^1.0.5",
+    "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-navigation/drawer": "^7.1.1",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
@@ -46,7 +47,9 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.19.13",
     "react-native-webview": "^13.12.5",
-    "rn-fetch-blob": "^0.12.0"
+    "rn-fetch-blob": "^0.12.0",
+    "expo-auth-session": "~6.0.3",
+    "expo-crypto": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

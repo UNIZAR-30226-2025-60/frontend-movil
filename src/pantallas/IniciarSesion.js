@@ -1,10 +1,11 @@
 // IniciarSesión.js
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, Image, View, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
-import logoGoogle from "../../assets/logo_google.png";
+
 import { API_URL } from "../../config";
+import BotonLoginGoogle from "../componentes/BotonLoginGoogle";
 
 
 export default function IniciarSesion({ setCorreoUsuario }) {
@@ -44,8 +45,8 @@ export default function IniciarSesion({ setCorreoUsuario }) {
       const usuario = await respuesta.json();
       Alert.alert("✅ Inicio de sesión exitoso", `Bienvenido, ${usuario.nombre}`);
 
-      setCorreoUsuario(usuario.correo); // ✅ Guarda el correo del usuario
-      navigation.navigate("Drawer"); // ✅ Redirige al menú principal
+      setCorreoUsuario(usuario.correo); // Guarda el correo del usuario
+      navigation.navigate("Drawer"); // Redirige al menú principal
 
     } catch (error) {
       Alert.alert("⚠️ Error", error.message);
@@ -54,9 +55,6 @@ export default function IniciarSesion({ setCorreoUsuario }) {
     }
   };
 
-  const handleLoginGoogle = async () => {
-
-  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
@@ -87,10 +85,8 @@ export default function IniciarSesion({ setCorreoUsuario }) {
         <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Confirmar"}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]} onPress={handleLoginGoogle} disabled={cargando}>
-        <Image source={logoGoogle} style={{ width: 20, height: 20, marginRight: 10 }} />
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Continuar con Google"}</Text>
-      </TouchableOpacity>
+      <BotonLoginGoogle setCorreoUsuario={setCorreoUsuario} />
+      
     </View>
   );
 }

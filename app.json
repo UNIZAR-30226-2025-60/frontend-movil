@@ -13,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.arianaporroche.bookly",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.arianaporroche.bookly",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,8 +27,7 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION",
         "android.permission.ACCESS_NETWORK_STATE"
-      ],
-      "package": "com.arianaporroche.bookly"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
