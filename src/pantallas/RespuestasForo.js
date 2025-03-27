@@ -61,40 +61,48 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
         
-        <View style={styles.headerPregunta}>
-            <Text style={styles.titulo}>Pregunta</Text>
-            <Text style={styles.cuestion}>{cuestion}</Text>
+        <View style={[styles.headerPregunta, { backgroundColor: colors.subtitleBackground }]}>
+          <Text style={[styles.titulo, { color: colors.text }]}>Pregunta</Text>
+          <Text style={[styles.cuestion, { color: colors.text }]}>{cuestion}</Text>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Mostrar el título o enunciado de la pregunta */}
-            <Text style={styles.titulo}>Respuestas a: {cuestion}</Text>
+            <Text style={[styles.titulo, { color: colors.text }]}>Respuestas a: {cuestion}</Text>
             {respuestas.length > 0 ? (
             respuestas.map((respuesta) => (
-                <View key={respuesta.id} style={styles.card}>
-                <Text style={styles.usuario}>Usuario: {respuesta.usuario_respuesta}</Text>
-                <Text style={styles.mensaje}>{respuesta.mensaje_respuesta}</Text>
-                <Text style={styles.fecha}>{respuesta.fecha}</Text>
-                </View>
+              <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundHeader }]}>
+                <Text style={[styles.usuario, { color: colors.text }]}>Usuario: {respuesta.usuario_respuesta}</Text>
+                <Text style={[styles.mensaje, { color: colors.text }]}>{respuesta.mensaje_respuesta}</Text>
+                <Text style={[styles.fecha, { color: colors.textSecondary }]}>{respuesta.fecha}</Text>
+              </View>
             ))
             ) : (
-            <Text style={styles.sinRespuestas}>Aún no hay respuestas.</Text>
+              <Text style={[styles.sinRespuestas, { color: colors.textSecondary }]}>Aún no hay respuestas.</Text>
             )}
         </ScrollView>
         {correoUsuario ? (
-            <View style={styles.formContainer}>
-            <TextInput
-                style={styles.input}
+            <View style={[styles.formContainer, { borderColor: colors.border }]}>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    borderColor: colors.border,
+                    color: colors.text,
+                    backgroundColor: colors.backgroundHeader
+                  }
+                ]}
                 placeholder="Escribe tu respuesta..."
+                placeholderTextColor={colors.textSecondary}
                 value={nuevaRespuesta}
                 onChangeText={setNuevaRespuesta}
-            />
+              />
             <Button title="Responder" onPress={handleEnviarRespuesta} />
             </View>
         ) : (
-            <Text style={styles.aviso}>Debes iniciar sesión para responder</Text>
+          <Text style={[styles.aviso, { color: colors.buttonSec }]}>Debes iniciar sesión para responder</Text>
         )}
         </View>
     );
@@ -103,13 +111,11 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
   },
   scrollContainer: {
     padding: 10
   },
   headerPregunta: {
-    backgroundColor: '#f2f2f2',
     padding: 16,
     marginHorizontal: 8,
     marginVertical: 12,
@@ -122,7 +128,6 @@ const styles = StyleSheet.create({
   },
   cuestion: {
     fontSize: 16,
-    color: '#333'
   },
   titulo: {
     fontSize: 18,
@@ -130,7 +135,6 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   card: {
-    backgroundColor: '#f9f9f9',
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
@@ -149,7 +153,6 @@ const styles = StyleSheet.create({
   },
   fecha: {
     fontSize: 12,
-    color: '#777'
   },
   sinRespuestas: {
     textAlign: 'center',
@@ -161,12 +164,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderTopWidth: 1,
-    borderColor: '#ccc'
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -174,7 +175,6 @@ const styles = StyleSheet.create({
   },
   aviso: {
     textAlign: 'center',
-    color: 'red',
     padding: 10
   }
 });

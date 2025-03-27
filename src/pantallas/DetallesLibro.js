@@ -557,11 +557,11 @@ export default function DetallesLibro({ route, correoUsuario }) {
           return (
             <View key={num} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
               <Text style={{ width: 50, color: colors.text }}>{num} ESTRELLA</Text>
-              <View style={{ flex: 1, height: 8, backgroundColor: '#ddd', marginLeft: 5, borderRadius: 4 }}>
+              <View style={{ flex: 1, height: 8, backgroundColor: colors.background, marginLeft: 5, borderRadius: 4 }}>
                 <View style={{
                   height: '100%',
                   width: `${porcentaje}%`, // Ajusta el width dinámicamente
-                  backgroundColor: '#FFD700',
+                  backgroundColor: colors.background,
                   borderRadius: 4
                 }} />
               </View>
@@ -635,17 +635,17 @@ export default function DetallesLibro({ route, correoUsuario }) {
                       height: 24,
                       borderRadius: 4,
                       borderWidth: 2,
-                      borderColor: '#aaa',
+                      borderColor: colors.border,
                       marginRight: 8,
                       justifyContent: 'center',
                       alignItems: 'center',
                       // Si está seleccionado, fondo azul, si no, transparente
-                      backgroundColor: isSelected ? '#007BFF' : 'transparent',
+                      backgroundColor: isSelected ? colors.background : 'transparent',
                     }}
                   >
                     {/* Si está seleccionado, muestra un check (puedes usar texto o un ícono) */}
                     {isSelected && (
-                      <Text style={{ color: '#fff', fontWeight: 'bold' }}>✓</Text>
+                      <Text style={{ color: colors.text, fontWeight: 'bold' }}>✓</Text>
                     )}
                   </View>
 
@@ -663,13 +663,13 @@ export default function DetallesLibro({ route, correoUsuario }) {
             style={{
               marginTop: 10,
               padding: 12,
-              backgroundColor: '#007BFF',
+              backgroundColor: colors.background,
               borderRadius: 6,
               alignItems: 'center',
             }}
             onPress={() => setShowCrearListaModal(true)}
           >
-            <Text style={{ color: '#fff', fontWeight: 'bold' }}>+ Nueva lista</Text>
+            <Text style={{ color: colors.text, fontWeight: 'bold' }}>+ Nueva lista</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -692,7 +692,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             onChangeText={setNombreNuevaLista}
             style={{
               borderWidth: 1, 
-              borderColor: '#ccc', 
+              borderColor: colors.border, 
               marginVertical: 8,
               padding: 8,
               borderRadius: 6,
@@ -705,7 +705,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             onChangeText={setDescripcionNuevaLista}
             style={{
               borderWidth: 1, 
-              borderColor: '#ccc', 
+              borderColor: colors.border, 
               marginVertical: 8,
               padding: 8,
               borderRadius: 6,
@@ -821,7 +821,6 @@ const stylesGeneral = StyleSheet.create({
   linea: {
     width: '100%',       // Ocupar todo el ancho disponible
     height: 1,          // Altura de la línea
-    backgroundColor: '#000', // Color de la línea
     marginVertical: 5,
   },
 
@@ -841,7 +840,6 @@ const stylesGeneral = StyleSheet.create({
 
   // 📌 Botones generales (Leer, Añadir a lista, etc.)
   boton: {
-    backgroundColor: '#333333',  // Color: Gris oscuro
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

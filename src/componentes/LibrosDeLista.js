@@ -99,19 +99,13 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* 📌 Encabezado de la lista */}
-      <View style={styles.headerLista}>
-        <Text style={styles.tituloLista}>{nombreLista || 'Título de la lista'}</Text>
-
-        <Text style={styles.descripcionLista}>
-          {descripcionLista?.trim() || 'Sin descripción'}
-        </Text>
-
-        <Text style={styles.privacidad}>
-          {esPublica ? 'Pública' : 'Privada'}
-        </Text>
+      <View style={[styles.headerLista, { backgroundColor: colors.subtitleBackground }]}>
+        <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
+        <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+        <Text style={[styles.privacidad, { color: colors.textSecondary }]}>{esPublica ? 'Pública' : 'Privada'}</Text>
       </View>
 
       {/* 📌 Componente que muestra los libros en forma de lista */}
@@ -123,7 +117,6 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
   },
   itemContainer: {
     flex: 1,
@@ -142,15 +135,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14
   },
-  backButton: {
-    padding: 10,
-    margin: 10,
-    backgroundColor: '#ddd',
-    alignSelf: 'flex-start',
-    borderRadius: 5,
-  },
   headerLista: {
-    backgroundColor: '#f2f2f2', // color de fondo gris claro
     padding: 16,                // espacio interno
     marginHorizontal: 8,        // márgenes laterales
     marginBottom: 16,           // espacio debajo
@@ -167,6 +152,5 @@ const styles = StyleSheet.create({
   },
   privacidad: {
     fontSize: 12,
-    color: '#888',
   },
 });

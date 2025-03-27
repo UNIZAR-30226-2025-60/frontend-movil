@@ -63,9 +63,9 @@ export default function BuscadorLibros({ setResultados, categoria }) {
     return (
         <View style={[styles.contenedor, { backgroundColor: colors.background }]}>
             <TextInput
-                style={[styles.input, { color: colors.text }]}
+                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.backgroundHeader }]}
                 placeholder="Buscar libros..."
-                placeholderTextColor="#888888"
+                placeholderTextColor={colors.textSecondary}
                 value={terminoBusqueda}
                 onChangeText={setTerminoBusqueda}
             />
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 40,
         borderWidth: 1,
-        borderColor: "#ccc",
         borderRadius: 5,
         paddingHorizontal: 10,
     },

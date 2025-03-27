@@ -16,13 +16,13 @@ export const useThemeColors = () => {
         /***************************************/
 
         // COLORES DE FONDO
-        backgroundHeader: "#121212",
-        background: "#2b2b2b",
-        subtitleBackground: "#dab572",
+        backgroundHeader: "#655f4e",
+        subtitleBackground: "#97927f",  // Justo lo que hay debajo del encabezado principal
+        background: "#4c4637",
         arrowBackground: "#fef9d2",
 
         // TEXTO
-        text: "#ffffff",
+        text: "#dfcc75",
         textSecondary: "#a54cac",
         subtitleText: "#000000",
 
@@ -53,13 +53,13 @@ export const useThemeColors = () => {
         /***************************************/
         
         // COLORES DE FONDO
-        backgroundHeader: "#be954e",
-        background: "#ffffff",
-        subtitleBackground: "#dab572", // Justo lo que hay debajo del encabezado principal
+        backgroundHeader: "#bda636",
+        subtitleBackground: "#dfcc75",  // Justo lo que hay debajo del encabezado principal
+        background: "#f2f1e7",
         arrowBackground: "#cacac9",
 
         // TEXTO
-        text: "#000000",
+        text: "#4c4637",
         textSecondary: "#333333",
         subtitleText: "#000000",
 
@@ -77,8 +77,8 @@ export const useThemeColors = () => {
         buttonOtherText: "#007bff",
 
         // BOTONES DE CATEGORÍA
-        categoriaButton: "#be954e",
-        categoriaButtonSec: "#007bff",
+        categoriaButton: "#dfcc75",
+        categoriaButtonSec: "#be954e",
 
         // BORDES
         border: "#000000",

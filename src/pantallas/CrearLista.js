@@ -188,10 +188,10 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 />
     
                 <TouchableOpacity
-                  style={styles.botonCerrarModal}
+                  style={[styles.botonCerrarModal, { backgroundColor: colors.buttonOther }]}
                   onPress={() => setModalVisible(false)}
                 >
-                  <Text style={styles.textoBotonCerrar}>Cerrar</Text>
+                  <Text style={[styles.textoBotonCerrar, { color: colors.buttonOtherText }]}>Cerrar</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -210,7 +210,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
             {/* Campo de nombre */}
             <Text style={[styles.label, { color: colors.text }]}>Ingrese el nombre de su lista:</Text>
             <TextInput
-                style={[styles.input, { borderColor: colors.text }]}
+                style={[styles.input, { borderColor: colors.text, color: colors.text }]}
                 placeholder="Ejemplo: Novelas Policiacas"
                 placeholderTextColor={colors.placeholder}
                 value={nombre}
@@ -225,7 +225,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
             {/* Campo de descripción */}
             <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
             <TextInput
-                style={[styles.textarea, { borderColor: colors.text }]}
+                style={[styles.textarea, { borderColor: colors.text, color: colors.text }]}
                 placeholder="Añade una descripción (opcional)"
                 placeholderTextColor={colors.placeholder}
                 value={descripcion}
@@ -306,7 +306,6 @@ const styles = StyleSheet.create({
     },
     imagenSeleccionada: {
         borderWidth: 3,
-        borderColor: 'blue',
         opacity: 4.5, // Resalta la imagen seleccionada
     },
     verMasContainer: {
@@ -314,30 +313,25 @@ const styles = StyleSheet.create({
         height: 80,
         marginRight: 5,
         borderRadius: 5,
-        backgroundColor: '#eee',
         borderStyle: 'dashed',
         borderWidth: 2,
-        borderColor: '#aaa',
         justifyContent: 'center',
         alignItems: 'center',
     },
     verMasTexto: {
         fontSize: 18, // un + grande
         fontWeight: 'bold',
-        color: 'grey',
     },
 
     // Modal overlay (fondo semitransparente)
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
     },
 
     // Contenido principal del modal
     modalContent: {
-        backgroundColor: 'white',
         borderRadius: 8,
         padding: 16,
         width: '80%',
@@ -367,7 +361,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#ccc',
         borderRadius: 5,
     },
     textoBotonCerrar: {

@@ -88,7 +88,7 @@ export default function AñadirValoracion({ route, correoUsuario }) {
             <Ionicons
               name={estrella <= valoracion ? 'star' : 'star-outline'} // Usar Ionicons para la estrella rellena o vacía
               size={30}
-              color={estrella <= valoracion ? colors.star : "#cccccc"}
+              color={estrella <= valoracion ? colors.star : colors.border}
             />
           </TouchableOpacity>
         ))}
@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
       width: '100%',
       height: 50,
       borderWidth: 1,
-      borderColor: '#ccc',
       borderRadius: 8,
       paddingHorizontal: 15,
       paddingTop: 12,
@@ -136,7 +135,6 @@ const styles = StyleSheet.create({
       width: '100%',
       height: 150,
       borderWidth: 1,
-      borderColor: '#ccc',
       borderRadius: 8,
       paddingHorizontal: 15,
       paddingTop: 12,
@@ -156,7 +154,6 @@ const styles = StyleSheet.create({
     boton: {
       width: '100%',
       height: 50,
-      backgroundColor: '#007bff',
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 8,

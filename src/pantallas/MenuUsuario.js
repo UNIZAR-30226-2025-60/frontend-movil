@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
       
     },
     textoBoton: {
-      color: '#fff',
       fontSize: 18,
       fontWeight: 'bold',
     },

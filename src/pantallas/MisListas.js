@@ -159,14 +159,14 @@ export default function MisListas({ correoUsuario, navigation, route }) {
               height: 20,
               borderRadius: 4,
               borderWidth: 2,
-              borderColor: '#555',
-              backgroundColor: listasSeleccionadas.has(item.nombre) ? '#007BFF' : 'transparent',
+              borderColor: colors.border,
+              backgroundColor: isSelected ? colors.button : 'transparent',
               justifyContent: 'center',
               alignItems: 'center',
               zIndex: 1
             }}>
               {listasSeleccionadas.has(item.nombre) && (
-                <Text style={{ color: '#fff', fontSize: 12 }}>✓</Text>
+                <Text style={{ color: colors.buttonText, fontSize: 12 }}>✓</Text>
               )}
             </View>
           )}
@@ -191,7 +191,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   
         {/* Menú desplegable */}
         {isMenuVisible && (
-          <View style={styles.menuOpciones}>
+          <View style={[styles.menuOpciones, { backgroundColor: colors.subtitleBackground }]}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => eliminarLista(item.nombre)}

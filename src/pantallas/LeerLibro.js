@@ -180,33 +180,43 @@ export default function LeerLibro({ route, correoUsuario }) {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {pdfPath ? (
         <>
           <View>
             {/* Botón Finalizar Lectura */}
-            <TouchableOpacity style={styles.finishButton} onPress={finalizarLectura}>
-              <Text style={styles.buttonText}>Finalizar Lectura</Text>
+            <TouchableOpacity
+              style={[styles.finishButton, { backgroundColor: colors.buttonSec }]}
+              onPress={finalizarLectura}
+            >
+              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Finalizar Lectura</Text>
             </TouchableOpacity>
 
             {/* Control del Zoom y Marcador */}
-            <View style={styles.zoomContainer}>
+            <View style={[styles.zoomContainer, { backgroundColor: colors.backgroundHeader }]}>
               <TouchableOpacity
-                style={[styles.zoomButton, scale <= 1 && styles.disabledButton]}
+                style={[
+                  styles.zoomButton,
+                  { backgroundColor: scale <= 1 ? colors.border : colors.button },
+                ]}
                 onPress={decreaseZoom}
                 disabled={scale <= 1}
               >
-                <Icon name="search-minus" size={20} color={scale <= 1 ? "#888" : "#fff"} />
+                <Icon
+                  name="search-minus"
+                  size={20}
+                  color={scale <= 1 ? colors.textSecondary : colors.buttonText}
+                />
               </TouchableOpacity>
 
-              <Text style={styles.zoomText}>{(scale * 100).toFixed(0)}%</Text>
+              <Text style={[styles.zoomText, { color: colors.text }]}>{(scale * 100).toFixed(0)}%</Text>
 
               <TouchableOpacity
-                style={[styles.zoomButton, scale >= 2 && styles.disabledButton]}
+                style={[styles.zoomButton, { backgroundColor: scale >= 2 ? colors.border : colors.button },]}
                 onPress={increaseZoom}
                 disabled={scale >= 3}
               >
-                <Icon name="search-plus" size={20} color={scale >= 2 ? "#888" : "#fff"} />
+                <Icon name="search-plus" size={20} color={scale >= 2 ? colors.textSecondary : colors.buttonText} />
               </TouchableOpacity>
 
               {/* Botón de Marcador */}
@@ -215,7 +225,7 @@ export default function LeerLibro({ route, correoUsuario }) {
                   <Icon
                     name={paginasMarcadas.includes(currentPage) ? "bookmark" : "bookmark-o"}
                     size={24}
-                    color={paginasMarcadas.includes(currentPage) ? "#FFD700" : "#444"}
+                    color={paginasMarcadas.includes(currentPage) ? colors.star : colors.icon}
                   />
                 </TouchableOpacity>
               )}
@@ -237,34 +247,39 @@ export default function LeerLibro({ route, correoUsuario }) {
           />
 
           {/* Botones de navegación */}
-          <View style={styles.buttonContainer}>
+          <View style={[styles.buttonContainer, { backgroundColor: colors.backgroundHeader }]}>
             <TouchableOpacity
-              style={[styles.button, currentPage <= 1 && styles.disabledButton]}
+              style={[styles.button, { backgroundColor: currentPage <= 1 ? colors.buttonOther : colors.button, }]}
               onPress={() => changePage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={styles.buttonText}>Anterior</Text>
+              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Anterior</Text>
             </TouchableOpacity>
 
-            <Text style={styles.pageText}>
+            <Text style={[styles.pageText, { color: colors.text }]}>
               Página {currentPage} de {totalPages ?? "?"}
             </Text>
 
             <TouchableOpacity
               style={[
                 styles.button,
-                totalPages && currentPage >= totalPages && styles.disabledButton,
+                {
+                  backgroundColor:
+                    totalPages && currentPage >= totalPages
+                      ? colors.buttonOther
+                      : colors.button,
+                },
               ]}
               onPress={() => changePage(currentPage + 1)}
               disabled={totalPages && currentPage >= totalPages}
             >
-              <Text style={styles.buttonText}>Siguiente</Text>
+              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Siguiente</Text>
             </TouchableOpacity>
           </View>
         </>
       ) : (
         <View style={styles.loadingContainer}>
-          <Text>Cargando PDF...</Text>
+          <Text style={{ color: colors.text }}>Cargando PDF...</Text>
           <Image source={cargandoGif} style={styles.loadingImage}/>
         </View>
       )}
@@ -275,7 +290,6 @@ export default function LeerLibro({ route, correoUsuario }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   pdf: {
     flex: 1,
@@ -286,18 +300,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
-    backgroundColor: "#fff",
   },
   button: {
-    backgroundColor: "#007AFF",
     padding: 10,
     borderRadius: 5,
   },
-  disabledButton: {
-    backgroundColor: "#ccc",
-  },
   buttonText: {
-    color: "#fff",
     fontSize: 16,
     textAlign: "center",
   },
@@ -306,7 +314,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   finishButton: {
-    backgroundColor: "#ff3b30",
     padding: 10,
     margin: 10,
     borderRadius: 5,
@@ -317,10 +324,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
-    backgroundColor: "#fff",
   },
   zoomButton: {
-    backgroundColor: "#007AFF",
     padding: 10,
     borderRadius: 5,
     marginHorizontal: 5,

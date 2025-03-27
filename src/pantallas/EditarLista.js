@@ -313,28 +313,23 @@ const styles = StyleSheet.create({
     height: 80,
     marginHorizontal: 5,
     borderRadius: 5,
-    backgroundColor: '#eee',
     borderStyle: 'dashed',
     borderWidth: 2,
-    borderColor: '#aaa',
     justifyContent: 'center',
     alignItems: 'center',
   },
   verMasTexto: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'grey',
   },
 
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
     borderRadius: 8,
     padding: 16,
     width: '80%',
@@ -360,7 +355,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#ccc',
     borderRadius: 5,
   },
   textoBotonCerrar: {
