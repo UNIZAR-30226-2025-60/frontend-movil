@@ -4,13 +4,16 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import Encabezado from '../componentes/Encabezado';
 import ListadoPreguntasForo from '../componentes/ListadoPreguntasForo';
+import { useThemeColors } from "../componentes/Tema";
 
-export default function Foro({ correoUsuario }) {
+export default function Foro({ route, correoUsuario: propCorreo }) {
+  const colors = useThemeColors();
+  const correoUsuario = route?.params?.correoUsuario || propCorreo;
+
   return (
-    <View style={{ flex: 1 }}>
-      <Encabezado titulo="Foro"/>
-      {/* ScrollView con tu ListadoPreguntasForo */}
-      <ScrollView>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Encabezado titulo="Foro" correoUsuario={correoUsuario} />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <ListadoPreguntasForo correoUsuario={correoUsuario} />
       </ScrollView>
     </View>
@@ -20,7 +23,6 @@ export default function Foro({ correoUsuario }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
   },
   scrollContainer: {
     flexGrow: 1,

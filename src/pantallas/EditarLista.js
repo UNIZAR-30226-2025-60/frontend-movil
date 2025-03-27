@@ -100,6 +100,7 @@ export default function EditarLista({ route, navigation }) {
         navigation.goBack(); // O navigation.navigate("MisListasScreen"), etc.
       } else {
         // Si no fue ok, mostramos el texto devuelto por el backend
+        const textoResp = await respuesta.text();
         Alert.alert('Error', `No se pudo editar la lista. Servidor: ${textoResp}`);
       }
     } catch (error) {

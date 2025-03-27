@@ -90,7 +90,7 @@ export default function EnProceso({ correoUsuario }) {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Encabezado titulo="En Proceso" />
+        <Encabezado titulo="En Proceso" correoUsuario={correoUsuario} />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.grid}>
             {librosEnProceso.length > 0 ? (

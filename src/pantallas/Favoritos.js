@@ -110,7 +110,7 @@ export default function Favoritos({ correoUsuario }) {
 
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-          <Encabezado titulo="Mis Favoritos" />
+          <Encabezado titulo="Mis Favoritos" correoUsuario={correoUsuario} />
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.grid}>
                 {librosFavoritos.length > 0 ? (

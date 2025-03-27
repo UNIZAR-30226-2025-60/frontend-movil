@@ -104,7 +104,7 @@ export default function Leidos({ correoUsuario }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Encabezado titulo="Leídos" />
+      <Encabezado titulo="Leídos" correoUsuario={correoUsuario} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.grid}>
           {librosLeidos.length > 0 ? (

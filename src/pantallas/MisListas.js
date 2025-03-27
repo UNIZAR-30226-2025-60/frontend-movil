@@ -225,23 +225,15 @@ export default function MisListas({ correoUsuario, navigation, route }) {
       <View style={{ flex: 1 }}>
 
         {/* 📌 Encabezado de la pantalla */}
-        <Encabezado titulo="Mis Listas" />
+        <Encabezado titulo="Mis Listas" correoUsuario={correoUsuario} />
 
-        <View style={{ 
-          flexDirection: 'row', 
-          justifyContent: 'flex-end', 
-          paddingHorizontal: 16, 
-          alignItems: 'center',
-          height: 40,
-          backgroundColor: '#e5d9b6'
-        }}>
-
+        <View style={[styles.topBar, { backgroundColor: colors.subtitleBackground }]}>
           {modoSeleccion ? (
             <TouchableOpacity onPress={() => {
               setModoSeleccion(false);
               setListasSeleccionadas(new Set());
             }}>
-              <Text style={{ color: 'red' }}>Cancelar</Text>
+              <Text style={{ color: colors.buttonSec }}>Cancelar</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={() => setModoSeleccion(true)}>
@@ -254,7 +246,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         <FlatList
           // Agrega un item "Crear lista"
           data={[...listas, { nombre: 'Crear lista', esNueva: true }]}
-          keyExtractor={(item, index) =>
+          keyExtractor={(item) =>
             item.esNueva ? 'nueva' : item.nombre  // Usa el nombre como clave
           }
           renderItem={({ item }) => {
@@ -280,15 +272,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
 
         {modoSeleccion && listasSeleccionadas.size > 0 && (
           <TouchableOpacity
-            style={{
-              position: 'absolute',
-              bottom: 30,
-              alignSelf: 'center',
-              backgroundColor: 'red',
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              borderRadius: 8,
-            }}
+            style={[styles.botonEliminar, { backgroundColor: colors.buttonSec }]}
             onPress={() => {
               Alert.alert(
                 'Eliminar listas',
@@ -311,7 +295,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
               );
             }}
           >
-            <Text style={{ color: 'white', fontWeight: 'bold' }}>Eliminar seleccionadas</Text>
+            <Text style={{ color: colors.buttonText, fontWeight: 'bold' }}>Eliminar seleccionadas</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -325,8 +309,13 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16
   },
-
-  /** 📌 ESTILOS DE LAS LISTAS **/
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    height: 40,
+  },
 
   // 📌 Contenedor de cada lista
   itemContainer: {
@@ -335,7 +324,6 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
     overflow: 'hidden', // Asegura que el contenido no se desborde
   },
 
@@ -364,58 +352,59 @@ const styles = StyleSheet.create({
   addContainer: {
     borderStyle: 'dashed',
     borderWidth: 2,
-    borderColor: '#aaa',
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  /** 📌 ESTILOS DEL MODAL **/
-
-  // 📌 Contenedor de fondo oscuro del modal
-  modalContainer: {
-    flex: 1,
+  checkbox: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fondo semitransparente
+    zIndex: 1,
   },
 
-  // 📌 Contenido del modal
-  modalContent: {
-    width: '80%',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
+  // // 📌 Contenido del modal
+  // modalContent: {
+  //   width: '80%',
+  //   padding: 20,
+  //   borderRadius: 10,
+  //   alignItems: 'center',
+  // },
 
-  // 📌 Título dentro del modal
-  modalTitle: { 
-    fontSize: 18, 
-    fontWeight: 'bold', 
-    marginBottom: 10 
-  },
+  // // 📌 Título dentro del modal
+  // modalTitle: { 
+  //   fontSize: 18, 
+  //   fontWeight: 'bold', 
+  //   marginBottom: 10 
+  // },
 
-  // 📌 Input de texto dentro del modal
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-  },
+  // // 📌 Input de texto dentro del modal
+  // input: {
+  //   width: '100%',
+  //   borderWidth: 1,
+  //   borderRadius: 5,
+  //   padding: 10,
+  //   marginBottom: 20,
+  // },
 
-  // 📌 Contenedor de los botones dentro del modal
-  modalBotones: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    width: '100%' 
-  },
+  // // 📌 Contenedor de los botones dentro del modal
+  // modalBotones: { 
+  //   flexDirection: 'row', 
+  //   justifyContent: 'space-between', 
+  //   width: '100%' 
+  // },
 
-  // 📌 Estilo de cada botón dentro del modal
-  boton: { 
-    flex: 1, 
-    alignItems: 'center', 
-    padding: 10 
-  },
+  // // 📌 Estilo de cada botón dentro del modal
+  // boton: { 
+  //   flex: 1, 
+  //   alignItems: 'center', 
+  //   padding: 10 
+  // },
 
   /** 📌 ESTILOS DEL MENÚ DESPLEGABLE **/
 
@@ -432,7 +421,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 30,
     right: 10,
-    backgroundColor: "white",
     borderRadius: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -452,7 +440,14 @@ const styles = StyleSheet.create({
   // 📌 Texto de las opciones dentro del menú
   textoOpcion: {
     marginLeft: 8,
-    color: "red",
     fontSize: 14,
+  },
+  botonEliminar: {
+    position: 'absolute',
+    bottom: 30,
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
   },
 });

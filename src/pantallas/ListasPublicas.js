@@ -16,7 +16,7 @@ import { API_URL } from '../../config';
 /**
  * Pantalla para mostrar todas las listas públicas existentes en el sistema.
  */
-export default function ListasPublicas() {
+export default function ListasPublicas({ correoUsuario }) {
   const [listasPublicas, setListasPublicas] = useState([]); // Listado de listas públicas
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
@@ -75,7 +75,7 @@ export default function ListasPublicas() {
    */
   const renderItem = ({ item }) => {
     return (
-      <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
+      <View style={[styles.itemContainer, { backgroundColor: colors.background, borderColor: colors.border }]}>
         <TouchableOpacity
           style={styles.listaContenido}
           onPress={() => manejarListaPress(item)}
@@ -95,7 +95,7 @@ export default function ListasPublicas() {
           </Text>
 
           {/* 📌 Nombre del dueño de la lista */}
-          <Text style={[styles.usuarioLista, { color: colors.text }]}>
+          <Text style={[styles.usuarioLista, { color: colors.textSecondary }]}>
             de {item.usuario_id}
           </Text>
         </TouchableOpacity>
@@ -106,7 +106,7 @@ export default function ListasPublicas() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* 📌 Encabezado superior de la pantalla */}
-      <Encabezado titulo="Listas Públicas" />
+      <Encabezado titulo="Listas Públicas" correoUsuario={correoUsuario} />
 
       {/* 📌 Muestra un texto de carga mientras se obtienen los datos */}
       {isLoading ? (
@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
     height: 160,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
     overflow: 'hidden'
   },
   listaContenido: {
@@ -164,7 +163,6 @@ const styles = StyleSheet.create({
   },
   usuarioLista: {
     fontSize: 12,
-    opacity: 0.6,
   },
   textoVacio: {
     marginTop: 20,

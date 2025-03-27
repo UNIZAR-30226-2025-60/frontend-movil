@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '../../config';
+import { useThemeColors } from "../componentes/Tema";
 
 export default function ListadoPreguntasForo({ correoUsuario }) {
+  const colors = useThemeColors();
   const navigation = useNavigation();
   const [misPreguntas, setMisPreguntas] = useState([]);
   const [todasPreguntas, setTodasPreguntas] = useState([]);
@@ -72,100 +74,103 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
       
       setNuevaPregunta('');
       // Recarga las preguntas después de agregar una nueva
-      cargarPreguntas();
+      cargarTodasPreguntas();
+      cargarMisPreguntas();
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Si hay usuario logueado, permitimos publicar */}
       {correoUsuario ? (
-        <View style={styles.formContainer}>
+        <View style={[styles.formContainer, { backgroundColor: colors.subtitleBackground }]}>
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                color: colors.text
+              }
+            ]}
             placeholder="Escribe tu pregunta..."
+            placeholderTextColor={colors.textSecondary}
             value={nuevaPregunta}
             onChangeText={setNuevaPregunta}
           />
-          <Button title="Preguntar" onPress={handleEnviarPregunta} />
+          <Button title="Preguntar" onPress={handleEnviarPregunta} color={colors.button} />
         </View>
       ) : (
-        <Text style={styles.aviso}>Debes iniciar sesión para publicar en el foro</Text>
+        <Text style={[styles.aviso, { color: colors.buttonSec }]}>
+          Debes iniciar sesión para publicar en el foro
+        </Text>
       )}
 
-      {/* 
-        Botones tipo "segmented control" para alternar entre 
-        "Mis preguntas" y "Todas" 
-      */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'mine' && styles.tabButtonActive]}
+          style={[styles.tabButton, selectedTab === 'mine' && { backgroundColor: colors.button }]}
           onPress={() => setSelectedTab('mine')}
         >
-          <Text style={[styles.tabText, selectedTab === 'mine' && styles.tabTextActive]}>
+          <Text style={[styles.tabText, selectedTab === 'mine' && { color: colors.buttonText }]}>
             Mis preguntas
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'all' && styles.tabButtonActive]}
+          style={[styles.tabButton, selectedTab === 'all' && { backgroundColor: colors.button }]}
           onPress={() => setSelectedTab('all')}
         >
-          <Text style={[styles.tabText, selectedTab === 'all' && styles.tabTextActive]}>
+          <Text style={[styles.tabText, selectedTab === 'all' && { color: colors.buttonText }]}>
             Todas
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Renderizado condicional según el tab seleccionado */}
-      {selectedTab === 'mine'
-        ? (
-          // Sección: Mis preguntas
-          <View style={styles.section}>
-            {misPreguntas.map((pregunta) => (
-              <View key={pregunta.id} style={styles.card}>
-                <Text style={styles.usuario}>{pregunta.usuario}</Text>
-                <Text style={styles.pregunta}>{pregunta.cuestion}</Text>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    navigation.navigate('RespuestasForo', {
-                      preguntaId: pregunta.id,
-                      cuestion: pregunta.cuestion
-                    });
-                  }}
-                >
-                  <Text style={styles.buttonText}>Ver respuestas</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        )
-        : (
-          // Sección: Todas las preguntas
-          <View style={styles.section}>
-            {todasPreguntas.map((pregunta) => (
-              <View key={pregunta.id} style={styles.card}>
-                <Text style={styles.usuario}>{pregunta.usuario}</Text>
-                <Text style={styles.pregunta}>{pregunta.cuestion}</Text>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    navigation.navigate('RespuestasForo', {
-                      preguntaId: pregunta.id,
-                      cuestion: pregunta.cuestion
-                    });
-                  }}
-                >
-                  <Text style={styles.buttonText}>Ver respuestas</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        )
-      }
+      {selectedTab === 'mine' ? (
+        // Sección: Mis preguntas
+        <View style={styles.section}>
+          {misPreguntas.map((pregunta) => (
+            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.background }]}>
+              <Text style={[styles.usuario, { color: colors.text }]}>{pregunta.usuario}</Text>
+              <Text style={[styles.pregunta, { color: colors.textSecondary }]}>{pregunta.cuestion}</Text>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.button }]}
+                onPress={() =>
+                  navigation.navigate('RespuestasForo', {
+                    preguntaId: pregunta.id,
+                    cuestion: pregunta.cuestion,
+                  })
+                }
+              >
+                <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      ) : (
+        // Sección: Todas las preguntas
+        <View style={styles.section}>
+          {todasPreguntas.map((pregunta) => (
+            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.background }]}>
+              <Text style={[styles.usuario, { color: colors.text }]}>{pregunta.usuario}</Text>
+              <Text style={[styles.pregunta, { color: colors.textSecondary }]}>{pregunta.cuestion}</Text>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.button }]}
+                onPress={() =>
+                  navigation.navigate('RespuestasForo', {
+                    preguntaId: pregunta.id,
+                    cuestion: pregunta.cuestion,
+                  })
+                }
+              >
+                <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
@@ -176,25 +181,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     alignItems: 'center',
-    backgroundColor: '#f2f2f2'
   },
   textInput: {
     flex: 1,
     marginRight: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    backgroundColor: '#fff',
     borderRadius: 5,
-    borderColor: '#ccc',
     borderWidth: 1
   },
   aviso: {
     padding: 10,
-    color: 'red',
     fontWeight: 'bold'
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 8,
     padding: 20,
     marginVertical: 5,
@@ -217,14 +217,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   button: {
-    backgroundColor: '#007bff',
     borderRadius: 8,
     paddingVertical: 6,
     paddingHorizontal: 10,
     marginLeft: 8
   },
   buttonText: {
-    color: '#fff',
     fontSize: 12
   },
   tabContainer: {
@@ -237,17 +235,9 @@ const styles = StyleSheet.create({
   tabButton: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: '#ccc',
     alignItems: 'center',
   },
-  tabButtonActive: {
-    backgroundColor: '#007bff',
-  },
   tabText: {
-    color: '#333',
     fontWeight: '600'
   },
-  tabTextActive: {
-    color: '#fff'
-  }
 });

@@ -144,9 +144,16 @@ export default function DetallesLibro({ route, correoUsuario }) {
       const enlaceCodificado = encodeURIComponent(libro.enlace);
       const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}/${enlaceCodificado}/listas`);
 
-      if (!respuesta.ok) {
-        throw new Error('No se pudieron obtener las listas donde ya está el libro');  // 404 si no hay, 500 si error interno, etc.
+      if (respuesta.status === 404) {
+        // No pasa nada: simplemente no está en ninguna lista
+        setListasSeleccionadas(new Set());
+        return;
       }
+  
+      if (!respuesta.ok) {
+        throw new Error('Error real del servidor');
+      }
+
       const datos = await respuesta.json(); // datos será un array de objetos { nombre_lista, descripcion, publica, ... }
 
       // De esos objetos, extraemos nombre_lista para guardar en un Set
