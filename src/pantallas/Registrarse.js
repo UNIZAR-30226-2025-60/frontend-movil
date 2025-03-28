@@ -39,7 +39,7 @@ export default function Registrarse({ setCorreoUsuario }) {
     setCargando(true);
 
     try {
-      const respuesta = await fetch(`${API_URL}/usuarios/registro`, {
+      const respuesta = await fetch(`${API_URL}/usuarios/registroM`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, correo, contrasena }),

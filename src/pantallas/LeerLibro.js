@@ -5,6 +5,7 @@ import Pdf from "react-native-pdf";
 import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import { useThemeColors } from "../componentes/Tema";
 import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
 
@@ -12,6 +13,7 @@ import { API_URL } from "../../config";
 export default function LeerLibro({ route, correoUsuario }) {
   const { libro } = route.params;
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   const [pdfPath, setPdfPath] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
