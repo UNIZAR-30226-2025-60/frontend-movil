@@ -146,28 +146,90 @@ export default function LeerLibro({ route, correoUsuario }) {
   const finalizarLectura = async () => {
     try {
       if (correoUsuario) {
-        const respuesta = await fetch(`${API_URL}/libros/enproceso`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            correo: correoUsuario,
-            enlace: libro.enlace,
-            pagina: currentPage
-          }),
-        });
-    
-        if (!respuesta.ok) {
-          throw new Error(respuesta.error);
+        // 1. Ha acabado la lectura de todo el libro
+        if (libro.num_paginas == currentPage) {
+          // Eliminamos el libro de en proceso, si estuviese ahí
+          const respuestaDelete = await fetch(`${API_URL}/libros/enproceso`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              correo: correoUsuario,
+              enlace: libro.enlace
+            }),
+          });
+  
+          const dataDelete = await respuestaDelete.json();
+          if (!respuestaDelete.ok) {
+            console.error("Error al eliminar el libro de 'En proceso':", dataDelete.error);
+          } else {
+            console.log("Libro eliminado de 'En Proceso':", dataDelete.message);
+          }
+
+          // Añadimos el libro a leidos
+          // ESTO FALLA
+          // FALTA AÑADIR EL LIBRO A TABLA "leidos"
+          // 
+          // const respuesta = await fetch(`${API_URL}/libros/leidos`, {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify({ 
+          //     correo: encodeURIComponent(correoUsuario),
+          //     enlace: encodeURIComponent(libro.enlace)
+          //   }),
+          // });
+
+          // if (!respuesta.ok) {
+          //   console.log("Hay un error");
+          //   const errorData = await respuesta.json();
+          //     throw new Error(errorData.error || "No se pudo agregar el libro a Leídos");
+          // }
+
+
+          console.log("Finalizada la lectura del libro correctamente");
+          Alert.alert("✅ Fin de la lectura", "Ha finalizado la lectura del libro correctamente", [
+            {
+                text: "OK",
+                onPress: () => navigation.goBack(),
+            },
+          ]);
+        } 
+
+        // 2. Aún no ha leído todo el libro
+        else {
+          const respuesta = await fetch(`${API_URL}/libros/enproceso`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              correo: correoUsuario,
+              enlace: libro.enlace,
+              pagina: currentPage
+            }),
+          });
+          if (!respuesta.ok) {
+            throw new Error(respuesta.error);
+          }
+
+          console.log("Lectura finalizada correctamente en la página " + currentPage);
+          Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPage}`, [
+            {
+              text: "OK",
+              onPress: () => navigation.goBack(),
+            },
+          ]);
+
         }
       }
 
-      console.log("Lectura finalizada correctamente en la página " + currentPage);
-      Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPage}`, [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      else {
+
+        console.log("Lectura finalizada correctamente");
+        Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPage}`, [
+          {
+            text: "OK",
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      }
 
     } catch (error) {
       console.log("Error al guardar la página de finalización de la lectura", respuesta.error);

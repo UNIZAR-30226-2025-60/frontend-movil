@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
+import BotonLoginGoogle from "../componentes/BotonLoginGoogle";
 import { API_URL } from "../../config";
 
 export default function Registrarse({ setCorreoUsuario }) {
@@ -116,6 +117,8 @@ export default function Registrarse({ setCorreoUsuario }) {
       <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleLogin} disabled={cargando}>
         <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Continuar"}</Text>
       </TouchableOpacity>
+
+      <BotonLoginGoogle setCorreoUsuario={setCorreoUsuario} />
     </View>
   );
 }

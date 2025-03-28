@@ -27,50 +27,88 @@ export default function EnProceso({ correoUsuario }) {
         }
     };
 
-  // Función para obtener los libros de la lista "En proceso"
+    // Función para obtener los libros de la lista "En proceso"
     const obtenerEnProceso = async () => {
-    try {
-        const respuestaListas = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
-      
-        const textoListas = await respuestaListas.text();
-        let listas;
-        if (textoListas.startsWith("{") || textoListas.startsWith("[")) {
-        listas = JSON.parse(textoListas);
-        } else {
-        console.warn("La respuesta de listas no es JSON:", textoListas);
-        setLibrosLeidos([]);
-        return;
-        }
+        try {
+            const respuestaEnProceso = await fetch(`${API_URL}/libros/enproceso/${correoUsuario}`);
+            if (!respuestaEnProceso.ok) {
+                console.error("Error al obtener los libros en proceso del usuario");
+                setLibrosEnProceso([]);
+                return;
+            }
 
-        const listaEnProceso = listas.find(
-            (lista) =>
-            lista.nombre.toLowerCase() === "en proceso" ||
-            lista.nombre.toLowerCase() === "enproceso"
-        );
-        if (!listaEnProceso) {
-            console.warn("No se encontró la lista 'En proceso'");
-            setLibrosEnProceso([]);
-            return;
-        }
-        const respuestaLibros = await fetch(
-            `${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(listaEnProceso.nombre)}/libros`
-        );
-        const librosData = await respuestaLibros.json();
-        if (Array.isArray(librosData)) {
-            const librosConDetalles = await Promise.all(
-            librosData.map(async (libro) => {
-                const detalles = await obtenerDetallesLibro(libro.enlace_libro);
-                return detalles ? { ...libro, ...detalles } : libro;
-            })
+            const data = await respuestaEnProceso.json();
+
+            const libros = await Promise.all(
+                data.map(async (libro) => {
+                    const detalles = await obtenerDetallesLibro(libro.enlace_libro);
+                    return detalles ? { ...libro, ...detalles } : libro;
+                })
             );
-            setLibrosEnProceso(librosConDetalles);
-        } else {
-            console.warn("La respuesta de libros no es una lista:", librosData);
-            setLibrosEnProceso([]);
-        }
+    
+            setLibrosEnProceso(libros);
+            
+            // const respuestaListas = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
+    
+            // if (!respuestaListas.ok) {
+            //     console.error(`Error al obtener las listas del usuario. Código: ${respuestaListas.status}`);
+            //     setLibrosEnProceso([]);
+            //     return;
+            // }
+    
+            // console.log("La respuesta es correcta");
+            // const listas = await respuestaListas.json();
+    
+            // if (!Array.isArray(listas) || listas.length === 0) {
+            //     console.warn("No hay listas disponibles para este usuario.");
+            //     setLibrosEnProceso([]);
+            //     return;
+            // }
+    
+            // const listaEnProceso = listas.find(
+            //     (lista) =>
+            //         lista.nombre.toLowerCase() === "en proceso" ||
+            //         lista.nombre.toLowerCase() === "enproceso"
+            // );
+    
+            // if (!listaEnProceso) {
+            //     console.warn("No se encontró la lista 'En proceso'.");
+            //     setLibrosEnProceso([]);
+            //     return;
+            // }
+    
+            // console.log("Lista 'En proceso' encontrada:", listaEnProceso);
+    
+            // const respuestaLibros = await fetch(
+            //     `${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(listaEnProceso.nombre)}/libros`
+            // );
+    
+            // if (!respuestaLibros.ok) {
+            //     console.error(`Error al obtener los libros de la lista 'En proceso'. Código: ${respuestaLibros.status}`);
+            //     setLibrosEnProceso([]);
+            //     return;
+            // }
+    
+            // console.log("Libros de la lista 'En proceso' obtenidos correctamente");
+            // const librosData = await respuestaLibros.json();
+    
+            // if (!Array.isArray(librosData) || librosData.length === 0) {
+            //     console.log("No hay libros en la lista 'En proceso'.");
+            //     setLibrosEnProceso([]);
+            //     return;
+            // }
+    
+            // const librosConDetalles = await Promise.all(
+            //     librosData.map(async (libro) => {
+            //         const detalles = await obtenerDetallesLibro(libro.enlace_libro);
+            //         return detalles ? { ...libro, ...detalles } : libro;
+            //     })
+            // );
+    
+            // setLibrosEnProceso(librosConDetalles);
         } catch (error) {
-        console.error("Error al obtener los libros en proceso:", error);
-        setLibrosEnProceso([]);
+            console.error("Error al obtener los libros en proceso:", error);
+            setLibrosEnProceso([]);
         }
     };
 

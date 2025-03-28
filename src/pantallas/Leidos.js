@@ -12,7 +12,7 @@ export default function Leidos({ correoUsuario }) {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  // Función para obtener detalles del libro
+
   const obtenerDetallesLibro = async (enlaceLibro) => {
     try {
       const enlaceCodificado = encodeURIComponent(enlaceLibro);
@@ -28,64 +28,29 @@ export default function Leidos({ correoUsuario }) {
     }
   };
 
-  // Función para obtener los libros de la lista "Leídos"
   const obtenerLeidos = async () => {
     try {
-        // 1. Obtener todas las listas del usuario
-        const respuestaListas = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
-        const textoListas = await respuestaListas.text();
-        let listas;
-        if (textoListas.startsWith("{") || textoListas.startsWith("[")) {
-            listas = JSON.parse(textoListas);
-        } else {
-            console.warn("Respuesta de listas no es JSON:", textoListas);
-            setLibrosLeidos([]);
-            return;
-        }
-
-        // 2. Filtrar la lista "Leídos"
-        const listaLeidos = listas.find(
-            (lista) =>
-            lista.nombre.toLowerCase() === "leídos" ||
-            lista.nombre.toLowerCase() === "leidos"
-        );
-        if (!listaLeidos) {
-            console.warn("No se encontró la lista 'Leídos'");
-            setLibrosLeidos([]);
-            return;
-        }
-
-        // 3. Obtener los libros de la lista filtrada
-        const respuestaLibros = await fetch(
-            `${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(listaLeidos.nombre)}/libros`
-        );
-        const textoLibros = await respuestaLibros.text();
-        let librosData;
-        if (textoLibros.startsWith("{") || textoLibros.startsWith("[")) {
-            librosData = JSON.parse(textoLibros);
-        } else {
-            console.warn("La respuesta de libros no es JSON:", textoLibros);
-            setLibrosLeidos([]);
-            return;
-        }
-
-        if (Array.isArray(librosData)) {
-            // Enriquecer cada libro con sus detalles
-            const librosConDetalles = await Promise.all(
-            librosData.map(async (libro) => {
-                const detalles = await obtenerDetallesLibro(libro.enlace_libro);
-                return detalles ? { ...libro, ...detalles } : libro;
-            })
-            );
-            setLibrosLeidos(librosConDetalles);
-        } else {
-            console.warn("La respuesta de libros no es una lista:", librosData);
-            setLibrosLeidos([]);
-        }
-        } catch (error) {
-        console.error("Error al obtener los libros leídos:", error);
+      const respuestaLeidos = await fetch(`${API_URL}/libros/leidos/${correoUsuario}`);
+      if (!respuestaLeidos.ok) {
+        console.error("Error al obtener los libros leidos del usuario");
         setLibrosLeidos([]);
-        }
+        return;
+      }
+
+      const data = await respuestaLeidos.json();
+
+      const libros = await Promise.all(
+        data.map(async (libro) =>{
+          const detalles = await obtenerDetallesLibro(libro.enlace_libro);
+          return detalles ? { ...libro, ...detalles } : libro;
+        })
+      );
+
+      setLibrosLeidos(libros);
+    } catch (error) {
+      console.error("Error al obtener los libros leídos:", error);
+      setLibrosLeidos([]);
+    }
   };
 
   useFocusEffect(

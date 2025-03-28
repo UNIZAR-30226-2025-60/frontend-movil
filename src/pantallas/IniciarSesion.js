@@ -3,9 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
-
-import { API_URL } from "../../config";
 import BotonLoginGoogle from "../componentes/BotonLoginGoogle";
+import { API_URL } from "../../config";
 
 
 export default function IniciarSesion({ setCorreoUsuario }) {
