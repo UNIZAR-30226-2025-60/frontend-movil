@@ -102,7 +102,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* 📌 Encabezado de la lista */}
-      <View style={[styles.headerLista, { backgroundColor: colors.subtitleBackground }]}>
+      <View style={[styles.headerLista, { backgroundColor: colors.backgroudSubtitle }]}>
         <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
         <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
         <Text style={[styles.privacidad, { color: colors.textSecondary }]}>{esPublica ? 'Pública' : 'Privada'}</Text>

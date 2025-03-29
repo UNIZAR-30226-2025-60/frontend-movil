@@ -17,9 +17,9 @@ export const useThemeColors = () => {
 
         // COLORES DE FONDO
         backgroundHeader: "#655f4e",
-        subtitleBackground: "#97927f",  // Justo lo que hay debajo del encabezado principal
+        backgroudSubtitle: "#97927f",  // Justo lo que hay debajo del encabezado principal
         background: "#4c4637",
-        arrowBackground: "#fef9d2",
+        buttonArrow: "#fef9d2",
 
         // TEXTO
         text: "#dfcc75",
@@ -27,21 +27,25 @@ export const useThemeColors = () => {
         subtitleText: "#000000",
 
         // ICONOS
-        icon: "#ffffff",
+        icon: "#dfcc75",
         star: "#ffe300",
 
         // BOTONES
         button: "#a54cac",
         buttonSec: "#a5365d",
-        buttonText: "#ffffff",
-
-        // OTROS BOTONES
         buttonOther: "#cacaca",
         buttonOtherText: "#a54cac",
+        buttonDark: "#4c4637",
+        buttonLight: "#dfcc75",
+
+        // TEXTO BOTONES
+        buttonText: "#ffffff",
+        buttonTextLight: "#4c4637",
+        buttonTextDark: "#dfcc75",
 
         // BOTONES DE CATEGORÍA
         categoriaButton: "#be954e",
-        categoriaButtonSec: "#d45682",
+        categoriaButtonSeleccionado: "#d45682",
 
         // BORDES
         border: "#ffffff",
@@ -53,34 +57,49 @@ export const useThemeColors = () => {
         /***************************************/
         
         // COLORES DE FONDO
-        backgroundHeader: "#bda636",
-        subtitleBackground: "#dfcc75",  // Justo lo que hay debajo del encabezado principal
-        background: "#f2f1e7",
-        arrowBackground: "#cacac9",
+        backgroundHeader: "#eeca06",
+        backgroudSubtitle: "#f8e79b",  // Justo lo que hay debajo del encabezado principal
+        background: "#f8f7f3",
+        backgroundFormulario: "#f8e79b",
 
         // TEXTO
         text: "#4c4637",
-        textSecondary: "#333333",
-        subtitleText: "#000000",
+        textSecondary: "#6a6456",
+        textTerciary: "#878374",
+        subtitleText: "#6a6456",
 
         // ICONOS
-        icon: "#000000",
-        star: "#ffe300",
+        icon: "#4c4637",
+        star: "#eeca06",
 
         // BOTONES
         button: "#007bff",
         buttonSec: "#28a745",
+        buttonDark: "#4c4637",
+        buttonDarkSecondary: "#878374",
+        buttonLight: "#f8e79b",
+
+        // TEXTO BOTONES
         buttonText: "#000000",
+        buttonTextLight: "#4c4637",
+        buttonTextDark: "#f8e79b",
 
         // OTROS BOTONES
         buttonOther: "#cacaca",
         buttonOtherText: "#007bff",
 
-        // BOTONES DE CATEGORÍA
-        categoriaButton: "#dfcc75",
-        categoriaButtonSec: "#be954e",
+        // BUSCADOR Y CATEGORÍAS
+        buscador: "#f8e79b",
+        categoriaButton: "#d9d6cc",
+        categoriaButtonSeleccionado: "#b2ab99",
+        buttonArrow: "#d9d6cc",
+
+        // VALORACIONES
+        progressFilled: "#f4dd69",
+        progressNotFilled: "#ecebe5",
 
         // BORDES
-        border: "#000000",
+        border: "#4c4637",
+        line: "#4c4637",
       };
 };

@@ -191,7 +191,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   
         {/* Menú desplegable */}
         {isMenuVisible && (
-          <View style={[styles.menuOpciones, { backgroundColor: colors.subtitleBackground }]}>
+          <View style={[styles.menuOpciones, { backgroundColor: colors.backgroudSubtitle }]}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => eliminarLista(item.nombre)}
@@ -227,7 +227,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         {/* 📌 Encabezado de la pantalla */}
         <Encabezado titulo="Mis Listas" correoUsuario={correoUsuario} />
 
-        <View style={[styles.topBar, { backgroundColor: colors.subtitleBackground }]}>
+        <View style={[styles.topBar, { backgroundColor: colors.backgroudSubtitle }]}>
           {modoSeleccion ? (
             <TouchableOpacity onPress={() => {
               setModoSeleccion(false);

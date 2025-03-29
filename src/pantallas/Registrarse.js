@@ -68,7 +68,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Nombre y apellidos</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="miNombre"
           placeholderTextColor={colors.text}
           value={nombre}
@@ -80,7 +80,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="ejemplo@ejemplo.com"
           placeholderTextColor={colors.text}
           value={correo}
@@ -93,7 +93,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="1234abc@"
           placeholderTextColor={colors.text}
           value={contrasena}
@@ -105,7 +105,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Repetir contraseña</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="1234abc@"
           placeholderTextColor={colors.text}
           value={contrasenaRepetida}
@@ -114,8 +114,8 @@ export default function Registrarse({ setCorreoUsuario }) {
         />
       </View>
 
-      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleLogin} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Continuar"}</Text>
+      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.buttonDark }]} onPress={handleLogin} disabled={cargando}>
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Continuar"}</Text>
       </TouchableOpacity>
 
       <BotonLoginGoogle setCorreoUsuario={setCorreoUsuario} />
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 22,
   },
   textoBoton: {
     fontSize: 18,

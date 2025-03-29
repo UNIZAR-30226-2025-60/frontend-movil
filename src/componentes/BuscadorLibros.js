@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, TextInput, StyleSheet, Alert } from "react-native";
-import { useThemeColors } from "./Tema"; // Importamos los colores del tema
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useThemeColors } from "./Tema";
 import { API_URL } from "../../config";
 
 // Función debounce para retrasar la ejecución de la búsqueda
@@ -61,15 +62,16 @@ export default function BuscadorLibros({ setResultados, categoria }) {
     }, [debouncedTerminoBusqueda, categoria]);
 
     return (
-        <View style={[styles.contenedor, { backgroundColor: colors.background }]}>
-            <TextInput
-                style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.backgroundHeader }]}
-                placeholder="Buscar libros..."
-                placeholderTextColor={colors.textSecondary}
-                value={terminoBusqueda}
-                onChangeText={setTerminoBusqueda}
-            />
-        </View>
+      <View style={[styles.contenedor, { backgroundColor: colors.buscador }]}>
+        <Ionicons name="search" size={20} color={colors.textSecondary} style={styles.icono} />
+        <TextInput
+          style={[styles.input, { color: colors.text }]}
+          placeholder="Buscar libros..."
+          placeholderTextColor={colors.textSecondary}
+          value={terminoBusqueda}
+          onChangeText={setTerminoBusqueda}
+        />
+      </View>
     );
 }
 
@@ -78,12 +80,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         margin: 10,
+        paddingHorizontal: 10,
+        borderRadius: 20,
+        borderWidth: 1,
+    },
+    icono: {
+        marginRight: 10,
     },
     input: {
         flex: 1,
         height: 40,
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
     },
 });

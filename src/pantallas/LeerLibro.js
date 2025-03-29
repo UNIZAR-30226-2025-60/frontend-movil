@@ -169,20 +169,20 @@ export default function LeerLibro({ route, correoUsuario }) {
           // ESTO FALLA
           // FALTA AÑADIR EL LIBRO A TABLA "leidos"
           // 
-          // const respuesta = await fetch(`${API_URL}/libros/leidos`, {
-          //   method: "POST",
-          //   headers: { "Content-Type": "application/json" },
-          //   body: JSON.stringify({ 
-          //     correo: encodeURIComponent(correoUsuario),
-          //     enlace: encodeURIComponent(libro.enlace)
-          //   }),
-          // });
+          const respuesta = await fetch(`${API_URL}/libros/leidos`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              correo: correoUsuario,
+              enlace: libro.enlace,
+            }),
+          });
 
-          // if (!respuesta.ok) {
-          //   console.log("Hay un error");
-          //   const errorData = await respuesta.json();
-          //     throw new Error(errorData.error || "No se pudo agregar el libro a Leídos");
-          // }
+          if (!respuesta.ok) {
+            console.log("Hay un error");
+            const errorData = await respuesta.json();
+              throw new Error(errorData.error || "No se pudo agregar el libro a Leídos");
+          }
 
 
           console.log("Finalizada la lectura del libro correctamente");

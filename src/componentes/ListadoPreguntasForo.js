@@ -85,7 +85,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Si hay usuario logueado, permitimos publicar */}
       {correoUsuario ? (
-        <View style={[styles.formContainer, { backgroundColor: colors.subtitleBackground }]}>
+        <View style={[styles.formContainer, { backgroundColor: colors.backgroudSubtitle }]}>
           <TextInput
             style={[
               styles.textInput,

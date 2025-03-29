@@ -27,17 +27,17 @@ export default function MenuUsuario({ setCorreoUsuario }) {
       <Text style={[styles.titulo, { color: colors.text }]}>¡Bienvenido a Bookly!</Text>
 
       <TouchableOpacity 
-        style={[styles.boton, { backgroundColor: colors.button }]}
+        style={[styles.boton, { backgroundColor: colors.buttonDark }]}
         onPress={() => navigation.navigate("IniciarSesion")}
       >
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Iniciar sesión</Text>
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Iniciar sesión</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
-        style={[styles.boton, styles.botonSecundario, { backgroundColor: colors.buttonSec }]}
+        style={[styles.boton, styles.botonSecundario, { backgroundColor: colors.buttonDark }]}
         onPress={() => navigation.navigate("Registrarse")}
       >
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Registrarse</Text>
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Registrarse</Text>
       </TouchableOpacity>
     </View>
   );
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: 8,
+      borderRadius: 22,
       marginBottom: 10,
     },
     botonSecundario: {

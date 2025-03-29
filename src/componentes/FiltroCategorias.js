@@ -66,7 +66,7 @@ export default function FiltroCategorias({ onSelectCategoria }) {
 
     return (
         <View style={styles.categoriasWrapper}>
-            <TouchableOpacity style={[styles.arrowButtonLeft, { left: 0, backgroundColor: colors.arrowBackground }]} onPress={() => scrollTo("left")}>
+            <TouchableOpacity style={[styles.arrowButtonLeft, { left: 0, backgroundColor: colors.buttonArrow }]} onPress={() => scrollTo("left")}>
                 <Icon name="chevron-left" size={20} color={colors.icon} />
             </TouchableOpacity>
 
@@ -88,24 +88,20 @@ export default function FiltroCategorias({ onSelectCategoria }) {
                             styles.categoriaButton,
                             {
                                 backgroundColor: categoriaSeleccionada === categoria.tematica
-                                    ? colors.categoriaButtonSec
+                                    ? colors.categoriaButtonSeleccionado
                                     : colors.categoriaButton,
                             },
                         ]}
                         onPress={() => handleCategoriaPress(categoria.tematica)}
                     >
-                        <Text style={{
-                            color: categoriaSeleccionada === categoria.tematica
-                                ? colors.buttonText
-                                : colors.icon,
-                        }}>
+                        <Text style={{ color: colors.text }}>
                             {categoria.tematica}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
 
-            <TouchableOpacity style={[styles.arrowButtonRight, { right: 0, backgroundColor: colors.arrowBackground }]} onPress={() => scrollTo("right")}>
+            <TouchableOpacity style={[styles.arrowButtonRight, { right: 0, backgroundColor: colors.buttonArrow }]} onPress={() => scrollTo("right")}>
                 <Icon name="chevron-right" size={20} color={colors.icon} />
             </TouchableOpacity>
         </View>

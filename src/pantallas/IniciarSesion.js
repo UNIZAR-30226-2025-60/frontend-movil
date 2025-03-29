@@ -56,12 +56,12 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}> 
+    <View style={[styles.container]}> 
       <Text style={[styles.titulo, { color: colors.text }]}>Iniciar Sesión</Text>
 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
         placeholder="ejemplo@ejemplo.com"
         placeholderTextColor={colors.text}
         value={correo}
@@ -72,7 +72,7 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
         placeholder="1234abc@"
         placeholderTextColor={colors.text}
         value={contrasena}
@@ -80,8 +80,8 @@ export default function IniciarSesion({ setCorreoUsuario }) {
         secureTextEntry
       />
 
-      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleLogin} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Confirmar"}</Text>
+      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.buttonDark }]} onPress={handleLogin} disabled={cargando}>
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Confirmar"}</Text>
       </TouchableOpacity>
 
       <BotonLoginGoogle setCorreoUsuario={setCorreoUsuario} />
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 22,
     marginTop: 10,
     marginBottom: 10,
   },

@@ -63,7 +63,7 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
         
-        <View style={[styles.headerPregunta, { backgroundColor: colors.subtitleBackground }]}>
+        <View style={[styles.headerPregunta, { backgroundColor: colors.backgroudSubtitle }]}>
           <Text style={[styles.titulo, { color: colors.text }]}>Pregunta</Text>
           <Text style={[styles.cuestion, { color: colors.text }]}>{cuestion}</Text>
         </View>
