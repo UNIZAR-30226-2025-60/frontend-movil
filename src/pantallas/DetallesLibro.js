@@ -1470,7 +1470,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             <View>
               <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
               {valoraciones.map((item) => (
-                <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}`}>
+                <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}-${item.fecha}`}>
                   <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
                   <Text style={{ color: colors.textTerciary }}>{item.usuario_id}  {item.fecha}</Text>

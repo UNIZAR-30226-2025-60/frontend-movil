@@ -85,7 +85,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Si hay usuario logueado, permitimos publicar */}
       {correoUsuario ? (
-        <View style={[styles.formContainer, { backgroundColor: colors.backgroudSubtitle }]}>
+        <View style={[styles.formContainer, { backgroundColor: colors.backgroundSecondary }]}>
           <TextInput
             style={[
               styles.textInput,
@@ -100,7 +100,12 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
             value={nuevaPregunta}
             onChangeText={setNuevaPregunta}
           />
-          <Button title="Preguntar" onPress={handleEnviarPregunta} color={colors.button} />
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.buttonDark, borderRadius: 22 }]}
+            onPress={handleEnviarPregunta}
+          >
+            <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Preguntar</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <Text style={[styles.aviso, { color: colors.buttonSec }]}>
@@ -110,19 +115,19 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'mine' && { backgroundColor: colors.button }]}
+          style={[styles.tabButton, selectedTab === 'mine' ? { backgroundColor: colors.filtroSeleccionado } : { backgroundColor: colors.filtroNoSeleccionado }]}
           onPress={() => setSelectedTab('mine')}
         >
-          <Text style={[styles.tabText, selectedTab === 'mine' && { color: colors.buttonText }]}>
+          <Text style={[styles.tabText, selectedTab === 'mine' && { color: colors.text }]}>
             Mis preguntas
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'all' && { backgroundColor: colors.button }]}
+          style={[styles.tabButton, selectedTab === 'all' ? { backgroundColor: colors.filtroSeleccionado } : { backgroundColor: colors.filtroNoSeleccionado }]}
           onPress={() => setSelectedTab('all')}
         >
-          <Text style={[styles.tabText, selectedTab === 'all' && { color: colors.buttonText }]}>
+          <Text style={[styles.tabText, selectedTab === 'all' && { color: colors.text }]}>
             Todas
           </Text>
         </TouchableOpacity>
@@ -132,11 +137,11 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
         // Sección: Mis preguntas
         <View style={styles.section}>
           {misPreguntas.map((pregunta) => (
-            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.background }]}>
-              <Text style={[styles.usuario, { color: colors.text }]}>{pregunta.usuario}</Text>
-              <Text style={[styles.pregunta, { color: colors.textSecondary }]}>{pregunta.cuestion}</Text>
+            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+              <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text>
+              <Text style={[styles.usuario, { color: colors.textSecondary }]}>{pregunta.usuario}</Text>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.button }]}
+                style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
                 onPress={() =>
                   navigation.navigate('RespuestasForo', {
                     preguntaId: pregunta.id,
@@ -144,7 +149,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                   })
                 }
               >
-                <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
+                <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -153,11 +158,11 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
         // Sección: Todas las preguntas
         <View style={styles.section}>
           {todasPreguntas.map((pregunta) => (
-            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.background }]}>
-              <Text style={[styles.usuario, { color: colors.text }]}>{pregunta.usuario}</Text>
-              <Text style={[styles.pregunta, { color: colors.textSecondary }]}>{pregunta.cuestion}</Text>
+            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+              <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text>
+              <Text style={[styles.usuario, { color: colors.textSecondary }]}>{pregunta.usuario}</Text>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.button }]}
+                style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
                 onPress={() =>
                   navigation.navigate('RespuestasForo', {
                     preguntaId: pregunta.id,
@@ -165,7 +170,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                   })
                 }
               >
-                <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
+                <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -204,26 +209,26 @@ const styles = StyleSheet.create({
     elevation: 2 // Sombra en Android
   },
   usuario: {
-    fontWeight: 'bold',
     fontSize: 12,
-    marginBottom: 5
+    marginBottom: 10,
   },
   pregunta: {
+    fontWeight: 'bold',
     fontSize: 16,
-    marginBottom: 8
+    marginBottom: 5,
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
   button: {
-    borderRadius: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    marginLeft: 8
+    borderRadius: 22,
+    paddingVertical: 7,
+    paddingHorizontal: 15,
+    marginLeft: 8,
   },
   buttonText: {
-    fontSize: 12
+    fontSize: 13
   },
   tabContainer: {
     flexDirection: 'row',

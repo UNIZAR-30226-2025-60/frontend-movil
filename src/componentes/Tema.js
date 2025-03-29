@@ -61,6 +61,7 @@ export const useThemeColors = () => {
         backgroudSubtitle: "#f8e79b",  // Justo lo que hay debajo del encabezado principal
         background: "#f8f7f3",
         backgroundFormulario: "#f8e79b",
+        backgroundSecondary: "#ecebe5",
 
         // TEXTO
         text: "#4c4637",
@@ -76,7 +77,8 @@ export const useThemeColors = () => {
         button: "#007bff",
         buttonSec: "#28a745",
         buttonDark: "#4c4637",
-        buttonDarkSecondary: "#878374",
+        buttonDarkSecondary: "#6a6456",
+        buttonDarkTerciary: "#878374",
         buttonLight: "#f8e79b",
 
         // TEXTO BOTONES
@@ -93,6 +95,10 @@ export const useThemeColors = () => {
         categoriaButton: "#d9d6cc",
         categoriaButtonSeleccionado: "#b2ab99",
         buttonArrow: "#d9d6cc",
+
+        // FILTROS
+        filtroSeleccionado: "#b2ab99",
+        filtroNoSeleccionado: "#ecebe5",
 
         // VALORACIONES
         progressFilled: "#f4dd69",

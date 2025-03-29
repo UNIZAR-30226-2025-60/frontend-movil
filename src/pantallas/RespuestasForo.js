@@ -1,7 +1,6 @@
 // RespuestasForo.js
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, Button } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TextInput, Button, TouchableOpacity } from 'react-native';
 import { useThemeColors } from '../componentes/Tema';
 import { API_URL } from '../../config';
 
@@ -73,10 +72,10 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
             <Text style={[styles.titulo, { color: colors.text }]}>Respuestas a: {cuestion}</Text>
             {respuestas.length > 0 ? (
             respuestas.map((respuesta) => (
-              <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundHeader }]}>
+              <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
                 <Text style={[styles.usuario, { color: colors.text }]}>Usuario: {respuesta.usuario_respuesta}</Text>
                 <Text style={[styles.mensaje, { color: colors.text }]}>{respuesta.mensaje_respuesta}</Text>
-                <Text style={[styles.fecha, { color: colors.textSecondary }]}>{respuesta.fecha}</Text>
+                <Text style={[styles.fecha, { color: colors.textSecondary }]}>{new Date(respuesta.fecha).toLocaleDateString()}</Text>
               </View>
             ))
             ) : (
@@ -91,7 +90,7 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
                   {
                     borderColor: colors.border,
                     color: colors.text,
-                    backgroundColor: colors.backgroundHeader
+                    backgroundColor: colors.backgroundFormulario
                   }
                 ]}
                 placeholder="Escribe tu respuesta..."
@@ -99,7 +98,12 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
                 value={nuevaRespuesta}
                 onChangeText={setNuevaRespuesta}
               />
-            <Button title="Responder" onPress={handleEnviarRespuesta} />
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.buttonDark, borderRadius: 22 }]}
+                onPress={handleEnviarRespuesta}
+              >
+                <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>RESPONDER</Text>
+              </TouchableOpacity>
             </View>
         ) : (
           <Text style={[styles.aviso, { color: colors.buttonSec }]}>Debes iniciar sesión para responder</Text>
@@ -108,6 +112,83 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
     );
 }
 
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+//   scrollContainer: {
+//     padding: 10
+//   },
+//   headerPregunta: {
+//     padding: 16,
+//     marginHorizontal: 8,
+//     marginVertical: 12,
+//     borderRadius: 8
+//   },
+//   titulo: {
+//     fontSize: 20,
+//     fontWeight: 'bold',
+//     marginBottom: 6
+//   },
+//   cuestion: {
+//     fontSize: 16,
+//   },
+//   titulo: {
+//     fontSize: 18,
+//     fontWeight: 'bold',
+//     marginBottom: 10
+//   },
+//   card: {
+//     padding: 15,
+//     borderRadius: 8,
+//     marginBottom: 10,
+//     elevation: 2,
+//     shadowColor: '#000',
+//     shadowOpacity: 0.1,
+//     shadowRadius: 5
+//   },
+//   usuario: {
+//     fontWeight: 'bold',
+//     marginBottom: 5
+//   },
+//   mensaje: {
+//     fontSize: 16,
+//     marginBottom: 5
+//   },
+//   fecha: {
+//     fontSize: 12,
+//   },
+//   sinRespuestas: {
+//     textAlign: 'center',
+//     marginVertical: 20,
+//     fontStyle: 'italic'
+//   },
+//   formContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     padding: 10,
+//     borderTopWidth: 1,
+//   },
+//   input: {
+//     flex: 1,
+//     borderWidth: 1,
+//     borderRadius: 8,
+//     paddingHorizontal: 10,
+//     paddingVertical: 6,
+//     marginRight: 10
+//   },
+//   aviso: {
+//     textAlign: 'center',
+//     padding: 10
+//   },
+//   button: {
+//     borderRadius: 8,
+//     marginLeft: 8
+//   },
+//   buttonText: {
+//     fontSize: 13
+//   },
+// });
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -176,5 +257,16 @@ const styles = StyleSheet.create({
   aviso: {
     textAlign: 'center',
     padding: 10
-  }
+  },
+  button: {
+    borderRadius: 22,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
 });
