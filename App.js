@@ -227,6 +227,18 @@ function MenuStack({ correoUsuario }) {
       >
         {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
+      
+      <Stack.Screen name="CrearLista"
+        options={({ route }) => ({
+          headerShown: true,
+          title: "Crear Lista",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        })}
+      >
+        {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
+      </Stack.Screen>
+
     </Stack.Navigator>
   );
 }
@@ -395,11 +407,25 @@ function MisListasStack({ correoUsuario }) {
         {(props) => (<MisListas {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
 
-      <Stack.Screen name="CrearLista">
+      <Stack.Screen name="CrearLista"
+        options={({ route }) => ({
+          headerShown: true,
+          title: "Crear Lista",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        })}
+      >
         {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
 
-      <Stack.Screen name="EditarLista" component={EditarLista} />
+      <Stack.Screen name="EditarLista" component={EditarLista}
+        options={({ route }) => ({
+          headerShown: true,
+          title: "Crear Lista",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.text, // Color del texto del título
+        })} 
+      />
 
       <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
 

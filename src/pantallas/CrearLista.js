@@ -89,7 +89,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
         });
 
         if (respuesta.ok) {
-            Alert.alert('Éxito', 'Lista creada correctamente.');
+            Alert.alert('✅ Éxito', 'Lista creada correctamente.');
             navigation.goBack(); // Volver a MisListas
         } else {
             Alert.alert('Error', `No se pudo crear la lista. Respuesta: ${respuestaTexto}`);
@@ -154,7 +154,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
             animationType="fade"
             onRequestClose={() => setModalVisible(false)}
           >
-            <View style={styles.modalOverlay}>
+            <View style={[styles.modalOverlay, { backgroundColor: colors.backgroundFormulario }]}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitulo}>Selecciona una imagen</Text>
     
@@ -162,7 +162,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
                   data={resto}
                   keyExtractor={(_, idx) => idx.toString()}
                   numColumns={3}
-                  style={{ maxHeight: '80%' }} // Modal más grande
+                  style={{ maxHeight: '80%', marginTop: 10, marginBottom: 15 }}
                   showsVerticalScrollIndicator
                   renderItem={({ item }) => (
                     <TouchableOpacity
@@ -188,10 +188,10 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 />
     
                 <TouchableOpacity
-                  style={[styles.botonCerrarModal, { backgroundColor: colors.buttonOther }]}
+                  style={[styles.boton, { backgroundColor: colors.buttonDark }]}
                   onPress={() => setModalVisible(false)}
                 >
-                  <Text style={[styles.textoBotonCerrar, { color: colors.buttonOtherText }]}>Cerrar</Text>
+                  <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Cerrar</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -205,33 +205,31 @@ export default function CrearLista({ correoUsuario, navigation }) {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
 
-            <Text style={[styles.titulo, { color: colors.text }]}>Crear Lista:</Text>
-
             {/* Campo de nombre */}
             <Text style={[styles.label, { color: colors.text }]}>Ingrese el nombre de su lista:</Text>
             <TextInput
-                style={[styles.input, { borderColor: colors.text, color: colors.text }]}
+                style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario}]}
                 placeholder="Ejemplo: Novelas Policiacas"
-                placeholderTextColor={colors.placeholder}
+                placeholderTextColor={colors.textSecondary}
                 value={nombre}
                 onChangeText={setNombre}
+            />
+
+            {/* Campo de descripción */}
+            <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
+            <TextInput
+                style={[styles.textarea, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+                placeholder="Añade una descripción (opcional)"
+                placeholderTextColor={colors.textSecondary}
+                value={descripcion}
+                onChangeText={setDescripcion}
+                multiline
             />
 
             {/* Imágenes principales (3 primeras) y botón "Ver más" */}
             <Text style={[styles.label, { color: colors.text }]}>Elige una imagen para la portada:</Text>
             {renderImagenesPrincipales()}
             {renderModalTodasImagenes()}
-
-            {/* Campo de descripción */}
-            <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
-            <TextInput
-                style={[styles.textarea, { borderColor: colors.text, color: colors.text }]}
-                placeholder="Añade una descripción (opcional)"
-                placeholderTextColor={colors.placeholder}
-                value={descripcion}
-                onChangeText={setDescripcion}
-                multiline
-            />
 
             {/* Selector de privacidad con radio buttons */}
             <Text style={[styles.label, { color: colors.text }]}>Privacidad:</Text>
@@ -252,10 +250,10 @@ export default function CrearLista({ correoUsuario, navigation }) {
 
             {/* Botón para crear la lista */}
             <TouchableOpacity
-                style={[styles.boton, { backgroundColor: colors.button }]}
+                style={[styles.boton, { backgroundColor: colors.buttonDark }]}
                 onPress={crearLista}
             >
-            <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Crear Lista</Text>
+            <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Crear Lista</Text>
             </TouchableOpacity>
         </View>
     );
@@ -356,17 +354,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-     // Botón para cerrar el modal
-    botonCerrarModal: {
-        marginTop: 10,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 5,
-    },
-    textoBotonCerrar: {
-        fontWeight: 'bold',
-    },
-
     // 📌 Estilos para el selector de privacidad
     radioContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 20 },
     radioButton: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 10 },
@@ -387,6 +374,6 @@ const styles = StyleSheet.create({
     radioLabel: { fontSize: 16 },
 
     // 📌 Botón de "Crear Lista"
-    boton: { padding: 15, borderRadius: 5, alignItems: 'center' },
+    boton: { padding: 15, borderRadius: 22, alignItems: 'center' },
     textoBoton: { fontSize: 16, fontWeight: 'bold' },
 });

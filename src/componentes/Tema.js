@@ -75,7 +75,7 @@ export const useThemeColors = () => {
 
         // BOTONES
         button: "#007bff",
-        buttonSec: "#28a745",
+        buttonSec: "#ff0000",
         buttonDark: "#4c4637",
         buttonDarkSecondary: "#6a6456",
         buttonDarkTerciary: "#878374",

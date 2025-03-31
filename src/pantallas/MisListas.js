@@ -96,7 +96,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
     if (sinConfirmacion) {
       await ejecutarEliminacion();
     } else {
-      Alert.alert("Eliminar lista", `¿Eliminar "${nombreLista}"?`, [
+      Alert.alert("Eliminar lista", `¿Desea eliminar "${nombreLista}"?`, [
         { text: "Cancelar", style: "cancel" },
         { text: "Eliminar", style: "destructive", onPress: ejecutarEliminacion }
       ]);
@@ -197,9 +197,11 @@ export default function MisListas({ correoUsuario, navigation, route }) {
               onPress={() => eliminarLista(item.nombre)}
               style={styles.opcionEliminar}
             >
-              <Ionicons name="trash-outline" size={20} color="red" />
+              <Ionicons name="trash-outline" size={20} color={colors.icon} />
               <Text style={styles.textoOpcion}>Eliminar</Text>
             </TouchableOpacity>
+
+            <View style={[styles.linea, { backgroundColor: colors.line, height: 0.8 }]} />
   
             <TouchableOpacity
               activeOpacity={1}
@@ -211,8 +213,8 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                 navigation.navigate("EditarLista", { lista: item, correoUsuario: correoUsuario });
               }}
             >
-              <Ionicons name="create-outline" size={20} color="blue" />
-              <Text style={[styles.textoOpcion, { color: "blue" }]}>Editar</Text>
+              <Ionicons name="create-outline" size={20} color={colors.icon} />
+              <Text style={[styles.textoOpcion, { color: colors.text }]}>Editar</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -254,6 +256,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
               return (
                 <TouchableOpacity
                   style={[styles.itemContainer, styles.addContainer]}
+                  color={[colors.border]}
                   onPress={() => navigation.navigate("CrearLista")}
                 >
                   <Ionicons name="add-circle-outline" size={50} color={colors.icon} />
@@ -449,5 +452,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
+  },
+  linea: {
+    width: '100%',
+    marginVertical: 3,
   },
 });

@@ -159,14 +159,14 @@ export default function EditarLista({ route, navigation }) {
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.backgroundFormulario }]}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitulo}>Selecciona una imagen</Text>
             <FlatList
               data={imagenesModal}
               keyExtractor={(_, idx) => idx.toString()}
               numColumns={3}
-              style={{ maxHeight: '80%' }}
+              style={{ maxHeight: '80%', marginTop: 10, marginBottom: 15 }}
               showsVerticalScrollIndicator={true}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -191,10 +191,10 @@ export default function EditarLista({ route, navigation }) {
               contentContainerStyle={styles.listaModal}
             />
             <TouchableOpacity
-              style={styles.botonCerrarModal}
+              style={[styles.boton, { backgroundColor: colors.buttonDark }]}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.textoBotonCerrar}>Cerrar</Text>
+              <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -204,33 +204,31 @@ export default function EditarLista({ route, navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.titulo, { color: colors.text }]}>Editar Lista</Text>
-
       {/* Campo de nombre */}
       <Text style={[styles.label, { color: colors.text }]}>Nombre de la lista:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.text }]}
+        style={[styles.input, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario }]}
         placeholder="Nombre de la lista"
-        placeholderTextColor={colors.placeholder}
+        placeholderTextColor={colors.textSecondary}
         value={nombre}
         onChangeText={setNombre}
+      />
+
+      {/* Campo de descripción */}
+      <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
+      <TextInput
+        style={[styles.textarea, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario }]}
+        placeholder="Descripción (opcional)"
+        placeholderTextColor={colors.textSecondary}
+        value={descripcion}
+        onChangeText={setDescripcion}
+        multiline
       />
 
       {/* Vista principal de imágenes */}
       <Text style={[styles.label, { color: colors.text }]}>Elige una imagen para la portada:</Text>
       {renderImagenesPrincipales()}
       {renderModalTodasImagenes()}
-
-      {/* Campo de descripción */}
-      <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
-      <TextInput
-        style={[styles.textarea, { borderColor: colors.text }]}
-        placeholder="Descripción (opcional)"
-        placeholderTextColor={colors.placeholder}
-        value={descripcion}
-        onChangeText={setDescripcion}
-        multiline
-      />
 
       {/* Selector de privacidad */}
       <Text style={[styles.label, { color: colors.text }]}>Privacidad:</Text>
@@ -253,10 +251,10 @@ export default function EditarLista({ route, navigation }) {
 
       {/* Botón para confirmar edición */}
       <TouchableOpacity
-        style={[styles.boton, { backgroundColor: colors.button }]}
+        style={[styles.boton, { backgroundColor: colors.buttonDark }]}
         onPress={editarLista}
       >
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Guardar cambios</Text>
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Guardar cambios</Text>
       </TouchableOpacity>
     </View>
   );
@@ -351,15 +349,6 @@ const styles = StyleSheet.create({
   listaModal: {
     justifyContent: 'center',
   },
-  botonCerrarModal: {
-    marginTop: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-  },
-  textoBotonCerrar: {
-    fontWeight: 'bold',
-  },
   
   radioContainer: { 
     flexDirection: 'row', 
@@ -390,7 +379,7 @@ const styles = StyleSheet.create({
   },
   boton: { 
     padding: 15, 
-    borderRadius: 5, 
+    borderRadius: 22, 
     alignItems: 'center' 
   },
   textoBoton: { 

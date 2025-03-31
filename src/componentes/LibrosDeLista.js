@@ -103,8 +103,8 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 
       {/* 📌 Encabezado de la lista */}
       <View style={[styles.headerLista, { backgroundColor: colors.backgroudSubtitle }]}>
-        <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
-        <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+        <Text style={[styles.tituloLista, { color: colors.text }]}>Nombre: {nombreLista || 'Título de la lista'}</Text>
+        <Text style={[styles.descripcionLista, { color: colors.text }]}>Descripción: {descripcionLista?.trim() || 'Sin descripción'}</Text>
         <Text style={[styles.privacidad, { color: colors.textSecondary }]}>{esPublica ? 'Pública' : 'Privada'}</Text>
       </View>
 
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
   },
   headerLista: {
     padding: 16,                // espacio interno
-    marginHorizontal: 8,        // márgenes laterales
-    marginBottom: 16,           // espacio debajo
+    marginHorizontal: 10,        // márgenes laterales
+    marginVertical: 10,
     borderRadius: 8,            // esquinas redondeadas
   },
   tituloLista: {

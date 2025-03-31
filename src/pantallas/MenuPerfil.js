@@ -2,34 +2,45 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "../componentes/Tema";
+import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
 
 
 export default function MenuPerfil({ route, navigation }) {
   const { correoUsuario, setCorreoUsuario } = route.params;
   const [usuario, setUsuario] = useState(null);
+  const [esUsuarioGoogle, setEsUsuarioGoogle] = useState(false);
   const colors = useThemeColors();
 
   useEffect(() => {
-    const obtenerDatosUsuario = async () => {
-      try {
-        const response = await fetch(`${API_URL}/usuarios/usuario/${encodeURIComponent(correoUsuario)}`);
-        if (!response.ok) throw new Error("Usuario no autenticado");
-
-        const data = await response.json();
-
-        // Transformar la URL de la foto de perfil si es de Google Drive
-        if (data.foto_perfil) {
-          data.foto_perfil = transformarURLGoogleDrive(data.foto_perfil);
-        }
-
-        setUsuario(data);
-      } catch (error) {
-        console.error("Error al obtener los datos del usuario:", error);
-      }
-    };
     obtenerDatosUsuario();
   }, [correoUsuario]);
+
+  const obtenerDatosUsuario = async () => {
+    try {
+      const response = await fetch(`${API_URL}/usuarios/usuario/${encodeURIComponent(correoUsuario)}`);
+      if (!response.ok) throw new Error("Usuario no autenticado");
+
+      const data = await response.json();
+
+      // Transformar la URL de la foto de perfil si es de Google Drive
+      if (data.foto_perfil) {
+        data.foto_perfil = transformarURLGoogleDrive(data.foto_perfil);
+      }
+
+      setUsuario(data);
+
+      // Consultar si el usuario es de Google
+      const googleResponse = await fetch(`${API_URL}/usuarios/usuario/esGoogle/${encodeURIComponent(correoUsuario)}`);
+      if (!googleResponse.ok) throw new Error("Error al verificar si el usuario es de Google");
+
+      const googleData = await googleResponse.json();
+      setEsUsuarioGoogle(googleData.esGoogle);
+
+    } catch (error) {
+      console.error("Error al obtener los datos del usuario:", error);
+    }
+  };
 
   const transformarURLGoogleDrive = (url) => {
     const match = url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)\//);
@@ -58,9 +69,9 @@ export default function MenuPerfil({ route, navigation }) {
 
   if (usuario === null) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.text} />
-        <Text style={styles.text}>Cargando...</Text>
+      <View style={styles.container}>
+        <Image source={cargandoGif} style={styles.loadingImage}/>
+        <Text style={{ color: colors.text }}>Cargando...</Text>
       </View>
     );
   }
@@ -77,23 +88,28 @@ export default function MenuPerfil({ route, navigation }) {
       <Text style={[styles.nombre, { color: colors.text }]}>{usuario.nombre}</Text>
       <Text style={[styles.emailText, { color: colors.textSecondary }]}>{usuario.correo}</Text>
       
-      {/* Botón Cambiar contraseña */}
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.button }]}
-        onPress={() => navigation.navigate("CambioContrasena", { usuario: usuario })}
-      >
-        <Ionicons name="pencil" size={20} color={colors.buttonText} />
-        <Text style={[styles.buttonText, { color: colors.buttonText}]}>Editar Contraseña</Text>
-      </TouchableOpacity>
+      
+      {!esUsuarioGoogle && (
+        <>
+          {/* Botón Cambiar contraseña */}
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.button }]}
+            onPress={() => navigation.navigate("CambioContrasena", { usuario: usuario })}
+          >
+            <Ionicons name="pencil" size={20} color={colors.buttonText} />
+            <Text style={[styles.buttonText, { color: colors.buttonText}]}>Editar Contraseña</Text>
+          </TouchableOpacity>
 
-      {/* Botón Cambiar nombre */}
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.button }]}
-        onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
-      >
-        <Ionicons name="pencil" size={20} color={colors.buttonText} />
-        <Text style={[styles.buttonText, { color: colors.buttonText}]}>Cambiar Nombre</Text>
-      </TouchableOpacity>
+          {/* Botón Cambiar nombre */}
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.button }]}
+            onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
+          >
+            <Ionicons name="pencil" size={20} color={colors.buttonText} />
+            <Text style={[styles.buttonText, { color: colors.buttonText}]}>Cambiar Nombre</Text>
+          </TouchableOpacity>
+        </>
+      )}
 
       {/* Botón Cerrar Sesión */}
       <TouchableOpacity
@@ -186,5 +202,9 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
     backgroundColor: "red",
+  },
+  loadingImage: {
+    width: 160,
+    height: 160,
   },
 });

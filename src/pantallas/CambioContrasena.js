@@ -53,32 +53,32 @@ export default function CambioContrasena({ route, navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
-      <Text style={[styles.label, { color: colors.text }]}>Contraseña actual</Text>
+      <Text style={[styles.label, { color: colors.text }]}>Contraseña actual:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
         secureTextEntry
         value={oldPassword}
         onChangeText={setOldPassword}
       />
       
-      <Text style={[styles.label, { color: colors.text }]}>Nueva contraseña</Text>
+      <Text style={[styles.label, { color: colors.text }]}>Nueva contraseña:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
         secureTextEntry
         value={newPassword}
         onChangeText={setNewPassword}
       />
 
-      <Text style={[styles.label, { color: colors.text }]}>Confirmar nueva contraseña</Text>
+      <Text style={[styles.label, { color: colors.text }]}>Confirmar nueva contraseña:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
       />
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: colors.button }]} onPress={handlePasswordChange}>
-        <Text style={[styles.buttonText, { color: colors.buttonText }]}>Actualizar Contraseña</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: colors.buttonDark }]} onPress={handlePasswordChange}>
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Actualizar Contraseña</Text>
       </TouchableOpacity>
     </View>
   );
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 22,
     alignItems: "center",
   },
   buttonText: {
