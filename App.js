@@ -8,17 +8,10 @@
  *  - Pilas de navegación para cada sección de la app
  */
 
-/**********************************************************************************/
-// DUDAAAAAAAAAAAAAAAAAAAAAAAAAA:
-// ¿Meter en una función lo que tiene que ver con los detalles de un libro?
-// Asi, la llamamos desde Menú, Mis Listas, En proceso, Leídos y Mis favoritos
-/**********************************************************************************/
-
 import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Text } from 'react-native'; // Asegúrate de importar Text
 
 // Importación de pantallas principales
 import DetallesLibro from './src/pantallas/DetallesLibro';
@@ -33,6 +26,7 @@ import Menu from './src/pantallas/Menu';
 import LeerLibro from './src/pantallas/LeerLibro';
 import Foro from './src/pantallas/Foro';
 import RespuestasForo from './src/pantallas/RespuestasForo';
+import Estadisticas from './src/pantallas/Estadisticas';
 import Favoritos from './src/pantallas/Favoritos';
 import Leidos from './src/pantallas/Leidos';
 import EnProceso from './src/pantallas/EnProceso';
@@ -48,9 +42,6 @@ import { useThemeColors } from './src/componentes/Tema';
 // Creación de navegadores
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-// ELIMINAR ESTO CUANDO ESTÉN LAS PANTALLAS
-const Estadisticas = () => <Text>Estadísticas</Text>;
 
 /**
  * 📌 Componente principal de la aplicación
@@ -159,7 +150,7 @@ function DrawerNavigator({ correoUsuario }) {
       {correoUsuario && (
         <>
           <Drawer.Screen name="Estadísticas" options={{ headerShown: false }}>
-            {(props) => <EstadisticasStack {...props} />}
+            {(props) => <EstadisticasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
 
           <Drawer.Screen name="Listas públicas" options={{ headerShown: false }}>
@@ -276,10 +267,12 @@ function ForoStack({ correoUsuario }) {
 /**
  * 📌 EstadisticasStack: Pila de navegación para la sección de estadísticas
  */
-function EstadisticasStack() {
+function EstadisticasStack({ correoUsuario }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="EstadisticasScreen" component={Estadisticas} />
+      <Stack.Screen name="EstadisticasScreen">
+        {props => <Estadisticas {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

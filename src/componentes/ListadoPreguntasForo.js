@@ -114,14 +114,21 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
       )}
 
       <View style={styles.tabContainer}>
+      {correoUsuario && (
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'mine' ? { backgroundColor: colors.filtroSeleccionado } : { backgroundColor: colors.filtroNoSeleccionado }]}
+          style={[
+            styles.tabButton,
+            selectedTab === 'mine'
+              ? { backgroundColor: colors.filtroSeleccionado }
+              : { backgroundColor: colors.filtroNoSeleccionado }
+          ]}
           onPress={() => setSelectedTab('mine')}
         >
           <Text style={[styles.tabText, selectedTab === 'mine' && { color: colors.text }]}>
             Mis preguntas
           </Text>
         </TouchableOpacity>
+      )}
 
         <TouchableOpacity
           style={[styles.tabButton, selectedTab === 'all' ? { backgroundColor: colors.filtroSeleccionado } : { backgroundColor: colors.filtroNoSeleccionado }]}
