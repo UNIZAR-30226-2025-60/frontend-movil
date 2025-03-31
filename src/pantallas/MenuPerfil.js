@@ -69,7 +69,7 @@ export default function MenuPerfil({ route, navigation }) {
 
   if (usuario === null) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Image source={cargandoGif} style={styles.loadingImage}/>
         <Text style={{ color: colors.text }}>Cargando...</Text>
       </View>

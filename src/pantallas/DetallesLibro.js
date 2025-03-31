@@ -642,7 +642,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       >
         <View style={{ backgroundColor: 'white', padding: 16, borderTopLeftRadius: 12, borderTopRightRadius: 12, maxHeight: '50%', }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Guardar en...</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.textDark }}>Guardar en...</Text>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
               <Text style={{ fontSize: 18, fontWeight: 'bold' }}>X</Text>
             </TouchableOpacity>
@@ -670,17 +670,17 @@ export default function DetallesLibro({ route, correoUsuario }) {
                       height: 24,
                       borderRadius: 4,
                       borderWidth: 2,
-                      borderColor: colors.border,
+                      borderColor: colors.textDark,
                       marginRight: 8,
                       justifyContent: 'center',
                       alignItems: 'center',
                       // Si está seleccionado, fondo azul, si no, transparente
-                      backgroundColor: isSelected ? colors.background : 'transparent',
+                      backgroundColor: 'transparent',
                     }}
                   >
                     {/* Si está seleccionado, muestra un check (puedes usar texto o un ícono) */}
                     {isSelected && (
-                      <Text style={{ color: colors.text, fontWeight: 'bold' }}>✓</Text>
+                      <Text style={{ color: colors.textDark, fontWeight: 'bold' }}>✓</Text>
                     )}
                   </View>
 
@@ -699,12 +699,13 @@ export default function DetallesLibro({ route, correoUsuario }) {
               marginTop: 10,
               padding: 12,
               backgroundColor: colors.background,
-              borderRadius: 6,
+              borderRadius: 22,
+              
               alignItems: 'center',
             }}
             onPress={() => navigation.navigate("CrearLista")}
           >
-            <Text style={{ color: colors.text, fontWeight: 'bold' }}>+ Nueva lista</Text>
+            <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 15 }}>+ Nueva lista</Text>
           </TouchableOpacity>
         </View>
       </Modal>

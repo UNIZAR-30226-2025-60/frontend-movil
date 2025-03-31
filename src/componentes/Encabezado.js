@@ -47,8 +47,8 @@ export default function Encabezado({ titulo, correoUsuario }) {
 
       {/* Subtítulo, solo si 'titulo' está definido */}
       {titulo && (
-        <View style={[styles.subtituloContainer, { backgroundColor: colors.backgroudSubtitle }]}>
-          <Text style={[styles.subtitulo, { color: colors.subtitleText }]}>{titulo}</Text>
+        <View style={[styles.subtituloContainer, { backgroundColor: colors.backgroundSubtitle }]}>
+          <Text style={[styles.subtitulo, { color: colors.textHeader }]}>{titulo}</Text>
         </View>
       )}
     </SafeAreaView>

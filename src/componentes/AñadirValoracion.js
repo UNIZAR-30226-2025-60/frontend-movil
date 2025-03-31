@@ -61,18 +61,18 @@ export default function AñadirValoracion({ route, correoUsuario }) {
         
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Título</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.icon }]}
         placeholder="El mejor libro"
-        placeholderTextColor={colors.text}
+        placeholderTextColor={colors.textFormulario}
         value={titulo}
         onChangeText={setTitulo}
       />
 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Mensaje</Text>
       <TextInput
-        style={[styles.inputGrande, { backgroundColor: colors.backgroundHeader, color: colors.text, borderColor: colors.icon }]}
+        style={[styles.inputGrande, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.icon }]}
         placeholder="Me ha gustado por..."
-        placeholderTextColor={colors.text}
+        placeholderTextColor={colors.textFormulario}
         value={mensaje}
         onChangeText={setMensaje}
       />
