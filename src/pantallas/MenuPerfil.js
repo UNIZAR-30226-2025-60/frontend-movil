@@ -93,31 +93,31 @@ export default function MenuPerfil({ route, navigation }) {
         <>
           {/* Botón Cambiar contraseña */}
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.button }]}
+            style={[styles.button, { backgroundColor: colors.buttonDarkSecondary }]}
             onPress={() => navigation.navigate("CambioContrasena", { usuario: usuario })}
           >
-            <Ionicons name="pencil" size={20} color={colors.buttonText} />
-            <Text style={[styles.buttonText, { color: colors.buttonText}]}>Editar Contraseña</Text>
+            <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
+            <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Editar Contraseña</Text>
           </TouchableOpacity>
 
           {/* Botón Cambiar nombre */}
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.button }]}
+            style={[styles.button, { backgroundColor: colors.buttonDarkSecondary }]}
             onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
           >
-            <Ionicons name="pencil" size={20} color={colors.buttonText} />
-            <Text style={[styles.buttonText, { color: colors.buttonText}]}>Cambiar Nombre</Text>
+            <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
+            <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Cambiar Nombre</Text>
           </TouchableOpacity>
         </>
       )}
 
       {/* Botón Cerrar Sesión */}
       <TouchableOpacity
-        style={[styles.secondButton, { backgroundColor: colors.buttonOther }]}
+        style={[styles.secondButton, { backgroundColor: colors.buttonDark }]}
         onPress={cerrarSesion}
       >
-        <Ionicons name="log-out-outline" size={18} color={colors.buttonOtherText} />
-        <Text style={[styles.SecondButtonText, { color: colors.buttonOtherText }]}>Cerrar Sesión</Text>
+        <Ionicons name="log-out-outline" size={18} color={colors.buttonTextDark} />
+        <Text style={[styles.SecondButtonText, { color: colors.buttonTextDark }]}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
   );
@@ -159,9 +159,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 25,
-    borderRadius: 8,
+    borderRadius: 22,
     marginTop: 15,
-    width: '80%',
+    width: '65%',
     justifyContent: 'center',
   },
   buttonText: {
@@ -173,9 +173,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 25,
-    borderRadius: 8,
+    borderRadius: 22,
     marginTop: 15,
-    width: '50%',
+    width: '80%',
     justifyContent: 'center',
   },
   secondButtonText: {
