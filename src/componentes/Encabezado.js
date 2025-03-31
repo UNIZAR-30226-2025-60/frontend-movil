@@ -33,15 +33,15 @@ export default function Encabezado({ titulo, correoUsuario }) {
 
         {/* Botón de Menú */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Ionicons name="menu" size={30} color={colors.icon} />
+          <Ionicons name="menu" size={30} color={colors.textHeader} />
         </TouchableOpacity>
 
         {/* Título principal */}
-        <Text style={[styles.title, { color: colors.text }]}>{ "BOOKLY" }</Text>
+        <Text style={[styles.title, { color: colors.textHeader }]}>{ "BOOKLY" }</Text>
 
         {/* Icono de Usuario */}
         <TouchableOpacity onPress={manejarNavegacionUsuario}>
-        <Ionicons name="person-circle-outline" size={30} color={colors.icon} />
+        <Ionicons name="person-circle-outline" size={30} color={colors.textHeader} />
         </TouchableOpacity>
       </View>
 

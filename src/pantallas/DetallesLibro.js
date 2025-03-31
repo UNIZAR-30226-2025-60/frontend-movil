@@ -69,7 +69,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       obtenerValoraciones();
-      obtenerListasUsuario();
+      if (correoUsuario) {
+        obtenerListasUsuario();
+      }
+      
     });
     return unsubscribe;
   }, [navigation]);
@@ -483,7 +486,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
         </Text>
         {!esResumenCorto && (
           <TouchableOpacity onPress={() => setMostrarResumenCompleto(!mostrarResumenCompleto)}>
-            <Text style={{ color: colors.button, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
+            <Text style={{ color: colors.buttonTextLight, fontWeight: 'bold', marginTop: 5, marginLeft: 10 }}>
               {mostrarResumenCompleto ? "Ver menos" : "Ver más"}
             </Text>
           </TouchableOpacity>
@@ -570,8 +573,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
         <View>
-          <Text style={[{color: colors.text}]}>Valoración general</Text>
-          <Text style={{ fontSize: 16 }}>{promedio} de 5</Text>
+          <Text style={[{ color: colors.text }]}>Valoración general</Text>
+          <Text style={[{ fontSize: 16, color: colors.text }]}>{promedio} de 5</Text>
           <Text style={{ fontSize: 20, marginBottom: 7 }}>
             {Array(estrellasLlenas).fill(<Ionicons name="star" size={24} color={colors.star} />)}
             {Array(estrellasVacías).fill(<Ionicons name="star-outline" size={24} color={colors.border} />)}

@@ -16,39 +16,61 @@ export const useThemeColors = () => {
         /***************************************/
 
         // COLORES DE FONDO
-        backgroundHeader: "#655f4e",
+        backgroundHeader: "#eeca06",
         backgroudSubtitle: "#97927f",  // Justo lo que hay debajo del encabezado principal
         background: "#4c4637",
         buttonArrow: "#fef9d2",
+        // ahora
+        backgroundFormulario: "#B2AB99",
+        backgroundSecondary: "#ecebe5",
+        //
 
         // TEXTO
-        text: "#dfcc75",
-        textSecondary: "#a54cac",
+        textHeader: "#4c4637",
+        text: "#FBF1CD",
+        textDark: "#4c4637",
+        textLight: "#FBF1CD",
+        textSecondary: "#F8E79B",
         subtitleText: "#000000",
+        // ahora
+        textTerciary: "#F4DD69",
+        //
 
         // ICONOS
-        icon: "#dfcc75",
+        icon: "#FBF1CD",
         star: "#ffe300",
 
         // BOTONES
         button: "#a54cac",
         buttonSec: "#a5365d",
-        buttonOther: "#cacaca",
-        buttonOtherText: "#a54cac",
-        buttonDark: "#4c4637",
-        buttonLight: "#dfcc75",
+        buttonDark: "#FBF1CD",
+        buttonDarkSecondary: "#F8E79B",
+        buttonDarkTerciary: "#F4DD69",
+        buttonLight: "#4c4637",
 
         // TEXTO BOTONES
-        buttonText: "#ffffff",
-        buttonTextLight: "#4c4637",
-        buttonTextDark: "#dfcc75",
+        buttonText: "#000000",
+        buttonTextLight: "#f8e79b",
+        buttonTextDark: "#4c4637",
 
-        // BOTONES DE CATEGORÍA
-        categoriaButton: "#be954e",
-        categoriaButtonSeleccionado: "#d45682",
+        // BUSCADOR Y CATEGORÍAS
+        buscador: "#FBF1CD",
+        categoriaButton: "#C3C1B3",
+        categoriaButtonSeleccionado: "#878374",
+        categoriaText: "#4c4637",
+        buttonArrow: "#d9d6cc",
+
+        // FILTROS
+        filtroSeleccionado: "#b2ab99",
+        filtroNoSeleccionado: "#ecebe5",
+
+        // VALORACIONES
+        progressFilled: "#f4dd69",
+        progressNotFilled: "#ecebe5",
 
         // BORDES
-        border: "#ffffff",
+        border: "#FBF1CD",
+        line: "#FBF1CD",
         
         
       }
@@ -64,7 +86,10 @@ export const useThemeColors = () => {
         backgroundSecondary: "#ecebe5",
 
         // TEXTO
+        textHeader: "#4c4637",
         text: "#4c4637",
+        textDark: "#4c4637",
+        textLight: "#FBF1CD",
         textSecondary: "#6a6456",
         textTerciary: "#878374",
         subtitleText: "#6a6456",
@@ -75,7 +100,7 @@ export const useThemeColors = () => {
 
         // BOTONES
         button: "#007bff",
-        buttonSec: "#ff0000",
+        buttonSec: "#28a745",
         buttonDark: "#4c4637",
         buttonDarkSecondary: "#6a6456",
         buttonDarkTerciary: "#878374",
@@ -86,14 +111,11 @@ export const useThemeColors = () => {
         buttonTextLight: "#4c4637",
         buttonTextDark: "#f8e79b",
 
-        // OTROS BOTONES
-        buttonOther: "#cacaca",
-        buttonOtherText: "#007bff",
-
         // BUSCADOR Y CATEGORÍAS
         buscador: "#f8e79b",
         categoriaButton: "#d9d6cc",
         categoriaButtonSeleccionado: "#b2ab99",
+        categoriaText: "#4c4637",
         buttonArrow: "#d9d6cc",
 
         // FILTROS

@@ -87,7 +87,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           title: "Iniciar Sesión",
           headerShown: true,
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
@@ -99,7 +99,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           title: "Registrarse",
           headerShown: true,
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <Registrarse {...props} setCorreoUsuario={setCorreoUsuario} />}
@@ -112,7 +112,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           title: "Menú de Usuario",
           headerShown: true,
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       />
 
@@ -124,7 +124,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerShown: true, 
           title: "Perfil",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text, }}
+          headerTintColor: colors.textHeader, }}
       />
 
       <Stack.Screen
@@ -135,7 +135,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerShown: true, 
           title: "Cambio contraseña",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text, }}
+          headerTintColor: colors.textHeader, }}
       />
     </Stack.Navigator>
   );
@@ -202,7 +202,7 @@ function MenuStack({ correoUsuario }) {
         options={{ 
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />} 
@@ -212,7 +212,7 @@ function MenuStack({ correoUsuario }) {
         options={{ 
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
@@ -222,7 +222,7 @@ function MenuStack({ correoUsuario }) {
         options={{ 
           title: "Añadir valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
         {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
@@ -233,7 +233,7 @@ function MenuStack({ correoUsuario }) {
           headerShown: true,
           title: "Crear Lista",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         })}
       >
         {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
@@ -263,7 +263,7 @@ function ForoStack({ correoUsuario }) {
           title: 'Respuestas',
           headerShown: true,
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
           headerTitleStyle: { fontWeight: 'bold' }
         }}
       >
@@ -300,7 +300,7 @@ function FavoritosStack({ correoUsuario }) {
           headerShown: true,
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
 
@@ -311,7 +311,7 @@ function FavoritosStack({ correoUsuario }) {
         options={{ 
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
@@ -337,7 +337,7 @@ function LeidosStack({ correoUsuario }) {
           headerShown: true,
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
@@ -349,10 +349,21 @@ function LeidosStack({ correoUsuario }) {
           headerShown: true,
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="AñadirValoracion"
+        options={{ 
+          headerShown: true,
+          title: "Añadir valoración",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.textHeader, // Color del texto del título
+        }}
+      >
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -375,7 +386,7 @@ function EnProcesoStack({ correoUsuario }) {
           headerShown: true,
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
@@ -387,10 +398,21 @@ function EnProcesoStack({ correoUsuario }) {
           headerShown: true,
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="AñadirValoracion"
+        options={{ 
+          headerShown: true,
+          title: "Añadir valoración",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.textHeader, // Color del texto del título
+        }}
+      >
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -412,7 +434,7 @@ function MisListasStack({ correoUsuario }) {
           headerShown: true,
           title: "Crear Lista",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         })}
       >
         {(props) => (<CrearLista {...props} correoUsuario={correoUsuario} />)}
@@ -423,7 +445,7 @@ function MisListasStack({ correoUsuario }) {
           headerShown: true,
           title: "Crear Lista",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         })} 
       />
 
@@ -434,7 +456,7 @@ function MisListasStack({ correoUsuario }) {
           headerShown: true,
           title: "Mis Listas",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         })}
       >
         {(props) => (<LibrosDeLista {...props} correoUsuario={correoUsuario} />)}
@@ -445,7 +467,7 @@ function MisListasStack({ correoUsuario }) {
           headerShown: true,
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
@@ -455,7 +477,7 @@ function MisListasStack({ correoUsuario }) {
         options={{ 
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
-          headerTintColor: colors.text, // Color del texto del título
+          headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
@@ -482,7 +504,7 @@ function ListasPublicasStack({ correoUsuario }) {
           headerShown: true,
           title: "Libros de la lista",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <LibrosDeLista {...props} correoUsuario={correoUsuario} />}
@@ -494,7 +516,7 @@ function ListasPublicasStack({ correoUsuario }) {
           headerShown: true,
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.text,
+          headerTintColor: colors.textHeader,
         }}
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}

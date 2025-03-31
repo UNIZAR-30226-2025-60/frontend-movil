@@ -250,10 +250,10 @@ export default function LeerLibro({ route, correoUsuario }) {
           <View>
             {/* Botón Finalizar Lectura */}
             <TouchableOpacity
-              style={[styles.finishButton, { backgroundColor: colors.buttonSec }]}
+              style={[styles.finishButton, { backgroundColor: colors.buttonDark }]}
               onPress={finalizarLectura}
             >
-              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Finalizar Lectura</Text>
+              <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Finalizar Lectura</Text>
             </TouchableOpacity>
 
             {/* Control del Zoom y Marcador */}
@@ -261,7 +261,7 @@ export default function LeerLibro({ route, correoUsuario }) {
               <TouchableOpacity
                 style={[
                   styles.zoomButton,
-                  { backgroundColor: scale <= 1 ? colors.border : colors.button },
+                  { backgroundColor: scale <= 1 ? colors.buttonLight : colors.buttonDark },
                 ]}
                 onPress={decreaseZoom}
                 disabled={scale <= 1}
@@ -269,18 +269,18 @@ export default function LeerLibro({ route, correoUsuario }) {
                 <Icon
                   name="search-minus"
                   size={20}
-                  color={scale <= 1 ? colors.textSecondary : colors.buttonText}
+                  color={scale <= 1 ? colors.buttonTextLight : colors.buttonTextDark }
                 />
               </TouchableOpacity>
 
               <Text style={[styles.zoomText, { color: colors.text }]}>{(scale * 100).toFixed(0)}%</Text>
 
               <TouchableOpacity
-                style={[styles.zoomButton, { backgroundColor: scale >= 2 ? colors.border : colors.button },]}
+                style={[styles.zoomButton, { backgroundColor: scale >= 2 ? colors.buttonLight : colors.buttonDark },]}
                 onPress={increaseZoom}
                 disabled={scale >= 3}
               >
-                <Icon name="search-plus" size={20} color={scale >= 2 ? colors.textSecondary : colors.buttonText} />
+                <Icon name="search-plus" size={20} color={scale >= 2 ? colors.buttonTextLight : colors.buttonTextDark } />
               </TouchableOpacity>
 
               {/* Botón de Marcador */}
@@ -313,11 +313,11 @@ export default function LeerLibro({ route, correoUsuario }) {
           {/* Botones de navegación */}
           <View style={[styles.buttonContainer, { backgroundColor: colors.backgroundHeader }]}>
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: currentPage <= 1 ? colors.buttonOther : colors.button, }]}
+              style={[styles.button, { backgroundColor: currentPage <= 1 ? colors.buttonLight : colors.buttonDark, }]}
               onPress={() => changePage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Anterior</Text>
+              <Text style={[styles.buttonText, { color: currentPage <= 1 ? colors.buttonTextLight : colors.buttonTextDark,  }]}>Anterior</Text>
             </TouchableOpacity>
 
             <Text style={[styles.pageText, { color: colors.text }]}>
@@ -330,14 +330,20 @@ export default function LeerLibro({ route, correoUsuario }) {
                 {
                   backgroundColor:
                     totalPages && currentPage >= totalPages
-                      ? colors.buttonOther
-                      : colors.button,
+                      ? colors.buttonLight
+                      : colors.buttonDark,
                 },
               ]}
               onPress={() => changePage(currentPage + 1)}
               disabled={totalPages && currentPage >= totalPages}
             >
-              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Siguiente</Text>
+              <Text 
+                style={[styles.buttonText, { color: totalPages && currentPage >= totalPages
+                      ? colors.buttonTextLight
+                      : colors.buttonTextDark, }]}
+              >
+                Siguiente
+              </Text>
             </TouchableOpacity>
           </View>
         </>
@@ -367,7 +373,7 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 20,
   },
   buttonText: {
     fontSize: 16,
@@ -380,7 +386,7 @@ const styles = StyleSheet.create({
   finishButton: {
     padding: 10,
     margin: 10,
-    borderRadius: 5,
+    borderRadius: 22,
     alignItems: "center",
   },
   zoomContainer: {
@@ -391,7 +397,7 @@ const styles = StyleSheet.create({
   },
   zoomButton: {
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 22,
     marginHorizontal: 5,
   },
   zoomText: {

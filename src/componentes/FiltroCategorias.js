@@ -66,8 +66,8 @@ export default function FiltroCategorias({ onSelectCategoria }) {
 
     return (
         <View style={styles.categoriasWrapper}>
-            <TouchableOpacity style={[styles.arrowButtonLeft, { left: 0, backgroundColor: colors.buttonArrow }]} onPress={() => scrollTo("left")}>
-                <Icon name="chevron-left" size={20} color={colors.icon} />
+            <TouchableOpacity style={[styles.arrowButtonLeft, { left: 0, backgroundColor: colors.categoriaButton }]} onPress={() => scrollTo("left")}>
+                <Icon name="chevron-left" size={20} color={colors.textDark} />
             </TouchableOpacity>
 
             <ScrollView
@@ -94,15 +94,15 @@ export default function FiltroCategorias({ onSelectCategoria }) {
                         ]}
                         onPress={() => handleCategoriaPress(categoria.tematica)}
                     >
-                        <Text style={{ color: colors.text }}>
+                        <Text style={{ color: categoriaSeleccionada === categoria.tematica ? colors.textLight : colors.textDark }}>
                             {categoria.tematica}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
 
-            <TouchableOpacity style={[styles.arrowButtonRight, { right: 0, backgroundColor: colors.buttonArrow }]} onPress={() => scrollTo("right")}>
-                <Icon name="chevron-right" size={20} color={colors.icon} />
+            <TouchableOpacity style={[styles.arrowButtonRight, { right: 0, backgroundColor: colors.categoriaButton }]} onPress={() => scrollTo("right")}>
+                <Icon name="chevron-right" size={20} color={colors.textDark} />
             </TouchableOpacity>
         </View>
     );

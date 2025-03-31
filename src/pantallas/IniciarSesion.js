@@ -56,14 +56,12 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
 
   return (
-    <View style={[styles.container]}> 
-      <Text style={[styles.titulo, { color: colors.text }]}>Iniciar Sesión</Text>
-
+    <View style={[styles.container, { backgroundColor: colors.background }]}> 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
         placeholder="ejemplo@ejemplo.com"
-        placeholderTextColor={colors.text}
+        placeholderTextColor={colors.textDark}
         value={correo}
         onChangeText={setCorreo}
         autoCapitalize="none"
@@ -74,7 +72,7 @@ export default function IniciarSesion({ setCorreoUsuario }) {
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
         placeholder="1234abc@"
-        placeholderTextColor={colors.text}
+        placeholderTextColor={colors.textDark}
         value={contrasena}
         onChangeText={setContrasena}
         secureTextEntry

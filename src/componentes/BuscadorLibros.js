@@ -62,12 +62,12 @@ export default function BuscadorLibros({ setResultados, categoria }) {
     }, [debouncedTerminoBusqueda, categoria]);
 
     return (
-      <View style={[styles.contenedor, { backgroundColor: colors.buscador }]}>
-        <Ionicons name="search" size={20} color={colors.textSecondary} style={styles.icono} />
+      <View style={[styles.contenedor, { backgroundColor: colors.buscador, borderColor: colors.border }]}>
+        <Ionicons name="search" size={20} color={colors.textDark} style={styles.icono} />
         <TextInput
-          style={[styles.input, { color: colors.text }]}
+          style={[styles.input, { color: colors.textDark }]}
           placeholder="Buscar libros..."
-          placeholderTextColor={colors.textSecondary}
+          placeholderTextColor={colors.textDark}
           value={terminoBusqueda}
           onChangeText={setTerminoBusqueda}
         />
