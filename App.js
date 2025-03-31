@@ -316,6 +316,17 @@ function FavoritosStack({ correoUsuario }) {
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
+
+      <Stack.Screen name="AñadirValoracion"
+        options={{ 
+          headerShown: true,
+          title: "Añadir valoración",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.textHeader, // Color del texto del título
+        }}
+      >
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -482,6 +493,17 @@ function MisListasStack({ correoUsuario }) {
       >
         {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
+
+      <Stack.Screen name="AñadirValoracion"
+        options={{ 
+          headerShown: true,
+          title: "Añadir valoración",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.textHeader, // Color del texto del título
+        }}
+      >
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -520,6 +542,17 @@ function ListasPublicasStack({ correoUsuario }) {
         }}
       >
         {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
+      <Stack.Screen name="AñadirValoracion"
+        options={{ 
+          headerShown: true,
+          title: "Añadir valoración",
+          headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
+          headerTintColor: colors.textHeader, // Color del texto del título
+        }}
+      >
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
       </Stack.Screen>
     </Stack.Navigator>
   );
