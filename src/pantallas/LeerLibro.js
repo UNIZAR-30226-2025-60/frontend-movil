@@ -348,7 +348,7 @@ export default function LeerLibro({ route, correoUsuario }) {
           </View>
         </>
       ) : (
-        <View style={styles.loadingContainer}>
+        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
           <Text style={{ color: colors.text }}>Cargando PDF...</Text>
           <Image source={cargandoGif} style={styles.loadingImage}/>
         </View>

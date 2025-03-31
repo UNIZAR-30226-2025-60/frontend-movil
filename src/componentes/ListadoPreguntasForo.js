@@ -90,7 +90,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
             style={[
               styles.textInput,
               {
-                backgroundColor: colors.background,
+                backgroundColor: colors.backgroundFormulario,
                 borderColor: colors.border,
                 color: colors.text
               }
@@ -124,7 +124,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           ]}
           onPress={() => setSelectedTab('mine')}
         >
-          <Text style={[styles.tabText, selectedTab === 'mine' && { color: colors.text }]}>
+          <Text style={[styles.tabText, selectedTab === 'mine' ? { color: colors.textDark } : { color: colors.textDark }]}>
             Mis preguntas
           </Text>
         </TouchableOpacity>
@@ -134,7 +134,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           style={[styles.tabButton, selectedTab === 'all' ? { backgroundColor: colors.filtroSeleccionado } : { backgroundColor: colors.filtroNoSeleccionado }]}
           onPress={() => setSelectedTab('all')}
         >
-          <Text style={[styles.tabText, selectedTab === 'all' && { color: colors.text }]}>
+          <Text style={[styles.tabText, selectedTab === 'all' ? { color: colors.textDark } : { color: colors.textDark }]}>
             Todas
           </Text>
         </TouchableOpacity>

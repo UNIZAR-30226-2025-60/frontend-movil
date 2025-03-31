@@ -17,12 +17,13 @@ export const useThemeColors = () => {
 
         // COLORES DE FONDO
         backgroundHeader: "#eeca06",
-        backgroudSubtitle: "#97927f",  // Justo lo que hay debajo del encabezado principal
+        backgroundSubtitle: "#97927f",  // Justo lo que hay debajo del encabezado principal
         background: "#4c4637",
         buttonArrow: "#fef9d2",
         // ahora
         backgroundFormulario: "#B2AB99",
-        backgroundSecondary: "#ecebe5",
+        backgroundSecondary: "#A5A294",
+        backgroundMenu: "#6a6456",
         //
 
         // TEXTO
@@ -33,7 +34,8 @@ export const useThemeColors = () => {
         textSecondary: "#F8E79B",
         subtitleText: "#000000",
         // ahora
-        textTerciary: "#F4DD69",
+        textTerciary: "#B2AB99",
+        textFormulario: "#4c4637",
         //
 
         // ICONOS
@@ -61,8 +63,8 @@ export const useThemeColors = () => {
         buttonArrow: "#d9d6cc",
 
         // FILTROS
-        filtroSeleccionado: "#b2ab99",
-        filtroNoSeleccionado: "#ecebe5",
+        filtroSeleccionado: "#C3C1B3",
+        filtroNoSeleccionado: "#878374",
 
         // VALORACIONES
         progressFilled: "#f4dd69",
@@ -80,10 +82,11 @@ export const useThemeColors = () => {
         
         // COLORES DE FONDO
         backgroundHeader: "#eeca06",
-        backgroudSubtitle: "#f8e79b",  // Justo lo que hay debajo del encabezado principal
+        backgroundSubtitle: "#f8e79b",  // Justo lo que hay debajo del encabezado principal
         background: "#f8f7f3",
         backgroundFormulario: "#f8e79b",
         backgroundSecondary: "#ecebe5",
+        backgroundMenu: "#f8f7f3",
 
         // TEXTO
         textHeader: "#4c4637",
@@ -92,6 +95,7 @@ export const useThemeColors = () => {
         textLight: "#FBF1CD",
         textSecondary: "#6a6456",
         textTerciary: "#878374",
+        textFormulario: "#4c4637",
         subtitleText: "#6a6456",
 
         // ICONOS

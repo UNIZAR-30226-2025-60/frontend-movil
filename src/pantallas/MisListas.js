@@ -118,7 +118,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
     const isMenuVisible = menuVisibleId === item.nombre; // usas el nombre como “ID”
   
     return (
-      <View style={[styles.itemContainer, { backgroundColor: colors.background }]}>
+      <View style={[styles.itemContainer, { borderColor: colors.border }]}>
         <TouchableOpacity
           onPress={() => {
             if (modoSeleccion) {
@@ -148,7 +148,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
               }
             }
           }}
-          style={styles.listaContenido}
+          style={[styles.listaContenido]}
         >
           {modoSeleccion && (
             <View style={{
@@ -191,14 +191,14 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   
         {/* Menú desplegable */}
         {isMenuVisible && (
-          <View style={[styles.menuOpciones, { backgroundColor: colors.backgroudSubtitle }]}>
+          <View style={[styles.menuOpciones, { backgroundColor: colors.backgroundSecondary }]}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => eliminarLista(item.nombre)}
               style={styles.opcionEliminar}
             >
-              <Ionicons name="trash-outline" size={20} color={colors.icon} />
-              <Text style={styles.textoOpcion}>Eliminar</Text>
+              <Ionicons name="trash-outline" size={20} color={colors.textDark} />
+              <Text style={[styles.textoOpcion, { color: colors.textDark }]}>Eliminar</Text>
             </TouchableOpacity>
 
             <View style={[styles.linea, { backgroundColor: colors.line, height: 0.8 }]} />
@@ -213,8 +213,8 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                 navigation.navigate("EditarLista", { lista: item, correoUsuario: correoUsuario });
               }}
             >
-              <Ionicons name="create-outline" size={20} color={colors.icon} />
-              <Text style={[styles.textoOpcion, { color: colors.text }]}>Editar</Text>
+              <Ionicons name="create-outline" size={20} color={colors.textDark} />
+              <Text style={[styles.textoOpcion, { color: colors.textDark }]}>Editar</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -229,7 +229,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         {/* 📌 Encabezado de la pantalla */}
         <Encabezado titulo="Mis Listas" correoUsuario={correoUsuario} />
 
-        <View style={[styles.topBar, { backgroundColor: colors.backgroudSubtitle }]}>
+        <View style={[styles.topBar, { backgroundColor: colors.backgroundSubtitle }]}>
           {modoSeleccion ? (
             <TouchableOpacity onPress={() => {
               setModoSeleccion(false);
@@ -255,8 +255,8 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             if (item.esNueva) {
               return (
                 <TouchableOpacity
-                  style={[styles.itemContainer, styles.addContainer]}
-                  color={[colors.border]}
+                  style={[styles.itemContainer, styles.addContainer, {borderColor: colors.border}]}
+                  color={[colors.text]}
                   onPress={() => navigation.navigate("CrearLista")}
                 >
                   <Ionicons name="add-circle-outline" size={50} color={colors.icon} />

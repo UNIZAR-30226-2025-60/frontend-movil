@@ -137,39 +137,53 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
  *  - Muestra opciones según si el usuario está autenticado o no.
  */
 function DrawerNavigator({ correoUsuario }) {
+  const colors = useThemeColors();
+
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="Inicio" options={{ headerShown: false }}>
+    <Drawer.Navigator
+        screenOptions={{
+          drawerStyle: {
+            backgroundColor: colors.backgroundMenu, // Color de fondo del Drawer
+          },
+          drawerLabelStyle: {
+            color: colors.text, // Color del texto de las opciones
+          },
+          // Para cuando el item está seleccionado
+          drawerActiveTintColor: colors.text, // El texto del ítem seleccionado será el color de fondo
+          headerShown: false, // Oculta el header en todas las pantallas
+        }}
+    >
+      <Drawer.Screen name="Inicio">
         {(props) => <MenuStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
 
-      <Drawer.Screen name="Foro" options={{ headerShown: false }}>
+      <Drawer.Screen name="Foro">
         {props => <ForoStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
       
       {correoUsuario && (
         <>
-          <Drawer.Screen name="Estadísticas" options={{ headerShown: false }}>
-            {(props) => <EstadisticasStack {...props} correoUsuario={correoUsuario} />}
+          <Drawer.Screen name="Estadísticas">
+            {(props) => <EstadisticasStack {...props} />}
           </Drawer.Screen>
 
-          <Drawer.Screen name="Listas públicas" options={{ headerShown: false }}>
+          <Drawer.Screen name="Listas públicas">
             {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
 
-          <Drawer.Screen name="Mis Listas" options={{ headerShown: false }}>
+          <Drawer.Screen name="Mis Listas">
             {(props) => <MisListasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
 
-          <Drawer.Screen name="Mis favoritos" options={{ headerShown: false }}>
+          <Drawer.Screen name="Mis favoritos">
             {props => <FavoritosStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
 
-          <Drawer.Screen name="Leídos" options={{ headerShown: false }}>
+          <Drawer.Screen name="Leídos">
             {(props) => <LeidosStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
           
-          <Drawer.Screen name="En Proceso" options={{ headerShown: false }}>
+          <Drawer.Screen name="En Proceso">
             {(props) => <EnProcesoStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
         </>
