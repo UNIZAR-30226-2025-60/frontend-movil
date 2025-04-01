@@ -22,6 +22,7 @@ import IniciarSesion from './src/pantallas/IniciarSesion';
 import Registrarse from "./src/pantallas/Registrarse";
 import MenuPerfil from './src/pantallas/MenuPerfil';
 import CambioContrasena from './src/pantallas/CambioContrasena';
+import CambioNombre from './src/pantallas/CambioNombre';
 import Menu from './src/pantallas/Menu';
 import LeerLibro from './src/pantallas/LeerLibro';
 import Foro from './src/pantallas/Foro';
@@ -124,7 +125,18 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         initialParams={{ correoUsuario }}
         options={{ 
           headerShown: true, 
-          title: "Cambio contraseña",
+          title: "Cambiar contraseña",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.textHeader, }}
+      />
+
+      <Stack.Screen
+        name="CambioNombre"
+        component={CambioNombre}
+        initialParams={{ correoUsuario }}
+        options={{ 
+          headerShown: true, 
+          title: "Cambiar nombre",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader, }}
       />

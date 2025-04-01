@@ -2,14 +2,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, Modal } from "react-native";
 import logoGoogle from "../../assets/logo_google.png";
+import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
 
 import * as Google from 'expo-auth-session/providers/google';
 
 export default function BotonLoginGoogle({ setCorreoUsuario }) {
   const [cargando, setCargando] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false); // Estado para el modal
   const navigation = useNavigation();
   const colors = useThemeColors();
 
@@ -20,6 +22,8 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
   useEffect(() => {
     const fetchUserInfo = async () => {
       if (response?.type === 'success') {
+        setMostrarModal(true);
+
         const { accessToken } = response.authentication;
 
         try {
@@ -27,23 +31,17 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           const userInfo = await userInfoResponse.json();
-          
+
           console.log("Correo del usuario:", userInfo.email);
           console.log("Nombre:", userInfo.name);
           console.log("Foto de perfil:", userInfo.picture);
 
           const backendResponse = await fetch(`${API_URL}/usuarios/usuario/${userInfo.email}`);
-          
-          if (backendResponse.ok) {
-            const data = await backendResponse.json();
-            console.log("El usuario ya tenía cuenta en bookly");
 
+          if (backendResponse.ok) {
             setCorreoUsuario(userInfo.email);
             navigation.navigate("Drawer");
-
           } else {
-            console.log("El usuario no tenía cuenta en bookly");
-
             const registroResponse = await fetch(`${API_URL}/usuarios/registroM`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -55,17 +53,16 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
             });
 
             if (registroResponse.ok) {
-              console.log("Usuario registrado exitosamente.");
               setCorreoUsuario(userInfo.email);
               navigation.navigate("Drawer");
             } else {
-              console.error("Error al registrar el usuario.", registroResponse.error);
               Alert.alert("⚠️ Error", "No se pudo registrar al usuario.");
             }
           }
-
         } catch (error) {
           console.error("Error al obtener información del usuario:", error);
+        } finally {
+          setMostrarModal(false);
         }
       }
     };
@@ -76,9 +73,9 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
     <View style={{ width: '100%' }}>
       <TouchableOpacity
         style={[styles.boton, { backgroundColor: colors.buttonDarkTerciary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}
-        onPress={() => promptAsync().catch((e) => {
-            console.error("Error al iniciar sesión:", e);
-        })}
+        onPress={() => {
+          promptAsync().catch((e) => console.error("Error al iniciar sesión:", e));
+        }}
         disabled={cargando}
       >
         <View style={styles.logoContainer}>
@@ -86,24 +83,32 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
         </View>
         <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Continuar con Google"}</Text>
       </TouchableOpacity>
+
+      {/* Pantalla Cargando... mientras se gestionan datos del login */}
+      <Modal visible={mostrarModal} animationType="fade" transparent={true}>
+        <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+          <Text style={{ color: colors.text }}>Cargando...</Text>
+          <Image source={cargandoGif} style={styles.loadingImage}/>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   boton: {
-    width: '100%',  // Asegura que el botón ocupe el 100% del ancho disponible
+    width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 22,
     marginTop: 10,
     marginBottom: 10,
-    flexDirection: 'row', // Alinea la imagen del logo y el texto horizontalmente
-    paddingHorizontal: 20, // Añade padding horizontal para que no se vea apretado
+    flexDirection: 'row',
+    paddingHorizontal: 20,
   },
   logoContainer: {
-    backgroundColor: "#f8f7f3",  // Fondo blanco detrás del logo
+    backgroundColor: "#f8f7f3",
     padding: 5,
     borderRadius: 22,
   },
@@ -114,6 +119,15 @@ const styles = StyleSheet.create({
   textoBoton: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 10,  // Espacio entre el logo y el texto
+    marginLeft: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },  
+  loadingImage: {
+    width: 160,
+    height: 160,
   },
 });

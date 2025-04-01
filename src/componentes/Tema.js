@@ -61,6 +61,9 @@ export const useThemeColors = () => {
         categoriaButtonSeleccionado: "#878374",
         categoriaText: "#4c4637",
         buttonArrow: "#d9d6cc",
+        buttonArrowDesactivado: "#ECEBE5",
+        iconArrow: "#4c4637",
+        iconArrowDesactivado: "#D9D6CC",
 
         // FILTROS
         filtroSeleccionado: "#C3C1B3",
@@ -121,6 +124,9 @@ export const useThemeColors = () => {
         categoriaButtonSeleccionado: "#b2ab99",
         categoriaText: "#4c4637",
         buttonArrow: "#d9d6cc",
+        buttonArrowDesactivado: "#ECEBE5",
+        iconArrow: "#4c4637",
+        iconArrowDesactivado: "#D9D6CC",
 
         // FILTROS
         filtroSeleccionado: "#b2ab99",

@@ -27,6 +27,10 @@ export default function Encabezado({ titulo, correoUsuario }) {
     }
   };
 
+  const manejarNavegacionInicio = () => {
+    navigation.navigate("Inicio");
+  };
+
   return (
     <SafeAreaView style={{ backgroundColor: colors.backgroundHeader }}>
       <View style={[styles.header, { backgroundColor: colors.backgroundHeader }]}>
@@ -37,7 +41,9 @@ export default function Encabezado({ titulo, correoUsuario }) {
         </TouchableOpacity>
 
         {/* Título principal */}
-        <Text style={[styles.title, { color: colors.textHeader }]}>{ "BOOKLY" }</Text>
+        <TouchableOpacity onPress={manejarNavegacionInicio}>
+          <Text style={[styles.title, { color: colors.textHeader }]}>{ "BOOKLY" }</Text>
+        </TouchableOpacity>
 
         {/* Icono de Usuario */}
         <TouchableOpacity onPress={manejarNavegacionUsuario}>
