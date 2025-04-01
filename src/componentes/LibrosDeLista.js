@@ -9,8 +9,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import ListadoLibros from '../componentes/ListadoLibros';
 import { useThemeColors } from "../componentes/Tema";
+import { Ionicons } from 'react-native-vector-icons';
+import ListadoLibros from '../componentes/ListadoLibros';
 import { API_URL } from '../../config';
 
 export default function LibrosDeLista({ correoUsuario, tituloProp }) {
@@ -103,9 +104,29 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 
       {/* 📌 Encabezado de la lista */}
       <View style={[styles.headerLista, { backgroundColor: colors.backgroundSubtitle }]}>
-        <Text style={[styles.tituloLista, { color: colors.text }]}>Nombre: {nombreLista || 'Título de la lista'}</Text>
-        <Text style={[styles.descripcionLista, { color: colors.text }]}>Descripción: {descripcionLista?.trim() || 'Sin descripción'}</Text>
-        <Text style={[styles.privacidad, { color: colors.textSecondary }]}>{esPublica ? 'Pública' : 'Privada'}</Text>
+        <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
+        <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+        {esPublica ? (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Ionicons
+              name='lock-open'
+              size={15}
+              color={ colors.textSecondary }
+            />
+            <Text style={[styles.privacidad, { color: colors.textSecondary }]}>Pública</Text>
+          </View>  
+        ) : (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Ionicons
+              name='lock-closed'
+              size={15}
+              color={ colors.textSecondary }
+            />
+            <Text style={[styles.privacidad, { color: colors.textSecondary }]}>Privada</Text>
+          </View> 
+        )}
+
+        
       </View>
 
       {/* 📌 Componente que muestra los libros en forma de lista */}

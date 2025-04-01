@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { useThemeColors } from "../componentes/Tema";
+import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useThemeColors } from "../componentes/Tema";
 import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
 
 
-export default function MenuPerfil({ route, navigation }) {
+export default function MenuPerfil({ route, navig }) {
   const { correoUsuario, setCorreoUsuario } = route.params;
   const [usuario, setUsuario] = useState(null);
   const [esUsuarioGoogle, setEsUsuarioGoogle] = useState(false);
-  const colors = useThemeColors();
 
-  useEffect(() => {
-    obtenerDatosUsuario();
-  }, [correoUsuario]);
+  const colors = useThemeColors();
+  const navigation = useNavigation();
+
+  useFocusEffect(
+    useCallback(() => {
+      obtenerDatosUsuario();
+    }, [])
+  );
 
   const obtenerDatosUsuario = async () => {
     try {
@@ -99,25 +106,25 @@ export default function MenuPerfil({ route, navigation }) {
             <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
             <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Editar Contraseña</Text>
           </TouchableOpacity>
-
-          {/* Botón Cambiar nombre */}
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.buttonDarkSecondary }]}
-            onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
-          >
-            <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
-            <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Cambiar Nombre</Text>
-          </TouchableOpacity>
         </>
       )}
+
+      {/* Botón Cambiar nombre */}
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors.buttonDarkSecondary }]}
+        onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
+      >
+        <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Cambiar Nombre</Text>
+      </TouchableOpacity>
 
       {/* Botón Cerrar Sesión */}
       <TouchableOpacity
         style={[styles.secondButton, { backgroundColor: colors.buttonDark }]}
         onPress={cerrarSesion}
       >
-        <Ionicons name="log-out-outline" size={18} color={colors.buttonTextDark} />
-        <Text style={[styles.SecondButtonText, { color: colors.buttonTextDark }]}>Cerrar Sesión</Text>
+        <Ionicons name="log-out-outline" size={20} color={colors.buttonTextDark} />
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
   );
@@ -177,10 +184,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     width: '80%',
     justifyContent: 'center',
-  },
-  secondButtonText: {
-    marginLeft: 10,
-    fontSize: 12,
   },
   logoutButton: {
     flexDirection: 'row',

@@ -430,11 +430,6 @@ export default function DetallesLibro({ route, correoUsuario }) {
             <View>
               {correoUsuario && (
                 <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
-                  {/* <FontAwesomeIcon
-                    icon={esFavorito ? faHeartSolid : faHeartRegular}
-                    size={30}
-                    color={esFavorito ? 'red' : 'gray'}
-                  /> */}
                   <Ionicons
                     name={esFavorito ? 'heart' : 'heart-outline'}
                     size={30}
