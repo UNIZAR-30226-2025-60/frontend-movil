@@ -93,11 +93,6 @@ export default function ListasPublicas({ correoUsuario }) {
           <Text style={[styles.nombreLista, { color: colors.text }]}>
             {item.nombre}
           </Text>
-
-          {/* 📌 Nombre del dueño de la lista */}
-          <Text style={[styles.usuarioLista, { color: colors.textSecondary }]}>
-            de {item.usuario_id}
-          </Text>
         </TouchableOpacity>
       </View>
     );

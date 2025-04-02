@@ -69,15 +69,17 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Mostrar el título o enunciado de la pregunta */}
-            <Text style={[styles.titulo, { color: colors.text }]}>Respuestas a: {cuestion}</Text>
+            <Text style={[styles.titulo, { color: colors.text }]}>Respuestas:</Text>
             {respuestas.length > 0 ? (
-            respuestas.map((respuesta) => (
-              <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-                <Text style={[styles.usuario, { color: colors.text }]}>Usuario: {respuesta.usuario_respuesta}</Text>
-                <Text style={[styles.mensaje, { color: colors.text }]}>{respuesta.mensaje_respuesta}</Text>
-                <Text style={[styles.fecha, { color: colors.textSecondary }]}>{new Date(respuesta.fecha).toLocaleDateString()}</Text>
-              </View>
-            ))
+              respuestas.map((respuesta) => (
+                <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+                  <Text style={[styles.mensaje, { color: colors.text }]}>{respuesta.mensaje_respuesta}</Text>
+                  <View style={[styles.mismaFila]}>
+                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {respuesta.usuario_respuesta}    </Text>
+                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
+                  </View>
+                </View>
+              ))
             ) : (
               <Text style={[styles.sinRespuestas, { color: colors.textSecondary }]}>Aún no hay respuestas.</Text>
             )}
@@ -112,83 +114,6 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
     );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   scrollContainer: {
-//     padding: 10
-//   },
-//   headerPregunta: {
-//     padding: 16,
-//     marginHorizontal: 8,
-//     marginVertical: 12,
-//     borderRadius: 8
-//   },
-//   titulo: {
-//     fontSize: 20,
-//     fontWeight: 'bold',
-//     marginBottom: 6
-//   },
-//   cuestion: {
-//     fontSize: 16,
-//   },
-//   titulo: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     marginBottom: 10
-//   },
-//   card: {
-//     padding: 15,
-//     borderRadius: 8,
-//     marginBottom: 10,
-//     elevation: 2,
-//     shadowColor: '#000',
-//     shadowOpacity: 0.1,
-//     shadowRadius: 5
-//   },
-//   usuario: {
-//     fontWeight: 'bold',
-//     marginBottom: 5
-//   },
-//   mensaje: {
-//     fontSize: 16,
-//     marginBottom: 5
-//   },
-//   fecha: {
-//     fontSize: 12,
-//   },
-//   sinRespuestas: {
-//     textAlign: 'center',
-//     marginVertical: 20,
-//     fontStyle: 'italic'
-//   },
-//   formContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     padding: 10,
-//     borderTopWidth: 1,
-//   },
-//   input: {
-//     flex: 1,
-//     borderWidth: 1,
-//     borderRadius: 8,
-//     paddingHorizontal: 10,
-//     paddingVertical: 6,
-//     marginRight: 10
-//   },
-//   aviso: {
-//     textAlign: 'center',
-//     padding: 10
-//   },
-//   button: {
-//     borderRadius: 8,
-//     marginLeft: 8
-//   },
-//   buttonText: {
-//     fontSize: 13
-//   },
-// });
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -225,11 +150,11 @@ const styles = StyleSheet.create({
     shadowRadius: 5
   },
   usuario: {
-    fontWeight: 'bold',
     marginBottom: 5
   },
   mensaje: {
     fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 5
   },
   fecha: {
@@ -268,5 +193,9 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 13,
     fontWeight: 'bold',
+  },
+  mismaFila: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

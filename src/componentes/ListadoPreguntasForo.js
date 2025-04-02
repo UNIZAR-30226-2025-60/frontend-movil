@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { API_URL } from '../../config';
 import { useThemeColors } from "../componentes/Tema";
+import { Ionicons } from 'react-native-vector-icons';
+import { API_URL } from '../../config';
+
 
 export default function ListadoPreguntasForo({ correoUsuario }) {
   const colors = useThemeColors();
@@ -17,10 +19,10 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
   // Al montar el componente, cargamos ambas listas
   useEffect(() => {
+    cargarTodasPreguntas();
     if (correoUsuario) {
       cargarMisPreguntas();
     }
-    cargarTodasPreguntas();
   }, [correoUsuario]);
 
   // Carga solo las preguntas del usuario logueado
@@ -32,7 +34,15 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
         throw new Error("Error al obtener tus preguntas");
       }
       const data = await response.json();
-      setMisPreguntas(data);
+      
+      // Obtener número de respuestas para cada pregunta
+      const preguntasConRespuestas = await Promise.all(
+        data.map(async (pregunta) => ({
+          ...pregunta,
+          numRespuestas: await obtenerNumeroRespuestas(pregunta.id)
+        }))
+      );
+      setMisPreguntas(preguntasConRespuestas);
     } catch (error) {
       console.error(error);
     }
@@ -47,11 +57,31 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
         throw new Error("Error al obtener todas las preguntas");
       }
       const data = await response.json();
-      setTodasPreguntas(data);
+
+      // Obtener número de respuestas para cada pregunta
+      const preguntasConRespuestas = await Promise.all(
+        data.map(async (pregunta) => ({
+          ...pregunta,
+          numRespuestas: await obtenerNumeroRespuestas(pregunta.id)
+        }))
+      );
+      setTodasPreguntas(preguntasConRespuestas);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const obtenerNumeroRespuestas = async (preguntaId) => {
+    try {
+      const response = await fetch(`${API_URL}/obtenerNumeroRespuestas?preguntaId=${preguntaId}`);
+      const data = await response.json();
+      return data.numRespuestas;
+    } catch (error) {
+      console.error('Error al obtener el número de respuestas:', error);
+      return 0;
+    }
+  };
+
 
   const handleEnviarPregunta = async () => {
     if (!nuevaPregunta.trim()) return;
@@ -139,18 +169,32 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           {misPreguntas.map((pregunta) => (
             <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
               <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text>
-              <Text style={[styles.usuario, { color: colors.textSecondary }]}>{pregunta.usuario}</Text>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
-                onPress={() =>
-                  navigation.navigate('RespuestasForo', {
-                    preguntaId: pregunta.id,
-                    cuestion: pregunta.cuestion,
-                  })
-                }
-              >
-                <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
-              </TouchableOpacity>
+              <View style={[styles.mismaFila]}>
+                <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {pregunta.usuario}    </Text>
+                <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+              </View>  
+              <View style={[styles.mismaFila]}>
+                <Ionicons
+                  name='chatbubble'
+                  size={15}
+                  color={colors.textSecondary}
+                  style={{ marginRight: 7 }}
+                />
+                <Text style={[{ color: colors.textSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
+               
+
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
+                  onPress={() =>
+                    navigation.navigate('RespuestasForo', {
+                      preguntaId: pregunta.id,
+                      cuestion: pregunta.cuestion,
+                    })
+                  }
+                >
+                  <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
+                </TouchableOpacity>
+              </View> 
             </View>
           ))}
         </View>
@@ -160,18 +204,32 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           {todasPreguntas.map((pregunta) => (
             <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
               <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text>
-              <Text style={[styles.usuario, { color: colors.textSecondary }]}>{pregunta.usuario}</Text>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
-                onPress={() =>
-                  navigation.navigate('RespuestasForo', {
-                    preguntaId: pregunta.id,
-                    cuestion: pregunta.cuestion,
-                  })
-                }
-              >
-                <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
-              </TouchableOpacity>
+              <View style={[styles.mismaFila]}>
+                <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {pregunta.usuario}    </Text>
+                <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+              </View>  
+              <View style={[styles.mismaFila]}>
+                <Ionicons
+                  name='chatbubble'
+                  size={15}
+                  color={colors.textSecondary}
+                  style={{ marginRight: 7 }}
+                />
+                <Text style={[{ color: colors.textSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
+                
+
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
+                  onPress={() =>
+                    navigation.navigate('RespuestasForo', {
+                      preguntaId: pregunta.id,
+                      cuestion: pregunta.cuestion,
+                    })
+                  }
+                >
+                  <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>{pregunta.numRespuestas > 0 ? 'Ver respuestas' : 'Ver respuestas'}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ))}
         </View>
@@ -244,5 +302,9 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontWeight: '600'
+  },
+  mismaFila: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
