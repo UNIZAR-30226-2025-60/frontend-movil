@@ -36,19 +36,34 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [listasSeleccionadas, setListasSeleccionadas] = useState(new Set());
   const [showCrearListaModal, setShowCrearListaModal] = useState(false);
-  const [valoraciones, setValoraciones] = useState([]);
-  const [promedio, setPromedio] = useState(null);
-  const [conteo, setConteo] = useState([]);
-  const [totalValoraciones, setTotalValoraciones] = useState(null);
-  const estrellasLlenas = Math.floor(promedio);
-  const estrellasVacías = 5 - estrellasLlenas;
 
   // Datos del formulario para crear una lista rápidamente
   const [nombreNuevaLista, setNombreNuevaLista] = useState("");
   const [descripcionNuevaLista, setDescripcionNuevaLista] = useState("");
   const [publicaNuevaLista, setPublicaNuevaLista] = useState(false);
 
-  //  📌 Variables para mostrar la sinopsis del libro
+  // Variables para las valoraciones
+  const opcionesOrden = [
+    { id: 'alta', label: 'valoraciones más altas' },
+    { id: 'baja', label: 'valoraciones más bajas' },
+    { id: 'antigua', label: 'valoraciones más antiguas' },
+    { id: 'reciente', label: 'valoraciones más recientes' },
+    { id: 'ninguno', label: 'ninguno' },
+  ];
+  const [modalOrdenarVisible, setModalOrdenarVisible] = useState(false);
+  const [ordenSeleccionado, setOrdenSeleccionado] = useState('ninguno');
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const buttonRef = useRef(null);
+
+  const [valoraciones, setValoraciones] = useState([]);
+  const [valoracionesOrdenadas, setValoracionesOrdenadas] = useState([]);
+  const [promedio, setPromedio] = useState(null);
+  const [conteo, setConteo] = useState([]);
+  const [totalValoraciones, setTotalValoraciones] = useState(null);
+  const estrellasLlenas = Math.floor(promedio);
+  const estrellasVacías = 5 - estrellasLlenas;
+
+  // Constantes para la sinopsis
   const MAX_LINES = 6;  
   const MAX_CHARACTERS = 250;
   const esResumenCorto = libro.resumen.length <= MAX_CHARACTERS;
@@ -395,6 +410,42 @@ export default function DetallesLibro({ route, correoUsuario }) {
     obtenerListasDondeEstaLibro(); // 📌 Recargar listas al cerrar
   };
 
+  const handleOrdenarPor = () => {
+    setModalOrdenarVisible(true);
+  };
+
+  useEffect(() => {
+    setValoracionesOrdenadas(valoraciones);
+  }, [valoraciones]);
+
+  const seleccionarOrden = (opcion) => {
+    setOrdenSeleccionado(opcion.label);
+    setModalOrdenarVisible(false);
+
+    let val = [...valoraciones];
+
+    switch (opcion.id) {
+      case 'alta':
+        val.sort((a, b) => b.valor - a.valor);
+        break;
+      case 'baja':
+        val.sort((a, b) => a.valor - b.valor);
+        break;
+      case 'antigua':
+        val.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+        break;
+      case 'reciente':
+        val.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        break;
+      case 'ninguno':
+      default:
+        val = [...valoraciones]; // Restaurar sin ordenar
+        break;
+    }
+
+    setValoracionesOrdenadas(val);
+  };
+
   // 📌 Renderización del componente
   return (
     <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
@@ -435,9 +486,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
           {/* 📌 Botones: Leer */}
           <View style={stylesGeneral.fila}>
             <TouchableOpacity 
-              style={[stylesGeneral.boton, { backgroundColor: colors.buttonDark }]} 
+              style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
               onPress={handleLeer}
             >
+              <Ionicons
+                name='book'
+                size={15}
+                color={ colors.buttonTextDark }
+                style={{ marginRight: 7 }}
+              />
               <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Leer</Text>
             </TouchableOpacity>
 
@@ -606,9 +663,56 @@ export default function DetallesLibro({ route, correoUsuario }) {
           {valoraciones.length > 0 ? (
             <View>
               <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
-              {valoraciones.map((item) => (
+              <TouchableOpacity 
+                style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
+                onPress={handleOrdenarPor}
+              >
+                <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por' : `Ordenado por: ${ordenSeleccionado}`}</Text>
+                <Ionicons
+                  name='caret-down'
+                  size={15}
+                  color={ colors.buttonTextDark }
+                  style={{ marginLeft: 7 }}
+                />
+              </TouchableOpacity>
+
+              {/* Modal que despliega las opciones de ordenación */}
+              <Modal
+                visible={modalOrdenarVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setModalOrdenarVisible(false)}
+              >
+                <TouchableOpacity
+                  style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                  onPress={() => setModalOrdenarVisible(false)}
+                >
+                  <View style={{ backgroundColor: 'white', padding: 15, borderRadius: 10, width: 250 }}>
+                    <Text style={{ fontWeight: 'bold' }}>Ordenar por:</Text>
+                    <FlatList
+                      data={opcionesOrden}
+                      keyExtractor={(item) => item.id}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          style={{ padding: 10 }}
+                          onPress={() => seleccionarOrden(item)}
+                        >
+                          <Text>{item.label}</Text>
+                        </TouchableOpacity>
+                      )}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+
+              {valoracionesOrdenadas.map((item) => (
                 <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}-${item.fecha}`}>
-                  <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena}</Text>
+                  <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena} </Text>
+                    {Array(item.valor).fill().map((_, index) => (
+                      <Ionicons key={index} name="star" size={13} color={ colors.star } />
+                    ))}
+                  </View>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
                   <Text style={{ color: colors.textTerciary }}>{item.usuario_id}  {item.fecha}</Text>
                 
