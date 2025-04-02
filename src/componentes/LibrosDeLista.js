@@ -12,6 +12,7 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import { useThemeColors } from "../componentes/Tema";
 import { Ionicons } from 'react-native-vector-icons';
 import ListadoLibros from '../componentes/ListadoLibros';
+import BuscadorLibrosLista from './BuscadorLibrosLista';
 import { API_URL } from '../../config';
 
 export default function LibrosDeLista({ correoUsuario, tituloProp }) {
@@ -23,7 +24,8 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   const { url, nombreLista, descripcionLista, esPublica } = route.params;
   const finalUrl = url;
 
-  const [libros, setLibros] = useState([]); // Lista de libros
+  const [libros, setLibros] = useState([]); // Lista de libros filtrados
+  const [librosOriginales, setLibrosOriginales] = useState([]); // Lista de libros originales
   const [cargando, setCargando] = useState(true); // Estado de carga
 
   // Cada vez que la pantalla se enfoca, se vuelve a obtener la lista de libros
@@ -44,6 +46,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 
       if (!respuesta.ok) {
         setLibros([]);
+        setLibrosOriginales([]);
         return;
       }
 
@@ -65,10 +68,12 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
       // 📌 Filtrar los que fallaron
       const filtrados = librosDetallados.filter((libro) => libro !== null);
       setLibros(filtrados);
+      setLibrosOriginales(filtrados);
 
     } catch (error) {
       console.error('Error al obtener libros:', error);
       setLibros([]);
+      setLibrosOriginales([]);
     } finally {
       setCargando(false);
     }
@@ -128,6 +133,8 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 
         
       </View>
+
+      <BuscadorLibrosLista setLibros={setLibros} libros={librosOriginales} />
 
       {/* 📌 Componente que muestra los libros en forma de lista */}
       <ListadoLibros libros={libros} onPressLibro={verDetallesLibro} />

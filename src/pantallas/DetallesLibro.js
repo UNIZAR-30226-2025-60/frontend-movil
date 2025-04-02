@@ -307,21 +307,13 @@ export default function DetallesLibro({ route, correoUsuario }) {
       const nuevoSet = new Set(prevSeleccionadas);
       if (nuevoSet.has(nombreLista)) {
         // Estaba marcado => desmarcamos => ELIMINAR
-        console.log("ANTES: listasSeleccionadas:", listasSeleccionadas);
-        console.log("ANTES: nuevoSet:", nuevoSet);
         nuevoSet.delete(nombreLista);
         eliminarLibroDeListaPorNombre(nombreLista); 
-        console.log("DESPUES: listasSeleccionadas:", listasSeleccionadas);
-        console.log("DESPUES: nuevoSet:", nuevoSet);
       }
       else {
         // No estaba => marcamos => AÑADIR
-        console.log("ANTES: listasSeleccionadas:", listasSeleccionadas);
-        console.log("ANTES: nuevoSet:", nuevoSet);
         nuevoSet.add(nombreLista);
         añadirLibroAListaPorNombre(nombreLista); 
-        console.log("DESPUES: listasSeleccionadas:", listasSeleccionadas);
-        console.log("DESPUES: nuevoSet:", nuevoSet);
       }
       return nuevoSet;
     });
