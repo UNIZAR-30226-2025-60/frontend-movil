@@ -472,7 +472,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             </View>
             <View>
               {correoUsuario && (
-                <TouchableOpacity onPress={handleCorazonPress} style={stylesGeneral.corazon}>
+                <TouchableOpacity onPress={handleCorazonPress}>
                   <Ionicons
                     name={esFavorito ? 'heart' : 'heart-outline'}
                     size={30}
@@ -493,7 +493,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                 name='book'
                 size={15}
                 color={ colors.buttonTextDark }
-                style={{ marginRight: 7 }}
+                style={{ marginRight: 5 }}
               />
               <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Leer</Text>
             </TouchableOpacity>
@@ -501,9 +501,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
             {/* 📌 Botones: Añadir a lista */}
             {correoUsuario && (
               <TouchableOpacity 
-                style={[stylesGeneral.boton, { backgroundColor: colors.buttonDark }]} 
+                style={[stylesGeneral.boton, { marginLeft: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
                 onPress={() => setModalVisible(true)}
               >
+                <Ionicons
+                  name='add'
+                  size={17}
+                  color={ colors.buttonTextDark }
+                  style={{ marginRight: 5 }}
+                />
                 <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Añadir a lista</Text>
               </TouchableOpacity>
             )}
@@ -647,9 +653,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
         {correoUsuario && (
           <TouchableOpacity 
-            style={[stylesGeneral.boton, { backgroundColor: colors.buttonDark }]} 
+            style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
             onPress={handleAñadirValoracion}
           >
+            <Ionicons
+              name='add'
+              size={17}
+              color={ colors.buttonTextDark }
+              style={{ marginRight: 5 }}
+            />
             <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Añadir valoración</Text>
           </TouchableOpacity>
         )}
@@ -843,12 +855,6 @@ const stylesGeneral = StyleSheet.create({
     flex: 1,  // Ocupa 1 parte del espacio disponible
     alignItems: 'center',
   },
-  imagenPortada: {
-    width: 120,
-    height: 180,
-    resizeMode: 'cover',
-    borderRadius: 5,
-  },
   columnaDerecha: {
     flex: 2,  // Ocupa 2 partes del espacio disponible
     paddingLeft: 16,
@@ -859,7 +865,6 @@ const stylesGeneral = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
   },
   tituloContainer: {
     flex: 1,  // Permite que el texto ocupe el espacio disponible
@@ -886,7 +891,6 @@ const stylesGeneral = StyleSheet.create({
   // 📌 Estilo del título de las secciones
   titulo: {
     fontWeight: 'bold',
-    paddingTop: 10,
     paddingBottom: 10,
   },
 
@@ -913,10 +917,5 @@ const stylesGeneral = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-
-  // 📌 Icono de favorito (corazón)
-  corazon: {
-    marginHorizontal: 15,
   },
 });
