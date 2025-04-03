@@ -3,7 +3,7 @@ import { useThemeColors } from "../componentes/Tema";
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert, Modal, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
@@ -13,6 +13,8 @@ export default function MenuPerfil({ route, navig }) {
   const { correoUsuario, setCorreoUsuario } = route.params;
   const [usuario, setUsuario] = useState(null);
   const [esUsuarioGoogle, setEsUsuarioGoogle] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [imagenes, setImagenes] = useState([]);
 
   const colors = useThemeColors();
   const navigation = useNavigation();
@@ -44,6 +46,8 @@ export default function MenuPerfil({ route, navig }) {
       const googleData = await googleResponse.json();
       setEsUsuarioGoogle(googleData.esGoogle);
 
+      obtenerFotosPerfil();
+
     } catch (error) {
       console.error("Error al obtener los datos del usuario:", error);
     }
@@ -74,6 +78,43 @@ export default function MenuPerfil({ route, navig }) {
     );
   };
 
+  const obtenerFotosPerfil = async () => {
+    try {
+      const response = await fetch(`${API_URL}/usuarios/fotos-perfil`);
+      if (!response.ok) throw new Error("Error al obtener las fotos de perfil");
+      const data = await response.json();
+      setImagenes(data.map(item => item.url));
+    } catch (error) {
+      console.error("Error al obtener las fotos de perfil:", error);
+    }
+  };
+
+  const cambiarImagenPerfil = async (nuevaImagen) => {
+    try {
+      const response = await fetch(`${API_URL}/usuarios/usuario/cambiar-foto`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          correo: correoUsuario, // Correo del usuario
+          foto_perfil: nuevaImagen, // Nueva URL de la imagen
+        }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al cambiar la imagen");
+      }
+      const data = await response.json();
+      
+      // Actualizar el estado con la nueva imagen
+      setUsuario((prev) => ({ ...prev, foto_perfil: transformarURLGoogleDrive(nuevaImagen) }));
+      setModalVisible(false);
+      Alert.alert("Éxito", "Imagen de perfil actualizada correctamente.");
+    } catch (error) {
+      console.error("Error al cambiar la imagen:", error);
+      Alert.alert("Error", error.message || "No se pudo cambiar la imagen.");
+    }
+  };
+
   if (usuario === null) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -85,11 +126,41 @@ export default function MenuPerfil({ route, navig }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Image 
-        source={{ uri: usuario.foto_perfil }} 
-        style={styles.profileImage} 
-        onError={(e) => console.log("Error al cargar la imagen:", e.nativeEvent.error)}
-      />
+
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Image 
+          source={{ uri: usuario.foto_perfil }} 
+          style={[styles.profileImage, { borderColor: colors.icon }]} 
+          onError={(e) => console.log("Error al cargar la imagen:", e.nativeEvent.error)}
+        />
+        <View style={[styles.editIconContainer, { backgroundColor: colors.icon, borderColor: colors.background }]}>
+          <Ionicons name="pencil" size={20} color={colors.background} />
+        </View>
+      </TouchableOpacity>
+
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
+            <Text style={[styles.modalTitle, { color: colors.textLight }]}>Selecciona una nueva imagen</Text>
+            <FlatList
+              data={imagenes}
+              keyExtractor={(item) => item}
+              numColumns={3}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => cambiarImagenPerfil(item)}>
+                  <Image source={{ uri: transformarURLGoogleDrive(item) }} style={[styles.imageOption, { borderColor: colors.icon }]} />
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity 
+              style={[styles.closeButton, { backgroundColor: colors.buttonClose }]} 
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={[styles.closeButtonText, { color:colors.textLight }]}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <Text style={[styles.welcomeText, { color: colors.text }]}>Bienvenido</Text>
       <Text style={[styles.nombre, { color: colors.text }]}>{usuario.nombre}</Text>
@@ -146,6 +217,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     marginBottom: 10,
+    borderWidth: 2,
   },
   welcomeText: {
     fontSize: 26,
@@ -209,5 +281,47 @@ const styles = StyleSheet.create({
   loadingImage: {
     width: 160,
     height: 160,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "90%",
+    height: "80%",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  imageOption: {
+    width: 80,
+    height: 80,
+    margin: 5,
+    borderRadius: 60,
+    borderWidth: 2,
+  },
+  closeButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    fontWeight: "bold",
+  },
+  editIconContainer: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    borderRadius: 15,
+    padding: 5,
+    borderWidth: 1,
   },
 });

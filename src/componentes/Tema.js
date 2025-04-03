@@ -49,6 +49,7 @@ export const useThemeColors = () => {
         buttonDarkSecondary: "#F8E79B",
         buttonDarkTerciary: "#F4DD69",
         buttonLight: "#4c4637",
+        buttonClose: "#FF5A5F",
 
         // TEXTO BOTONES
         buttonText: "#000000",
@@ -112,6 +113,7 @@ export const useThemeColors = () => {
         buttonDarkSecondary: "#6a6456",
         buttonDarkTerciary: "#878374",
         buttonLight: "#f8e79b",
+        buttonClose: "#FF5A5F",
 
         // TEXTO BOTONES
         buttonText: "#000000",
