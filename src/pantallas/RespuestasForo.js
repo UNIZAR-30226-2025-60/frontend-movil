@@ -12,6 +12,7 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
   const [respuestas, setRespuestas] = useState([]);
   const [nuevaRespuesta, setNuevaRespuesta] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const [expandedRespuestas, setExpandedRespuestas] = useState({});
 
   useEffect(() => {
     cargarRespuestas();
@@ -59,6 +60,13 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
     }
   };
 
+  const toggleExpandedRespuesta = (id) => {
+    setExpandedRespuestas((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id]
+    }));
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
         
@@ -83,12 +91,51 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Mostrar el título o enunciado de la pregunta */}
             <Text style={[styles.titulo, { color: colors.text }]}>Respuestas:</Text>
+            {/* {respuestas.length > 0 ? (
+              respuestas.map((respuesta) => (
+                <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+                  <Text style={[styles.mensaje, { color: colors.text }]}>
+                    {expandedRespuesta || respuesta.mensaje_respuesta.length <= 63
+                      ? respuesta.mensaje_respuesta
+                      : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
+                  </Text>
+
+                  {respuesta.mensaje_respuesta.length > 63 && (
+                    <TouchableOpacity onPress={() => setExpandedRespuesta(!expandedRespuesta)}>
+                      <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
+                        {expandedRespuesta ? 'Ver menos' : 'Ver más'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  
+                  <View style={[styles.mismaFila]}>
+                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {respuesta.usuario_respuesta}    </Text>
+                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text style={[styles.sinRespuestas, { color: colors.textSecondary }]}>Aún no hay respuestas.</Text>
+            )} */}
             {respuestas.length > 0 ? (
               respuestas.map((respuesta) => (
                 <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-                  <Text style={[styles.mensaje, { color: colors.text }]}>{respuesta.mensaje_respuesta}</Text>
+                  <Text style={[styles.mensaje, { color: colors.text }]}>
+                    {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 63
+                      ? respuesta.mensaje_respuesta
+                      : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
+                  </Text>
+
+                  {respuesta.mensaje_respuesta.length > 63 && (
+                    <TouchableOpacity onPress={() => toggleExpandedRespuesta(respuesta.id)}>
+                      <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
+                        {expandedRespuestas[respuesta.id] ? 'Ver menos' : 'Ver más'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
                   <View style={[styles.mismaFila]}>
-                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {respuesta.usuario_respuesta}    </Text>
+                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {respuesta.usuario_respuesta}</Text>
                     <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
                   </View>
                 </View>
