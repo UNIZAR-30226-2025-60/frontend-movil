@@ -66,14 +66,14 @@ export default function App() {
  */
 function RootStack({ correoUsuario, setCorreoUsuario }) {
   const colors = useThemeColors();
-  
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Drawer" >
         {(props) => <DrawerNavigator {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
 
-      <Stack.Screen 
+      <Stack.Screen
         name="IniciarSesion"
         options={{
           title: "Iniciar Sesión",
@@ -85,7 +85,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         {(props) => <IniciarSesion {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
 
-      <Stack.Screen 
+      <Stack.Screen
         name="Registrarse"
         options={{
           title: "Registrarse",
@@ -97,7 +97,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         {(props) => <Registrarse {...props} setCorreoUsuario={setCorreoUsuario} />}
       </Stack.Screen>
 
-      <Stack.Screen 
+      <Stack.Screen
         name="MenuUsuario"
         component={MenuUsuario}
         options={{
@@ -108,7 +108,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         }}
       />
 
-      <Stack.Screen
+      {/* <Stack.Screen
         name="MenuPerfil"
         component={MenuPerfil}
         initialParams={{ correoUsuario, setCorreoUsuario }}
@@ -117,7 +117,17 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           title: "Mi Perfil",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader, }}
-      />
+      /> */}
+
+      <Stack.Screen name="MenuPerfil" options={{
+        headerShown: true,
+        title: "Perfil",
+        headerStyle: { backgroundColor: colors.backgroundHeader },
+        headerTintColor: colors.textHeader,
+      }}>
+        {(props) => <MenuPerfil {...props} correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />}
+      </Stack.Screen>
+
 
       <Stack.Screen
         name="CambioContrasena"
@@ -127,7 +137,8 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerShown: true, 
           title: "Editar contraseña",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.textHeader, }}
+          headerTintColor: colors.textHeader,
+        }}
       />
 
       <Stack.Screen
@@ -138,7 +149,8 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           headerShown: true, 
           title: "Editar nombre",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.textHeader, }}
+          headerTintColor: colors.textHeader,
+        }}
       />
     </Stack.Navigator>
   );
@@ -153,17 +165,17 @@ function DrawerNavigator({ correoUsuario }) {
 
   return (
     <Drawer.Navigator
-        screenOptions={{
-          drawerStyle: {
-            backgroundColor: colors.backgroundMenu, // Color de fondo del Drawer
-          },
-          drawerLabelStyle: {
-            color: colors.text, // Color del texto de las opciones
-          },
-          // Para cuando el item está seleccionado
-          drawerActiveTintColor: colors.text, // El texto del ítem seleccionado será el color de fondo
-          headerShown: false, // Oculta el header en todas las pantallas
-        }}
+      screenOptions={{
+        drawerStyle: {
+          backgroundColor: colors.backgroundMenu, // Color de fondo del Drawer
+        },
+        drawerLabelStyle: {
+          color: colors.text, // Color del texto de las opciones
+        },
+        // Para cuando el item está seleccionado
+        drawerActiveTintColor: colors.text, // El texto del ítem seleccionado será el color de fondo
+        headerShown: false, // Oculta el header en todas las pantallas
+      }}
     >
       <Drawer.Screen name="Inicio">
         {(props) => <MenuStack {...props} correoUsuario={correoUsuario} />}
@@ -172,6 +184,12 @@ function DrawerNavigator({ correoUsuario }) {
       <Drawer.Screen name="Foro">
         {props => <ForoStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
+
+      {correoUsuario && (
+        <>
+          <Drawer.Screen name="Estadísticas">
+            {(props) => <EstadisticasStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
 
       <Drawer.Screen name="Listas públicas">
         {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
@@ -190,7 +208,7 @@ function DrawerNavigator({ correoUsuario }) {
           <Drawer.Screen name="Leídos">
             {(props) => <LeidosStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
-          
+
           <Drawer.Screen name="En Proceso">
             {(props) => <EnProcesoStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
@@ -213,26 +231,26 @@ function MenuStack({ correoUsuario }) {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Menu" options={{ headerShown: false }}>
-        {(props) => <Menu {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <Menu {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
       <Stack.Screen name="Detalles"
-        options={{ 
+        options={{
           title: "Detalles del libro",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
       <Stack.Screen name="MisListasScreen" component={MisListas} options={{ title: "Mis Listas" }} />
       <Stack.Screen name="LeerLibro"
-        options={{ 
+        options={{
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
@@ -242,9 +260,9 @@ function MenuStack({ correoUsuario }) {
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
-      
+
       <Stack.Screen name="CrearLista"
         options={({ route }) => ({
           headerShown: true,
@@ -267,14 +285,14 @@ function ForoStack({ correoUsuario }) {
   const colors = useThemeColors();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen 
+      <Stack.Screen
         name="ForoScreen"
         options={{ headerShown: false }}
       >
         {props => <Foro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
 
-      <Stack.Screen 
+      <Stack.Screen
         name="RespuestasForo"
         options={{
           title: 'Respuestas',
@@ -327,24 +345,24 @@ function FavoritosStack({ correoUsuario }) {
       </Stack.Screen>
 
       <Stack.Screen name="LeerLibro"
-        options={{ 
+        options={{
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
-        options={{ 
+        options={{
           headerShown: true,
           title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -386,14 +404,14 @@ function LeidosStack({ correoUsuario }) {
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
-        options={{ 
+        options={{
           headerShown: true,
           title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -435,14 +453,14 @@ function EnProcesoStack({ correoUsuario }) {
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
-        options={{ 
+        options={{
           headerShown: true,
           title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -476,7 +494,7 @@ function MisListasStack({ correoUsuario }) {
           title: "Crear Lista",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
-        })} 
+        })}
       />
 
       <Stack.Screen name="MisFavoritosScreen" component={Favoritos} />
@@ -492,7 +510,7 @@ function MisListasStack({ correoUsuario }) {
         {(props) => (<LibrosDeLista {...props} correoUsuario={correoUsuario} />)}
       </Stack.Screen>
 
-      <Stack.Screen name="Detalles" 
+      <Stack.Screen name="Detalles"
         options={{
           headerShown: true,
           title: "Detalles del libro",
@@ -504,24 +522,24 @@ function MisListasStack({ correoUsuario }) {
       </Stack.Screen>
 
       <Stack.Screen name="LeerLibro"
-        options={{ 
+        options={{
           title: "Leyendo...",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <LeerLibro {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
-        options={{ 
+        options={{
           headerShown: true,
           title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -538,7 +556,7 @@ function ListasPublicasStack({ correoUsuario }) {
       <Stack.Screen name="ListasPublicasScreen">
         {(props) => <ListasPublicas {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
-      
+
       <Stack.Screen
         name="LibrosDeListaScreen"
         options={{
@@ -564,14 +582,14 @@ function ListasPublicasStack({ correoUsuario }) {
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
-        options={{ 
+        options={{
           headerShown: true,
           title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
       >
-        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />} 
+        {(props) => <AñadirValoracion {...props} correoUsuario={correoUsuario} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
