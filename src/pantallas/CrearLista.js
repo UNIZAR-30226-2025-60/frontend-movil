@@ -10,6 +10,7 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, FlatList } from 'react-native';
 import { useThemeColors } from '../componentes/Tema';
+import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "../../config";
 
 export default function CrearLista({ correoUsuario, navigation }) {
@@ -59,6 +60,9 @@ export default function CrearLista({ correoUsuario, navigation }) {
         const sinDuplicados = filtrarDuplicados(fotosConvertidas); // Quita duplicados si los hay
         setImagenesPortada(sinDuplicados);
 
+        if (sinDuplicados.length > 0) {
+          setPortadaSeleccionada(sinDuplicados[0].foto);
+        }
       } catch (error) {
         console.error("Error al obtener portadas:", error);
       }
@@ -100,47 +104,6 @@ export default function CrearLista({ correoUsuario, navigation }) {
     }
     };
 
-    /**
-     * 📌 Renderiza la fila de imágenes (solo las 3 primeras)
-     */
-    function renderImagenesPrincipales() {
-        const primeras3 = imagenesPortada.slice(0, 3);
-        return (
-          <View style={styles.imagenesContainer}>
-            {primeras3.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  if (portadaSeleccionada === item.foto) {
-                    setPortadaSeleccionada(null);
-                  } else {
-                    setPortadaSeleccionada(item.foto);
-                  }
-                }}
-              >
-                <Image
-                  source={{ uri: item.foto }}
-                  style={[
-                    styles.imagenPortada,
-                    portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
-                  ]}
-                />
-              </TouchableOpacity>
-            ))}
-    
-            {/* Botón "Ver más" si hay más de 3 */}
-            {imagenesPortada.length > 3 && (
-              <TouchableOpacity
-                style={styles.verMasContainer}
-                onPress={() => setModalVisible(true)}
-              >
-                {/* Muestra "+X" o solo "+" */}
-                <Text style={styles.verMasTexto}>+{imagenesPortada.length - 3}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        );
-      }
 
     /**
      * 📌 Renderiza el modal con las imágenes que NO están en las primeras 3 (y tampoco la seleccionada si está entre esas 3).
@@ -199,11 +162,32 @@ export default function CrearLista({ correoUsuario, navigation }) {
         );
       }
 
-    /**
-     * 📌 Renderización del formulario para crear una lista
-     */
+    const handleEditarFotoPerfil = () => {
+      setModalVisible(true);
+    };
+      
+
+
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
+
+          <View style={[styles.card, { backgroundColor: colors.backgroundSecondary, alignItems: 'center' }]}>
+            <Text style={{ fontSize: 15, marginBottom: 10, textAlign: 'justify' }}>¿Quieres compartir tus recomendaciones o prefieres mantener tu lista sólo para ti? ¡Tú decides! Crea listas públicas para inspirar a otros, o privadas para disfrutar en solitario</Text>
+            
+            <Image
+              source={{ uri: portadaSeleccionada }}
+              style={[styles.imagenPortadaLista]}
+            />
+            
+            <TouchableOpacity
+              style={[styles.botonEditar, { backgroundColor: colors.buttonDark, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }]}
+              onPress={handleEditarFotoPerfil}
+            >
+              <Ionicons name="pencil" size={17} color={colors.buttonTextDark} style={{ marginRight: 7 }}/>
+              <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Editar foto de perfil</Text>
+            </TouchableOpacity>
+            {renderModalTodasImagenes()}
+          </View>
 
             {/* Campo de nombre */}
             <Text style={[styles.label, { color: colors.text }]}>Nombre de la lista:</Text>
@@ -225,11 +209,6 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 onChangeText={setDescripcion}
                 multiline
             />
-
-            {/* Imágenes principales (3 primeras) y botón "Ver más" */}
-            <Text style={[styles.label, { color: colors.text }]}>Elige una imagen para la portada:</Text>
-            {renderImagenesPrincipales()}
-            {renderModalTodasImagenes()}
 
             {/* Selector de privacidad con radio buttons */}
             <Text style={[styles.label, { color: colors.text }]}>Privacidad:</Text>
@@ -253,7 +232,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 style={[styles.boton, { backgroundColor: colors.buttonDark }]}
                 onPress={crearLista}
             >
-            <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Confirmar</Text>
+              <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Confirmar</Text>
             </TouchableOpacity>
         </View>
     );
@@ -292,15 +271,21 @@ const styles = StyleSheet.create({
 
     // 📌 Estilos para las imágenes de portada
     imagenesContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',     // Asegura que estén verticalmente centrados
-        marginBottom: 20,
+      flexDirection: 'row',
+      alignItems: 'center',     // Asegura que estén verticalmente centrados
+      marginBottom: 20,
+    },
+    imagenPortadaLista: {
+      width: 100,
+      height: 100,
+      marginHorizontal: 5,
+      borderRadius: 5,
     },
     imagenPortada: {
-        width: 80,
-        height: 80,
-        marginHorizontal: 5,
-        borderRadius: 5
+      width: 80,
+      height: 80,
+      marginHorizontal: 5,
+      borderRadius: 5,
     },
     imagenSeleccionada: {
         borderWidth: 3,
@@ -374,6 +359,29 @@ const styles = StyleSheet.create({
     radioLabel: { fontSize: 16 },
 
     // 📌 Botón de "Crear Lista"
-    boton: { padding: 15, borderRadius: 22, alignItems: 'center' },
-    textoBoton: { fontSize: 16, fontWeight: 'bold' },
+    botonEditar: { 
+      paddingVertical: 6, 
+      paddingHorizontal: 20,
+      marginTop: 7,
+      borderRadius: 22, 
+      alignSelf: 'flex-start'
+    },
+    boton: { 
+      padding: 15, 
+      borderRadius: 22, 
+      alignItems: 'center' 
+    },
+    textoBoton: { 
+      fontSize: 16, 
+      fontWeight: 'bold' 
+    },
+    card: {
+      borderRadius: 8,
+      padding: 15,
+      marginBottom: 20,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+      elevation: 2 // Sombra en Android
+    },
 });

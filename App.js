@@ -172,17 +172,13 @@ function DrawerNavigator({ correoUsuario }) {
       <Drawer.Screen name="Foro">
         {props => <ForoStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
+
+      <Drawer.Screen name="Listas públicas">
+        {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
       
       {correoUsuario && (
         <>
-          <Drawer.Screen name="Estadísticas">
-            {(props) => <EstadisticasStack {...props} />}
-          </Drawer.Screen>
-
-          <Drawer.Screen name="Listas públicas">
-            {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
-          </Drawer.Screen>
-
           <Drawer.Screen name="Mis Listas">
             {(props) => <MisListasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
@@ -197,6 +193,10 @@ function DrawerNavigator({ correoUsuario }) {
           
           <Drawer.Screen name="En Proceso">
             {(props) => <EnProcesoStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
+
+          <Drawer.Screen name="Estadísticas">
+            {(props) => <EstadisticasStack {...props} />}
           </Drawer.Screen>
         </>
       )}

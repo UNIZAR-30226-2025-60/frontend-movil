@@ -58,8 +58,6 @@ export default function ListasPublicas({ correoUsuario }) {
    * 📌 Navega a la pantalla "LibrosDeLista" con los datos de la lista seleccionada.
    */
   const manejarListaPress = (lista) => {
-    onsole.log("LISTA.NOMBRE: " + lista.nombre);
-    console.log("LISTA.PORTADA: " + lista.portada);
     // Aquí necesitas el usuario_id y el nombre de la lista
     // para armar la ruta y/o params que usas en "LibrosDeListaScreen"
     navigation.navigate('LibrosDeListaScreen', {
@@ -94,8 +92,9 @@ export default function ListasPublicas({ correoUsuario }) {
           )}
 
           <Text style={[styles.nombreLista, { color: colors.text }]}>
-            {item.nombre}
+            {item.nombre.length > 36 ? `${item.nombre.substring(0, 36)}...` : item.nombre}
           </Text>
+
         </TouchableOpacity>
       </View>
     );

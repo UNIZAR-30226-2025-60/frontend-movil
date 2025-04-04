@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import { Ionicons } from 'react-native-vector-icons';
@@ -27,6 +27,9 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   const [libros, setLibros] = useState([]); // Lista de libros filtrados
   const [librosOriginales, setLibrosOriginales] = useState([]); // Lista de libros originales
   const [cargando, setCargando] = useState(true); // Estado de carga
+
+  const [expandido, setExpandido] = useState(false);
+  const maxCaracteres = 30;
 
   // Cada vez que la pantalla se enfoca, se vuelve a obtener la lista de libros
   useFocusEffect(
@@ -116,8 +119,21 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
           style={styles.imagen_portada_lista} 
         />
         <View>
-          <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
-          <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+          <Text style={{ color: colors.text, maxWidth: 270, flexWrap: 'wrap' }}>
+            {expandido || (nombreLista || 'Título de la lista').length <= 57
+              ? nombreLista || 'Título de la lista'
+              : `${(nombreLista || 'Título de la lista').substring(0, 57)}...`}
+          </Text>
+
+          {(nombreLista || 'Título de la lista').length > 57 && (
+            <TouchableOpacity onPress={() => setExpandido(!expandido)}>
+              <Text style={{ color: colors.textSecondary, fontSize: 14, marginTop: 5 }}>
+                {expandido ? 'Ver menos' : 'Ver más'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          
+          <Text style={[styles.descripcionLista, { color: colors.text, maxWidth: 270 }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
           {esPublica ? (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons
