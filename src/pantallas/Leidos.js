@@ -90,7 +90,7 @@ export default function Leidos({ correoUsuario }) {
             ))
           ) : (
             <Text style={[styles.textoVacio, { color: colors.text }]}>
-              No tienes libros leídos aún.
+              No se encontraron libros leídos
             </Text>
           )}
         </View>

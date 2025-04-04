@@ -114,7 +114,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         initialParams={{ correoUsuario, setCorreoUsuario }}
         options={{ 
           headerShown: true, 
-          title: "Perfil",
+          title: "Mi Perfil",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader, }}
       />
@@ -125,7 +125,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         initialParams={{ correoUsuario }}
         options={{ 
           headerShown: true, 
-          title: "Cambiar contraseña",
+          title: "Editar contraseña",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader, }}
       />
@@ -136,7 +136,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         initialParams={{ correoUsuario }}
         options={{ 
           headerShown: true, 
-          title: "Cambiar nombre",
+          title: "Editar nombre",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader, }}
       />
@@ -237,7 +237,7 @@ function MenuStack({ correoUsuario }) {
 
       <Stack.Screen name="AñadirValoracion"
         options={{ 
-          title: "Añadir valoración",
+          title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
@@ -339,7 +339,7 @@ function FavoritosStack({ correoUsuario }) {
       <Stack.Screen name="AñadirValoracion"
         options={{ 
           headerShown: true,
-          title: "Añadir valoración",
+          title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
@@ -388,7 +388,7 @@ function LeidosStack({ correoUsuario }) {
       <Stack.Screen name="AñadirValoracion"
         options={{ 
           headerShown: true,
-          title: "Añadir valoración",
+          title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
@@ -437,7 +437,7 @@ function EnProcesoStack({ correoUsuario }) {
       <Stack.Screen name="AñadirValoracion"
         options={{ 
           headerShown: true,
-          title: "Añadir valoración",
+          title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
@@ -516,7 +516,7 @@ function MisListasStack({ correoUsuario }) {
       <Stack.Screen name="AñadirValoracion"
         options={{ 
           headerShown: true,
-          title: "Añadir valoración",
+          title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}
@@ -566,7 +566,7 @@ function ListasPublicasStack({ correoUsuario }) {
       <Stack.Screen name="AñadirValoracion"
         options={{ 
           headerShown: true,
-          title: "Añadir valoración",
+          title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         }}

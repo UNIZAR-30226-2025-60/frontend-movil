@@ -149,7 +149,7 @@ export default function EnProceso({ correoUsuario }) {
                 ))
             ) : (
                 <Text style={[styles.textoVacio, { color: colors.text }]}>
-                No tienes libros en proceso aún.
+                No se encontraron libros en proceso
                 </Text>
             )}
             </View>

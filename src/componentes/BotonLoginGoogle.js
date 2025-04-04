@@ -32,10 +32,6 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
           });
           const userInfo = await userInfoResponse.json();
 
-          console.log("Correo del usuario:", userInfo.email);
-          console.log("Nombre:", userInfo.name);
-          console.log("Foto de perfil:", userInfo.picture);
-
           const backendResponse = await fetch(`${API_URL}/usuarios/usuario/${userInfo.email}`);
 
           if (backendResponse.ok) {

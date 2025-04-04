@@ -57,27 +57,27 @@ export default function AñadirValoracion({ route, correoUsuario }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.titulo, { color: colors.text }]}>Añadir valoración</Text>    
+      <Text style={[styles.titulo, { color: colors.text }]}>Nueva valoración</Text>    
         
-      <Text style={[styles.tituloCampo, { color: colors.text }]}>Título</Text>
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Título:</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.icon }]}
-        placeholder="El mejor libro"
+        placeholder="Introduce tu título"
         placeholderTextColor={colors.textFormulario}
         value={titulo}
         onChangeText={setTitulo}
       />
 
-      <Text style={[styles.tituloCampo, { color: colors.text }]}>Mensaje</Text>
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Mensaje:</Text>
       <TextInput
         style={[styles.inputGrande, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.icon }]}
-        placeholder="Me ha gustado por..."
+        placeholder="Introduce tu valoración"
         placeholderTextColor={colors.textFormulario}
         value={mensaje}
         onChangeText={setMensaje}
       />
 
-      <Text style={[styles.tituloCampo, { color: colors.text }]}>Puntuación del 1 al 5</Text>
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Puntuación del 1 al 5:</Text>
       <View style={styles.estrellasContainer}>
         {[1, 2, 3, 4, 5].map((estrella) => (
           <TouchableOpacity
@@ -96,7 +96,7 @@ export default function AñadirValoracion({ route, correoUsuario }) {
 
 
       <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleGuardar} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Confirmar"}</Text>
+        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Enviar"}</Text>
       </TouchableOpacity>
     
     </View>

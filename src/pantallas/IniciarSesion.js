@@ -57,7 +57,7 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
-      <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico</Text>
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico:</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
         placeholder="ejemplo@ejemplo.com"
@@ -68,7 +68,7 @@ export default function IniciarSesion({ setCorreoUsuario }) {
         keyboardType="email-address"
       />
 
-      <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña</Text>
+      <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña:</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
         placeholder="1234abc@"

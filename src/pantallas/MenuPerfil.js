@@ -162,8 +162,8 @@ export default function MenuPerfil({ route, navig }) {
         </View>
       </Modal>
 
-      <Text style={[styles.welcomeText, { color: colors.text }]}>Bienvenido</Text>
-      <Text style={[styles.nombre, { color: colors.text }]}>{usuario.nombre}</Text>
+      <Text style={[styles.welcomeText, { color: colors.text }]}>¡Bienvenid@ {usuario.nombre}!</Text>
+      {/* <Text style={[styles.nombre, { color: colors.text }]}></Text> */}
       <Text style={[styles.emailText, { color: colors.textSecondary }]}>{usuario.correo}</Text>
       
       
@@ -186,7 +186,7 @@ export default function MenuPerfil({ route, navig }) {
         onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
       >
         <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
-        <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Cambiar Nombre</Text>
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Editar Nombre</Text>
       </TouchableOpacity>
 
       {/* Botón Cerrar Sesión */}

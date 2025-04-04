@@ -128,7 +128,7 @@ export default function Favoritos({ correoUsuario }) {
                         </TouchableOpacity>
                     ))
                 ) : (
-                    <Text style={[styles.textoVacio, { color: colors.text }]}>No tienes libros favoritos aún.</Text>
+                    <Text style={[styles.textoVacio, { color: colors.text }]}>No se encontraron libros en favoritos</Text>
                 )}
             </View>
           </ScrollView>

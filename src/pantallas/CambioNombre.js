@@ -4,7 +4,7 @@ import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 export default function CambioNombre({ route, navigation }) {
-  const { correoUsuario } = route.params;  // Recibimos el correo del usuario
+  const { usuario } = route.params;  // Recibimos el correo del usuario
   const colors = useThemeColors();
 
   const [ nuevoNombre, setNuevoNombre ] = useState("");
@@ -16,7 +16,7 @@ export default function CambioNombre({ route, navigation }) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
-              correo: correoUsuario,
+              correo: usuario.correoUsuario,
               nombre: nuevoNombre,
             }),
           });
@@ -39,7 +39,11 @@ export default function CambioNombre({ route, navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.label, { color: colors.text }]}>Nombre actual:</Text>
-      <Text></Text>
+      <TextInput
+        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        value={usuario?.nombre || ""}
+        editable={false}
+      />
 
       <Text style={[styles.label, { color: colors.text }]}>Nuevo nombre:</Text>
       <TextInput
@@ -48,7 +52,7 @@ export default function CambioNombre({ route, navigation }) {
       />
 
       <TouchableOpacity style={[styles.button, { backgroundColor: colors.buttonDark }]} onPress={handleCambiarNombre}>
-        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Actualizar nombre</Text>
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Confirmar</Text>
       </TouchableOpacity>
     </View>
   );

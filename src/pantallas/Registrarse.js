@@ -10,7 +10,7 @@ export default function Registrarse({ setCorreoUsuario }) {
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [contrasenaRepetida, setContrasenaRepetida] = useState("");
+  // const [contrasenaRepetida, setContrasenaRepetida] = useState("");
 
   const [cargando, setCargando] = useState(false);
 
@@ -28,15 +28,10 @@ export default function Registrarse({ setCorreoUsuario }) {
   }, [navigation, colors]);
 
   const handleLogin = async () => {
-    if (!nombre || !correo || !contrasena || !contrasenaRepetida) {
+    if (!nombre || !correo || !contrasena) {
       Alert.alert("⚠️ Error", "Por favor, completa todos los campos");
       return;
     }
-    if (contrasena != contrasenaRepetida) {
-      Alert.alert("⚠️ Error", "Las contraseñas no son iguales. Por favor, introduzca la misma contraseña");
-      return;
-    }
-
     setCargando(true);
 
     try {
@@ -66,7 +61,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       <Text style={[styles.titulo, { color: colors.text }]}>Registrarse</Text>
 
       <View style={styles.contenedorCampo}>
-        <Text style={[styles.tituloCampo, { color: colors.text }]}>Nombre y apellidos</Text>
+        <Text style={[styles.tituloCampo, { color: colors.text }]}>Nombre:</Text>
         <TextInput
           style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="miNombre"
@@ -78,7 +73,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       </View>
 
       <View style={styles.contenedorCampo}>
-        <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico</Text>
+        <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico:</Text>
         <TextInput
           style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="ejemplo@ejemplo.com"
@@ -91,7 +86,7 @@ export default function Registrarse({ setCorreoUsuario }) {
       </View>
 
       <View style={styles.contenedorCampo}>
-        <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña</Text>
+        <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña:</Text>
         <TextInput
           style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="1234abc@"
@@ -102,8 +97,8 @@ export default function Registrarse({ setCorreoUsuario }) {
         />
       </View>
 
-      <View style={styles.contenedorCampo}>
-        <Text style={[styles.tituloCampo, { color: colors.text }]}>Repetir contraseña</Text>
+      {/* <View style={styles.contenedorCampo}>
+        <Text style={[styles.tituloCampo, { color: colors.text }]}>Repetir contraseña:</Text>
         <TextInput
           style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
           placeholder="1234abc@"
@@ -112,10 +107,14 @@ export default function Registrarse({ setCorreoUsuario }) {
           onChangeText={setContrasenaRepetida}
           secureTextEntry
         />
-      </View>
+      </View> */}
 
-      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.buttonDark }]} onPress={handleLogin} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Continuar"}</Text>
+      <TouchableOpacity 
+        style={[styles.boton, { backgroundColor: colors.buttonDark }]} 
+        onPress={handleLogin} 
+        disabled={cargando}
+      >
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Confirmar"}</Text>
       </TouchableOpacity>
 
       <BotonLoginGoogle setCorreoUsuario={setCorreoUsuario} />

@@ -206,7 +206,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
 
             {/* Campo de nombre */}
-            <Text style={[styles.label, { color: colors.text }]}>Ingrese el nombre de su lista:</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Nombre de la lista:</Text>
             <TextInput
                 style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario}]}
                 placeholder="Ejemplo: Novelas Policiacas"
@@ -253,7 +253,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
                 style={[styles.boton, { backgroundColor: colors.buttonDark }]}
                 onPress={crearLista}
             >
-            <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Crear Lista</Text>
+            <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Confirmar</Text>
             </TouchableOpacity>
         </View>
     );

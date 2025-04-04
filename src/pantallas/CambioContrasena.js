@@ -78,7 +78,7 @@ export default function CambioContrasena({ route, navigation }) {
       />
 
       <TouchableOpacity style={[styles.button, { backgroundColor: colors.buttonDark }]} onPress={handlePasswordChange}>
-        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Actualizar Contraseña</Text>
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Confirmar</Text>
       </TouchableOpacity>
     </View>
   );

@@ -58,6 +58,8 @@ export default function ListasPublicas({ correoUsuario }) {
    * 📌 Navega a la pantalla "LibrosDeLista" con los datos de la lista seleccionada.
    */
   const manejarListaPress = (lista) => {
+    onsole.log("LISTA.NOMBRE: " + lista.nombre);
+    console.log("LISTA.PORTADA: " + lista.portada);
     // Aquí necesitas el usuario_id y el nombre de la lista
     // para armar la ruta y/o params que usas en "LibrosDeListaScreen"
     navigation.navigate('LibrosDeListaScreen', {
@@ -65,6 +67,7 @@ export default function ListasPublicas({ correoUsuario }) {
       descripcionLista: lista.descripcion,
       usuarioId: lista.usuario_id,
       esPublica: true,
+      portada: lista.portada,
       // Por ejemplo, puedes pasar la URL ya formada:
       url: `${API_URL}/listas/${encodeURIComponent(lista.usuario_id)}/${encodeURIComponent(lista.nombre)}/libros`,
     });

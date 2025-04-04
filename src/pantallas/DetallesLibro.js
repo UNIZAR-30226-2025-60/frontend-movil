@@ -14,9 +14,7 @@ import { StyleSheet, ScrollView, Text, TextInput, Switch, Image, View, Touchable
 import Modal from 'react-native-modal';
 import { Ionicons } from 'react-native-vector-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faClock, faBook, faFileWord } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { faFileWord } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
@@ -495,7 +493,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                 color={ colors.buttonTextDark }
                 style={{ marginRight: 5 }}
               />
-              <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Leer</Text>
+              <Text style={[{ color: colors.buttonTextDark }]}>Leer</Text>
             </TouchableOpacity>
 
             {/* 📌 Botones: Añadir a lista */}
@@ -510,7 +508,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                   color={ colors.buttonTextDark }
                   style={{ marginRight: 5 }}
                 />
-                <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Añadir a lista</Text>
+                <Text style={[{ color: colors.buttonTextDark }]}>Añadir a lista</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -519,6 +517,39 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
       {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
+
+{/* 📌 Más libros del autor */}
+{libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
+        <View>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {librosDelAutor
+              .filter((item) => item.nombre !== libro.nombre)
+              .map((item) => (
+              <TouchableOpacity
+                key={item.enlace}
+                onPress={() => navigation.push("Detalles", { libro: item })}
+                style={{ marginRight: 10, alignItems: "center" }}
+              >
+                <Image
+                  source={{ uri: item.imagen_portada }}
+                  style={{ width: 100, height: 150, borderRadius: 5 }}
+                />
+                <Text
+                  style={{ width: 100, textAlign: "center", color: colors.text }}
+                  numberOfLines={2}
+                >
+                  {item.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
+        
+        </View>
+      )}
+
 
       {/* 📌 Sinopsis del libro */}
       <View>
@@ -563,7 +594,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
           
           {/* 📌 Tiempo estimado de lectura */}
           <View style={stylesAcercaDe.columna}>
-          <Ionicons name="time" size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
+            <Ionicons name="time" size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
             {/* <FontAwesomeIcon icon={faClock} style={[stylesAcercaDe.icono, { color: colors.text }]} /> */}
             <View style={stylesAcercaDe.textoSubcolumna}>
               <Text style={{ color: colors.text }}>{libro.horas_lectura}</Text>
@@ -573,7 +604,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
           
           {/* 📌 Cantidad total de palabras */}
           <View style={stylesAcercaDe.columna}>
-          <Ionicons name="text" size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
+            <FontAwesomeIcon icon={faFileWord} size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
+            {/* <Ionicons name="text" size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} /> */}
             {/* <FontAwesomeIcon icon={faFileWord} style={[stylesAcercaDe.icono, { color: colors.text }]} /> */}
             <View style={stylesAcercaDe.textoSubcolumna}>
               <Text style={{ color: colors.text }}>{libro.num_palabras}</Text>
@@ -586,50 +618,21 @@ export default function DetallesLibro({ route, correoUsuario }) {
       {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
 
-      {/* 📌 Más libros del autor */}
-      {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
-        <View>
-          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {librosDelAutor
-              .filter((item) => item.nombre !== libro.nombre)
-              .map((item) => (
-              <TouchableOpacity
-                key={item.enlace}
-                onPress={() => navigation.push("Detalles", { libro: item })}
-                style={{ marginRight: 10, alignItems: "center" }}
-              >
-                <Image
-                  source={{ uri: item.imagen_portada }}
-                  style={{ width: 100, height: 150, borderRadius: 5 }}
-                />
-                <Text
-                  style={{ width: 100, textAlign: "center", color: colors.text }}
-                  numberOfLines={2}
-                >
-                  {item.nombre}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
-        
-        </View>
-      )}
-
-
+    
       {/* 📌 Sección de valoraciones */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
         <View>
-          <Text style={[{ color: colors.text }]}>Valoración general</Text>
-          <Text style={[{ fontSize: 16, color: colors.text }]}>{promedio} de 5</Text>
-          <Text style={{ fontSize: 20, marginBottom: 7 }}>
-            {Array(estrellasLlenas).fill(<Ionicons name="star" size={24} color={colors.star} />)}
-            {Array(estrellasVacías).fill(<Ionicons name="star-outline" size={24} color={colors.border} />)}
+          <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+            <Text style={[{ color: colors.text }]}>Valoración general:   </Text>
+            <Text style={[{ fontSize: 16, color: colors.text }]}>{promedio} de 5</Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 7 }}>
+            {Array(estrellasLlenas).fill(<Ionicons name="star" size={20} color={colors.star} />)}
+            {Array(estrellasVacías).fill(<Ionicons name="star-outline" size={20} color={colors.border} />)}
+            <Text style={[{ color: colors.text, marginLeft: 5 }]}>({totalValoraciones})</Text>
             {/* {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))} */}
-          </Text>
+          </View>
         </View>
         
         {/* 📌 Barras de progreso de valoraciones */}
@@ -662,7 +665,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
               color={ colors.buttonTextDark }
               style={{ marginRight: 5 }}
             />
-            <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>Añadir valoración</Text>
+            <Text style={[{ color: colors.buttonTextDark }]}>Añadir valoración</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -672,14 +675,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
       {/* 📌 Todas las reseñas del libro */}
       <View>
         <View>
+        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
           {valoraciones.length > 0 ? (
             <View>
-              <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
               <TouchableOpacity 
                 style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
                 onPress={handleOrdenarPor}
               >
-                <Text style={[stylesGeneral.textoBoton, { color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por' : `Ordenado por: ${ordenSeleccionado}`}</Text>
+                <Text style={[{ color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}</Text>
                 <Ionicons
                   name='caret-down'
                   size={15}
@@ -726,14 +729,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
                     ))}
                   </View>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
-                  <Text style={{ color: colors.textTerciary }}>{item.usuario_id}  {item.fecha}</Text>
+                  <Text style={{ color: colors.textTerciary }}>Por {item.usuario_id} el {item.fecha}</Text>
                 
                   <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 1 }]} />
                 </View>
               ))}
             </View>
           ) : (
-            <Text style={{ color: colors.text }}>Aún no hay valoraciones.</Text>
+            <Text style={{ color: colors.text }}>Aún no hay valoraciones</Text>
           )}
         </View>
       </View>
@@ -909,9 +912,6 @@ const stylesGeneral = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
     alignSelf: 'flex-start',
-  },
-  textoBoton: {
-    color: 'white',
   },
   fila: {
     flexDirection: 'row',

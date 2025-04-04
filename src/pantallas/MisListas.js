@@ -141,6 +141,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                     nombreLista: item.nombre,
                     descripcionLista: item.descripcion,
                     esPublica: item.publica,
+                    portada: item.portada,
                     //url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
                     url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
                   });
@@ -244,6 +245,12 @@ export default function MisListas({ correoUsuario, navigation, route }) {
           )}
         </View>
         
+        {listas.length === 0 && (
+          <View style={{ alignItems: 'center', marginTop: 20 }}>
+            <Text style={{ color: colors.text, fontSize: 16 }}>No tienes listas aún</Text>
+          </View>
+        )}
+
         {/* 📌 Lista de listas */}
         <FlatList
           // Agrega un item "Crear lista"

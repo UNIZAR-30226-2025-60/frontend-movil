@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import { Ionicons } from 'react-native-vector-icons';
@@ -21,7 +21,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   const colors = useThemeColors();  // Colores personalizados según el tema
 
   // Extraemos los datos que se pasaron como parámetros a la pantalla
-  const { url, nombreLista, descripcionLista, esPublica } = route.params;
+  const { url, nombreLista, descripcionLista, esPublica, portada } = route.params;
   const finalUrl = url;
 
   const [libros, setLibros] = useState([]); // Lista de libros filtrados
@@ -32,6 +32,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   useFocusEffect(
     useCallback(() => {
       if (finalUrl) {
+        
         obtenerLibros();
       }
     }, [finalUrl])
@@ -40,6 +41,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   // 📌 Función que obtiene los libros de la lista desde la API
   const obtenerLibros = async () => {
     try {
+      console.log("PORTADA", portada);
       setCargando(true);
       const respuesta = await fetch(finalUrl);
       const textoRespuesta = await respuesta.text();
@@ -108,30 +110,34 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* 📌 Encabezado de la lista */}
-      <View style={[styles.headerLista, { backgroundColor: colors.backgroundSubtitle }]}>
-        <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
-        <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
-        {esPublica ? (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Ionicons
-              name='lock-open'
-              size={15}
-              color={ colors.textSecondary }
-            />
-            <Text style={[styles.privacidad, { color: colors.textSecondary }]}>Pública</Text>
-          </View>  
-        ) : (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Ionicons
-              name='lock-closed'
-              size={15}
-              color={ colors.textSecondary }
-            />
-            <Text style={[styles.privacidad, { color: colors.textSecondary }]}>Privada</Text>
-          </View> 
-        )}
-
-        
+      <View style={[styles.headerLista, { flexDirection: 'row', backgroundColor: colors.backgroundSubtitle }]}>
+        <Image 
+          source={{ uri: portada }}
+          style={styles.imagen_portada_lista} 
+        />
+        <View>
+          <Text style={[styles.tituloLista, { color: colors.text }]}>{nombreLista || 'Título de la lista'}</Text>
+          <Text style={[styles.descripcionLista, { color: colors.text }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+          {esPublica ? (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons
+                name='lock-open'
+                size={15}
+                color={ colors.textSecondary }
+              />
+              <Text style={[styles.privacidad, { color: colors.textSecondary }]}>Pública</Text>
+            </View>  
+          ) : (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons
+                name='lock-closed'
+                size={15}
+                color={ colors.textSecondary }
+              />
+              <Text style={[styles.privacidad, { color: colors.textSecondary }]}>Privada</Text>
+            </View> 
+          )}
+        </View>
       </View>
 
       <BuscadorLibrosLista setLibros={setLibros} libros={librosOriginales} />
@@ -180,5 +186,10 @@ const styles = StyleSheet.create({
   },
   privacidad: {
     fontSize: 12,
+  },
+  imagen_portada_lista: {
+    width: 80,
+    height: 80,
+    marginRight: 10,
   },
 });

@@ -11,6 +11,8 @@ import React, { use } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useThemeColors } from "./Tema";
 
@@ -46,8 +48,10 @@ export default function Encabezado({ titulo, correoUsuario }) {
         </TouchableOpacity>
 
         {/* Icono de Usuario */}
-        <TouchableOpacity onPress={manejarNavegacionUsuario}>
-        <Ionicons name="person-circle-outline" size={30} color={colors.textHeader} />
+        <TouchableOpacity onPress={manejarNavegacionUsuario} style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+          {/* <Ionicons name="person-circle-outline" size={30} color={colors.textHeader} /> */}
+          <FontAwesomeIcon icon={faUser} size={20} color={colors.textHeader} />
+          {/* <Text>Perfil</Text> */}
         </TouchableOpacity>
       </View>
 

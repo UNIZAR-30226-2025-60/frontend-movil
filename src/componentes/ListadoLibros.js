@@ -18,7 +18,7 @@ export default function ListadoLibros({ libros }) {
   if (!libros || libros.length === 0) {
     return (
       <View style={styles.noResultadosContainer}>
-        <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros.</Text>
+        <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros</Text>
       </View>
     );
   }

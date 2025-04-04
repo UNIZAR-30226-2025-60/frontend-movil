@@ -11,6 +11,7 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
   const { preguntaId, cuestion } = route.params;  
   const [respuestas, setRespuestas] = useState([]);
   const [nuevaRespuesta, setNuevaRespuesta] = useState('');
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     cargarRespuestas();
@@ -50,7 +51,6 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
         throw new Error('Error al enviar respuesta');
       }
       const data = await response.json();
-      console.log('Respuesta agregada:', data);
       // Limpiar el campo y recargar las respuestas para ver el nuevo mensaje
       setNuevaRespuesta('');
       cargarRespuestas();
@@ -63,8 +63,21 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
         
         <View style={[styles.headerPregunta, { backgroundColor: colors.backgroundSubtitle }]}>
-          <Text style={[styles.titulo, { color: colors.text }]}>Pregunta</Text>
-          <Text style={[styles.cuestion, { color: colors.text }]}>{cuestion}</Text>
+          <Text style={[styles.titulo, { color: colors.text }]}>Pregunta:</Text>
+          {/* <Text style={[styles.cuestion, { color: colors.text }]}>{cuestion}</Text> */}
+          <Text style={[styles.cuestion, { color: colors.text }]}>
+            {expanded || cuestion.length <= 63
+              ? cuestion
+              : `${cuestion.substring(0, 63)}...`}
+          </Text>
+
+          {cuestion.length > 63 && (
+            <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+              <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
+                {expanded ? 'Ver menos' : 'Ver más'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -85,27 +98,30 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
             )}
         </ScrollView>
         {correoUsuario ? (
-            <View style={[styles.formContainer, { borderColor: colors.border }]}>
-              <TextInput
-                style={[
-                  styles.input,
-                  {
-                    borderColor: colors.border,
-                    color: colors.text,
-                    backgroundColor: colors.backgroundFormulario
-                  }
-                ]}
-                placeholder="Escribe tu respuesta..."
-                placeholderTextColor={colors.textSecondary}
-                value={nuevaRespuesta}
-                onChangeText={setNuevaRespuesta}
-              />
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.buttonDark, borderRadius: 22 }]}
-                onPress={handleEnviarRespuesta}
-              >
-                <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>RESPONDER</Text>
-              </TouchableOpacity>
+            <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border }]}>
+              <Text style={[styles.tituloCampo, { color: colors.text }]}>Mensaje:</Text>
+              <View style={[styles.formContainer]}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      borderColor: colors.border,
+                      color: colors.text,
+                      backgroundColor: colors.backgroundFormulario
+                    }
+                  ]}
+                  placeholder="Escribe tu respuesta..."
+                  placeholderTextColor={colors.textSecondary}
+                  value={nuevaRespuesta}
+                  onChangeText={setNuevaRespuesta}
+                />
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: colors.buttonDark, borderRadius: 22 }]}
+                  onPress={handleEnviarRespuesta}
+                >
+                  <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Enviar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
         ) : (
           <Text style={[styles.aviso, { color: colors.buttonSec }]}>Debes iniciar sesión para responder</Text>
@@ -168,8 +184,8 @@ const styles = StyleSheet.create({
   formContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderTopWidth: 1,
+    // padding: 10,
+    // borderTopWidth: 1,
   },
   input: {
     flex: 1,
