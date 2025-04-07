@@ -4,11 +4,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
+import BuscadorLibrosLista from '../componentes/BuscadorLibrosLista';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 export default function Leidos({ correoUsuario }) {
   const [librosLeidos, setLibrosLeidos] = useState([]);
+  const [librosLeidosFiltrados, setLibrosLeidosFiltrados] = useState([]);
   const navigation = useNavigation();
   const colors = useThemeColors();
 
@@ -59,6 +61,12 @@ export default function Leidos({ correoUsuario }) {
     }, [correoUsuario])
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      setLibrosLeidosFiltrados(librosLeidos);
+    }, [librosLeidos])
+  );
+
   useEffect(() => {
     obtenerLeidos();
   }, []);
@@ -71,12 +79,12 @@ export default function Leidos({ correoUsuario }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Encabezado titulo="Leídos" correoUsuario={correoUsuario} />
 
-      {/* <BuscadorLibrosLista setLibros={setLibros} libros={librosOriginales} /> */}
-
+      <BuscadorLibrosLista setLibros={setLibrosLeidosFiltrados} libros={librosLeidos} />
+      
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.grid}>
-          {librosLeidos.length > 0 ? (
-            librosLeidos.map((libro, index) => (
+          {librosLeidosFiltrados.length > 0 ? (
+            librosLeidosFiltrados.map((libro, index) => (
               <TouchableOpacity
                 key={index}
                 style={styles.libroContainer}

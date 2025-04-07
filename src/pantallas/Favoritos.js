@@ -11,13 +11,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
-import DetallesLibro  from '../pantallas/DetallesLibro';
+import BuscadorLibrosLista from '../componentes/BuscadorLibrosLista';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 
 export default function Favoritos({ correoUsuario }) {
     const [librosFavoritos, setLibrosFavoritos] = useState([]);
+    const [librosFavoritosFiltrados, setLibrosFavoritosFiltrados] = useState([]);
     const navigation = useNavigation();
     const colors = useThemeColors();
 
@@ -100,6 +101,12 @@ export default function Favoritos({ correoUsuario }) {
       }, [correoUsuario])
     );
 
+    useFocusEffect(
+      useCallback(() => {
+        setLibrosFavoritosFiltrados(librosFavoritos);
+      }, [librosFavoritos])
+    );
+    
     const verDetallesLibro = (libro) => {
       navigation.navigate("Detalles", { libro });
     };
@@ -111,10 +118,11 @@ export default function Favoritos({ correoUsuario }) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
           <Encabezado titulo="Mis Favoritos" correoUsuario={correoUsuario} />
+          <BuscadorLibrosLista setLibros={setLibrosFavoritosFiltrados} libros={librosFavoritos} />
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.grid}>
-                {librosFavoritos.length > 0 ? (
-                    librosFavoritos.map((libro, index) => (
+                {librosFavoritosFiltrados.length > 0 ? (
+                    librosFavoritosFiltrados.map((libro, index) => (
                         <TouchableOpacity
                             key={index}
                             style={styles.libroContainer}

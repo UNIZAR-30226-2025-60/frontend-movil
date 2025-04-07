@@ -37,9 +37,9 @@ export default function BuscadorLibrosLista({ setLibros, libros }) {
                 );
                 setLibros(librosFiltrados);
             } 
-            // else {
-            //     setLibros(libros); // Si no hay búsqueda, muestra todos los libros
-            // }
+            else {
+                setLibros(libros); // Si no hay búsqueda, muestra todos los libros
+            }
         };
     
         buscarLibros();

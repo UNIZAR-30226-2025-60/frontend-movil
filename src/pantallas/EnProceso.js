@@ -4,11 +4,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
+import BuscadorLibrosLista from '../componentes/BuscadorLibrosLista';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 export default function EnProceso({ correoUsuario }) {
     const [librosEnProceso, setLibrosEnProceso] = useState([]);
+    const [librosEnProcesoFiltrados, setLibrosEnProcesoFiltrados] = useState([]);
     const navigation = useNavigation();
     const colors = useThemeColors();
 
@@ -118,6 +120,12 @@ export default function EnProceso({ correoUsuario }) {
         }, [correoUsuario])
     );
 
+    useFocusEffect(
+      useCallback(() => {
+        setLibrosEnProcesoFiltrados(librosEnProceso);
+      }, [librosEnProceso])
+    );
+
     useEffect(() => {
         obtenerEnProceso();
     }, []);
@@ -129,10 +137,12 @@ export default function EnProceso({ correoUsuario }) {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Encabezado titulo="En Proceso" correoUsuario={correoUsuario} />
+        <BuscadorLibrosLista setLibros={setLibrosEnProcesoFiltrados} libros={librosEnProceso} />
+        
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.grid}>
-            {librosEnProceso.length > 0 ? (
-                librosEnProceso.map((libro, index) => (
+            {librosEnProcesoFiltrados.length > 0 ? (
+                librosEnProcesoFiltrados.map((libro, index) => (
                 <TouchableOpacity
                     key={index}
                     style={styles.libroContainer}

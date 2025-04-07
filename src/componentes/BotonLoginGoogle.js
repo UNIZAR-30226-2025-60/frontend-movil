@@ -69,8 +69,17 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
     <View style={{ width: '100%' }}>
       <TouchableOpacity
         style={[styles.boton, { backgroundColor: colors.buttonDarkTerciary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}
-        onPress={() => {
-          promptAsync().catch((e) => console.error("Error al iniciar sesión:", e));
+        // onPress={() => {
+        //   promptAsync().catch((e) => console.error("Error al iniciar sesión:", e));
+        // }}
+        onPress={async () => {
+          setMostrarModal(true); // Mostrar modal justo al pulsar el botón
+          try {
+            await promptAsync();
+          } catch (e) {
+            console.error("Error al iniciar sesión:", e);
+            setMostrarModal(false);
+          }
         }}
         disabled={cargando}
       >
@@ -81,7 +90,7 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
       </TouchableOpacity>
 
       {/* Pantalla Cargando... mientras se gestionan datos del login */}
-      <Modal visible={mostrarModal} animationType="fade" transparent={true}>
+      <Modal visible={mostrarModal} animationType="fade">
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
           <Text style={{ color: colors.text }}>Cargando...</Text>
           <Image source={cargandoGif} style={styles.loadingImage}/>

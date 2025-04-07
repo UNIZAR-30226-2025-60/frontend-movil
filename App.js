@@ -108,7 +108,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         }}
       />
 
-      {/* <Stack.Screen
+      <Stack.Screen
         name="MenuPerfil"
         component={MenuPerfil}
         initialParams={{ correoUsuario, setCorreoUsuario }}
@@ -117,17 +117,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
           title: "Mi Perfil",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader, }}
-      /> */}
-
-      <Stack.Screen name="MenuPerfil" options={{
-        headerShown: true,
-        title: "Perfil",
-        headerStyle: { backgroundColor: colors.backgroundHeader },
-        headerTintColor: colors.textHeader,
-      }}>
-        {(props) => <MenuPerfil {...props} correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />}
-      </Stack.Screen>
-
+      />
 
       <Stack.Screen
         name="CambioContrasena"
