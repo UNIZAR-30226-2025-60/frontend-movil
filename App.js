@@ -133,8 +133,8 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         name="CambioContrasena"
         component={CambioContrasena}
         initialParams={{ correoUsuario }}
-        options={{ 
-          headerShown: true, 
+        options={{
+          headerShown: true,
           title: "Editar contraseña",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader,
@@ -145,13 +145,26 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         name="CambioNombre"
         component={CambioNombre}
         initialParams={{ correoUsuario }}
-        options={{ 
-          headerShown: true, 
+        options={{
+          headerShown: true,
           title: "Editar nombre",
           headerStyle: { backgroundColor: colors.backgroundHeader },
           headerTintColor: colors.textHeader,
         }}
       />
+
+      <Stack.Screen
+        name="Detalles"
+        options={{
+          headerShown: true,
+          title: "Detalles del libro",
+          headerStyle: { backgroundColor: colors.backgroundHeader },
+          headerTintColor: colors.textHeader,
+        }}
+      >
+        {(props) => <DetallesLibro {...props} correoUsuario={correoUsuario} />}
+      </Stack.Screen>
+
     </Stack.Navigator>
   );
 }
@@ -166,12 +179,8 @@ function DrawerNavigator({ correoUsuario }) {
   return (
     <Drawer.Navigator
       screenOptions={{
-        drawerStyle: {
-          backgroundColor: colors.backgroundMenu, // Color de fondo del Drawer
-        },
-        drawerLabelStyle: {
-          color: colors.text, // Color del texto de las opciones
-        },
+        drawerStyle: { backgroundColor: colors.backgroundMenu, },  // Color de fondo del Drawer
+        drawerLabelStyle: { color: colors.text, },  // Color del texto de las opciones
         // Para cuando el item está seleccionado
         drawerActiveTintColor: colors.text, // El texto del ítem seleccionado será el color de fondo
         headerShown: false, // Oculta el header en todas las pantallas
@@ -191,12 +200,10 @@ function DrawerNavigator({ correoUsuario }) {
             {(props) => <EstadisticasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
 
-      <Drawer.Screen name="Listas públicas">
-        {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
-      </Drawer.Screen>
-      
-      {correoUsuario && (
-        <>
+          <Drawer.Screen name="Listas públicas">
+            {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
+          </Drawer.Screen>
+
           <Drawer.Screen name="Mis Listas">
             {(props) => <MisListasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>
@@ -211,10 +218,6 @@ function DrawerNavigator({ correoUsuario }) {
 
           <Drawer.Screen name="En Proceso">
             {(props) => <EnProcesoStack {...props} correoUsuario={correoUsuario} />}
-          </Drawer.Screen>
-
-          <Drawer.Screen name="Estadísticas">
-            {(props) => <EstadisticasStack {...props} />}
           </Drawer.Screen>
         </>
       )}
@@ -254,7 +257,7 @@ function MenuStack({ correoUsuario }) {
       </Stack.Screen>
 
       <Stack.Screen name="AñadirValoracion"
-        options={{ 
+        options={{
           title: "Nueva valoración",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título

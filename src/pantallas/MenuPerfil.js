@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useThemeColors } from "../componentes/Tema";
-import { useNavigation } from '@react-navigation/native';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert, Modal, FlatList } from "react-native";
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Modal, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
-
 
 export default function MenuPerfil({ route, navig }) {
   const { correoUsuario, setCorreoUsuario } = route.params;
@@ -68,11 +65,12 @@ export default function MenuPerfil({ route, navig }) {
       "¿Estás seguro de que deseas cerrar sesión?",
       [
         { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Cerrar sesión", 
+        {
+          text: "Cerrar sesión",
           onPress: () => {
             setCorreoUsuario(null);
-            navigation.navigate("Drawer", { screen: "Inicio" });}
+            navigation.navigate("Drawer", { screen: "Inicio" });
+          }
         }
       ]
     );
@@ -104,7 +102,7 @@ export default function MenuPerfil({ route, navig }) {
         throw new Error(errorData.error || "Error al cambiar la imagen");
       }
       const data = await response.json();
-      
+
       // Actualizar el estado con la nueva imagen
       setUsuario((prev) => ({ ...prev, foto_perfil: transformarURLGoogleDrive(nuevaImagen) }));
       setModalVisible(false);
@@ -118,7 +116,7 @@ export default function MenuPerfil({ route, navig }) {
   if (usuario === null) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Image source={cargandoGif} style={styles.loadingImage}/>
+        <Image source={cargandoGif} style={styles.loadingImage} />
         <Text style={{ color: colors.text }}>Cargando...</Text>
       </View>
     );
@@ -128,9 +126,9 @@ export default function MenuPerfil({ route, navig }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Image 
-          source={{ uri: usuario.foto_perfil }} 
-          style={[styles.profileImage, { borderColor: colors.icon }]} 
+        <Image
+          source={{ uri: usuario.foto_perfil }}
+          style={[styles.profileImage, { borderColor: colors.icon }]}
           onError={(e) => console.log("Error al cargar la imagen:", e.nativeEvent.error)}
         />
         <View style={[styles.editIconContainer, { backgroundColor: colors.icon, borderColor: colors.background }]}>
@@ -152,11 +150,11 @@ export default function MenuPerfil({ route, navig }) {
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity 
-              style={[styles.closeButton, { backgroundColor: colors.buttonClose }]} 
+            <TouchableOpacity
+              style={[styles.closeButton, { backgroundColor: colors.buttonClose }]}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={[styles.closeButtonText, { color:colors.textLight }]}>Cerrar</Text>
+              <Text style={[styles.closeButtonText, { color: colors.textLight }]}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -165,8 +163,8 @@ export default function MenuPerfil({ route, navig }) {
       <Text style={[styles.welcomeText, { color: colors.text }]}>¡Bienvenid@ {usuario.nombre}!</Text>
       {/* <Text style={[styles.nombre, { color: colors.text }]}></Text> */}
       <Text style={[styles.emailText, { color: colors.textSecondary }]}>{usuario.correo}</Text>
-      
-      
+
+
       {!esUsuarioGoogle && (
         <>
           {/* Botón Cambiar contraseña */}
@@ -175,7 +173,7 @@ export default function MenuPerfil({ route, navig }) {
             onPress={() => navigation.navigate("CambioContrasena", { usuario: usuario })}
           >
             <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
-            <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Editar Contraseña</Text>
+            <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Editar Contraseña</Text>
           </TouchableOpacity>
         </>
       )}
@@ -186,7 +184,7 @@ export default function MenuPerfil({ route, navig }) {
         onPress={() => navigation.navigate("CambioNombre", { usuario: usuario })}
       >
         <Ionicons name="pencil" size={20} color={colors.buttonTextDark} />
-        <Text style={[styles.buttonText, { color: colors.buttonTextDark}]}>Editar Nombre</Text>
+        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Editar Nombre</Text>
       </TouchableOpacity>
 
       {/* Botón Cerrar Sesión */}

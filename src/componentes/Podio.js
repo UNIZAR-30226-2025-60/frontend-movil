@@ -1,7 +1,7 @@
 // Podio.js
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { useThemeColors } from '../componentes/Tema';
 
 /**
@@ -12,10 +12,20 @@ import { useThemeColors } from '../componentes/Tema';
 function getTextAlignmentStyles(place) {
    switch (place) {
       case 1: return { textAlign: 'center' };
-      case 2: return { textAlign: 'left' };
-      case 3: return { textAlign: 'right' };
+      case 2: return { textAlign: 'right' };
+      case 3: return { textAlign: 'left' };
       default: return { textAlign: 'center' };
    }
+}
+
+// Función para transformar URL de Google Drive (si fuera necesario)
+function transformarURLGoogleDrive(url) {
+   const match = url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)\//);
+   if (match) {
+      const id = match[1];
+      return `https://drive.google.com/uc?export=view&id=${id}`;
+   }
+   return url;
 }
 
 /**
@@ -41,14 +51,42 @@ function PodioColumna({ height, user, place }) {
          ? user.usuario_id.split('@')[0]
          : user.usuario_id);
 
+   // Si el objeto de usuario tiene la propiedad "profilePic", la usamos.
+   // Si es de Google Drive, la transformamos.
+   const profilePicURL = user.foto_perfil
+      ? transformarURLGoogleDrive(user.foto_perfil)
+      : null;
+
+
    return (
       <View style={styles.columnaContainer}>
-         <Text style={[styles.userText, { color: colors.text }, getTextAlignmentStyles(place)]}>
+         {/* Nombre del usuario */}
+         <Text numberOfLines={2} style={[styles.userText, { color: colors.text }, getTextAlignmentStyles(place)]}>
             {mostrarNombre}
          </Text>
+
+         {/* Imagen de perfil */}
+         {profilePicURL ? (
+            <Image
+               source={{ uri: profilePicURL }}
+               style={styles.profileImage}
+               onError={(e) => console.log("Error al cargar la imagen:", e.nativeEvent.error)}
+            />
+         ) : (
+            // Si no hay imagen, muestra un placeholder (puedes personalizarlo)
+            <View style={[styles.profileImage, { backgroundColor: '#eee' }]} />
+         )}
+
+         {/* Base del podio */}
          <View style={[styles.basePodio, { backgroundColor: baseColor, height }]}>
             <Text style={[styles.placeText, { color: colors.text }]}>{place}</Text>
          </View>
+
+         {/* Libros leídos */}
+         <Text
+            style={[styles.booksReadText, { color: colors.text }, getTextAlignmentStyles(place)]}>
+            {user.libros_leidos || 0} libros
+         </Text>
       </View>
    );
 }
@@ -151,10 +189,14 @@ const styles = StyleSheet.create({
    userText: {
       fontSize: 14,
       marginBottom: 4,
-      width: '100%',
-      flexWrap: 'wrap',
+      marginHorizontal: 8,
    },
-
+   profileImage: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      marginBottom: 4,
+   },
    // Base del podio
    basePodio: {
       width: 80,
@@ -164,5 +206,10 @@ const styles = StyleSheet.create({
    placeText: {
       fontWeight: 'bold',
       fontSize: 30,
+   },
+   booksReadText: {
+      fontSize: 12,
+      marginTop: 4,
+      marginHorizontal: 8,
    },
 });

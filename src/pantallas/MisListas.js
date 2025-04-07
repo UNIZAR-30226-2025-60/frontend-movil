@@ -26,6 +26,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   const [modoSeleccion, setModoSeleccion] = useState(false);
   const [listasSeleccionadas, setListasSeleccionadas] = useState(new Set());
   const [menuVisibleId, setMenuVisibleId] = useState(null);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   /**
    * 📌 Hook para obtener las listas cuando la pantalla recibe foco.
@@ -46,10 +47,10 @@ export default function MisListas({ correoUsuario, navigation, route }) {
     try {
       const respuesta = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
       const datos = await respuesta.json();
-  
+
       // Filtrar todas las listas que NO sean "Mis Favoritos", "Leídos" o "En proceso"
       const listasFiltradas = datos.filter(
-        (lista) => 
+        (lista) =>
           lista.nombre !== 'Mis Favoritos' &&
           lista.nombre !== 'Leídos' &&
           lista.nombre !== 'En proceso'
@@ -57,10 +58,10 @@ export default function MisListas({ correoUsuario, navigation, route }) {
 
       // Ordenar alfabéticamente las listas restantes
       listasFiltradas.sort((a, b) => a.nombre.localeCompare(b.nombre));
-  
+
       // Guardar en estado
-     setListas(listasFiltradas);
-  
+      setListas(listasFiltradas);
+
     } catch (error) {
       console.error('Error al obtener listas:', error);
     }
@@ -71,14 +72,14 @@ export default function MisListas({ correoUsuario, navigation, route }) {
    */
   const eliminarLista = async (nombreLista, sinConfirmacion = false) => {
     if (nombreLista === "Mis Favoritos") return;
-  
+
     const ejecutarEliminacion = async () => {
       try {
         //const res = await fetch(`${API_URL}/listas/${correoUsuario}/${nombreLista}`, {
         const res = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(nombreLista)}`, {
           method: "DELETE",
         });
-  
+
         if (!res.ok) {
           const msg = await res.text();
           Alert.alert("Error", msg);
@@ -92,7 +93,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         Alert.alert("Error", "Hubo un problema al eliminar la lista.");
       }
     };
-  
+
     if (sinConfirmacion) {
       await ejecutarEliminacion();
     } else {
@@ -116,7 +117,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   const renderItem = ({ item }) => {
     // Determinar si el menú está visible para esta lista
     const isMenuVisible = menuVisibleId === item.nombre; // usas el nombre como “ID”
-  
+
     return (
       <View style={[styles.itemContainer, { borderColor: colors.border }]}>
         <TouchableOpacity
@@ -134,7 +135,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                 setMenuVisibleId(null);
               } else {
                 if (libro) {
-                  añadirLibroALista(item.nombre); 
+                  añadirLibroALista(item.nombre);
                 } else {
                   navigation.navigate("LibrosDeListaScreen", {
                     usuarioId: correoUsuario,
@@ -178,7 +179,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
           )}
           <Text style={[styles.nombreLista, { color: colors.text }]}>{item.nombre}</Text>
         </TouchableOpacity>
-  
+
         {/* Menú de tres puntos, si no es “Mis Favoritos” (pero ya lo filtramos) */}
         <TouchableOpacity
           onPress={(event) => {
@@ -189,7 +190,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         >
           <Ionicons name="ellipsis-vertical" size={24} color={colors.icon} />
         </TouchableOpacity>
-  
+
         {/* Menú desplegable */}
         {isMenuVisible && (
           <View style={[styles.menuOpciones, { backgroundColor: colors.backgroundSecondary }]}>
@@ -203,7 +204,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             </TouchableOpacity>
 
             <View style={[styles.linea, { backgroundColor: colors.line, height: 0.8 }]} />
-  
+
             <TouchableOpacity
               activeOpacity={1}
               style={styles.opcionEliminar}
@@ -231,20 +232,36 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         <Encabezado titulo="Mis Listas" correoUsuario={correoUsuario} />
 
         <View style={[styles.topBar, { backgroundColor: colors.backgroundSubtitle }]}>
-          {modoSeleccion ? (
-            <TouchableOpacity onPress={() => {
-              setModoSeleccion(false);
-              setListasSeleccionadas(new Set());
-            }}>
-              <Text style={{ color: colors.buttonSec }}>Cancelar</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => setModoSeleccion(true)}>
-              <Ionicons name="trash-outline" size={24} color={colors.icon} />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
+            <Ionicons name="ellipsis-vertical" size={24} color={colors.icon} />
+          </TouchableOpacity>
         </View>
-        
+
+        {dropdownVisible && (
+          // Contenedor que ocupa toda la pantalla
+          <View style={styles.dropdownMenuContainer}>
+            {/* Si se pulsa fuera del menú, se cierra */}
+            <TouchableWithoutFeedback onPress={() => setDropdownVisible(false)}>
+              <View style={StyleSheet.absoluteFill} />
+            </TouchableWithoutFeedback>
+
+            {/* Menú en sí, posicionado debajo del icono */}
+            <View style={[styles.dropdownMenu, { backgroundColor: colors.backgroundSecondary }]}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModoSeleccion(true);
+                  setDropdownVisible(false);
+                }}
+                style={styles.dropdownOption}
+              >
+                <Text style={{ color: colors.text }}>
+                  Seleccionar para eliminar
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {listas.length === 0 && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
             <Text style={{ color: colors.text, fontSize: 16 }}>No tienes listas aún</Text>
@@ -262,7 +279,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             if (item.esNueva) {
               return (
                 <TouchableOpacity
-                  style={[styles.itemContainer, styles.addContainer, {borderColor: colors.border}]}
+                  style={[styles.itemContainer, styles.addContainer, { borderColor: colors.border }]}
                   color={[colors.text]}
                   onPress={() => navigation.navigate("CrearLista")}
                 >
@@ -290,7 +307,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                 [
                   { text: 'Cancelar', style: 'cancel' },
                   {
-                    text: 'Eliminar',
+                    text: 'Borrar seleccionadas', // Puedes cambiar este texto a lo que prefieras
                     style: 'destructive',
                     onPress: async () => {
                       for (const nombre of listasSeleccionadas) {
@@ -339,7 +356,7 @@ const styles = StyleSheet.create({
 
   listaContenido: {
     flex: 1, // Ocupa todo el espacio de la tarjeta
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: "center", // Asegura que los elementos estén centrados verticalmente
     width: "100%", // Asegura que el contenedor se expanda correctamente
   },
@@ -352,10 +369,10 @@ const styles = StyleSheet.create({
   },
 
   // 📌 Nombre de la lista
-  nombreLista: { 
-    marginTop: 8, 
-    textAlign: 'center', 
-    fontSize: 14 
+  nombreLista: {
+    marginTop: 8,
+    textAlign: 'center',
+    fontSize: 14
   },
 
   // 📌 Estilo especial para el botón "Crear Lista"
@@ -425,7 +442,7 @@ const styles = StyleSheet.create({
     right: 5,
     padding: 5,
   },
-  
+
   // 📌 Contenedor del menú desplegable
   menuOpciones: {
     position: "absolute",
@@ -439,14 +456,14 @@ const styles = StyleSheet.create({
     elevation: 5,
     padding: 10,
   },
-  
+
   // 📌 Opción dentro del menú desplegable
   opcionEliminar: {
     flexDirection: "row",
     alignItems: "center",
     padding: 8,
   },
-  
+
   // 📌 Texto de las opciones dentro del menú
   textoOpcion: {
     marginLeft: 8,
@@ -463,5 +480,29 @@ const styles = StyleSheet.create({
   linea: {
     width: '100%',
     marginVertical: 3,
+  },
+  dropdownMenuContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999, // Asegúrate de que se vea por encima
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 140,
+    right: 16, // Ubícalo a la derecha
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  dropdownOption: {
+    paddingVertical: 8,
   },
 });
