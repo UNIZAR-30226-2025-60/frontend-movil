@@ -474,7 +474,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                   <Ionicons
                     name={esFavorito ? 'heart' : 'heart-outline'}
                     size={30}
-                    color={esFavorito ? 'red' : 'gray'}
+                    color={esFavorito ? 'red' : colors.iconBorder }
                   />
                 </TouchableOpacity>
               )}
@@ -746,7 +746,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
         onBackdropPress={() => setModalVisible(false)}
         style={{ justifyContent: 'flex-end', margin: 0 }} // Coloca el modal en la parte inferior
       >
-        <View style={{ backgroundColor: 'white', padding: 16, borderTopLeftRadius: 12, borderTopRightRadius: 12, maxHeight: '50%', }}>
+        <View style={{ backgroundColor: colors.backgroundModal, padding: 16, borderTopLeftRadius: 12, borderTopRightRadius: 12, maxHeight: '50%', }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.textDark }}>Guardar en...</Text>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -777,11 +777,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
                       borderRadius: 4,
                       borderWidth: 2,
                       borderColor: colors.textDark,
+                      backgroundColor: colors.backgroundCheckbox,
                       marginRight: 8,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      // Si está seleccionado, fondo azul, si no, transparente
-                      backgroundColor: 'transparent',
                     }}
                   >
                     {/* Si está seleccionado, muestra un check (puedes usar texto o un ícono) */}

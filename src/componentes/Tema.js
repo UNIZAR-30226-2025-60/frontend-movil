@@ -17,7 +17,7 @@ export const useThemeColors = () => {
 
         // COLORES DE FONDO
         backgroundHeader: "#eeca06",
-        backgroundSubtitle: "#97927f",  // Justo lo que hay debajo del encabezado principal
+        backgroundSubtitle: "#878374",  // Justo lo que hay debajo del encabezado principal
         background: "#4c4637",
         buttonArrow: "#fef9d2",
         // ahora
@@ -26,14 +26,17 @@ export const useThemeColors = () => {
         backgroundMenu: "#6a6456",
         backgroundMenuLibro: "#d9d6cc",
         //
+        backgroundModal: "#fbf1cd",
+        backgroundCheckbox: "#f8f7f3",
+        backgroundForo: "#ecebe5",
 
         // TEXTO
         textHeader: "#4c4637",
-        text: "#FBF1CD",
+        text: "#ecebe5",
         textDark: "#4c4637",
         textLight: "#FBF1CD",
         textSecondary: "#F8E79B",
-        subtitleText: "#000000",
+        subtitleText: "#ecebe5",
         // ahora
         textTerciary: "#B2AB99",
         textFormulario: "#4c4637",
@@ -42,9 +45,10 @@ export const useThemeColors = () => {
         // ICONOS
         icon: "#FBF1CD",
         star: "#ffe300",
+        iconBorder: "#f8e79b",
 
         // BOTONES
-        button: "#a54cac",
+        button: "#4c4637",
         buttonSec: "#a5365d",
         buttonDark: "#FBF1CD",
         buttonDarkSecondary: "#F8E79B",
@@ -54,20 +58,19 @@ export const useThemeColors = () => {
         buttonDarkDisabled: "#ecebe5",
 
         // TEXTO BOTONES
-        buttonText: "#000000",
+        buttonText: "#f8f7f3",
         buttonTextLight: "#f8e79b",
         buttonTextDark: "#4c4637",
         buttonTextDarkDisabled: "#a5a294",
 
         // BUSCADOR Y CATEGORÍAS
-        buscador: "#FBF1CD",
-        categoriaButton: "#C3C1B3",
-        categoriaButtonSeleccionado: "#878374",
-        categoriaText: "#4c4637",
+        buscador: "#f8f7f3",
+        categoriaButton: "#f8f7f3",
+        categoriaButtonSeleccionado: "#c6c1b3",
         buttonArrow: "#d9d6cc",
         buttonArrowDesactivado: "#ECEBE5",
         iconArrow: "#4c4637",
-        iconArrowDesactivado: "#D9D6CC",
+        iconArrowDesactivado: "#c3c1b3",
 
         // FILTROS
         filtroSeleccionado: "#C3C1B3",
@@ -78,10 +81,9 @@ export const useThemeColors = () => {
         progressNotFilled: "#ecebe5",
 
         // BORDES
-        border: "#FBF1CD",
+        border: "#4c4637",
+        borderFormulario: "#ecebe5",
         line: "#FBF1CD",
-        
-        
       }
     : { /***************************************/
         /************* TEMA CLARO *************/
@@ -95,6 +97,8 @@ export const useThemeColors = () => {
         backgroundSecondary: "#ecebe5",
         backgroundMenu: "#f8f7f3",
         backgroundMenuLibro: "#d9d6cc",
+        backgroundModal: "#f8f7f3",
+        backgroundForo: "#ecebe5",
 
         // TEXTO
         textHeader: "#4c4637",
@@ -104,14 +108,15 @@ export const useThemeColors = () => {
         textSecondary: "#6a6456",
         textTerciary: "#878374",
         textFormulario: "#4c4637",
-        subtitleText: "#6a6456",
+        subtitleText: "#4c4637",
 
         // ICONOS
         icon: "#4c4637",
         star: "#eeca06",
+        iconBorder: "#4c4637",
 
         // BOTONES
-        button: "#007bff",
+        button: "#4c4637",
         buttonSec: "#28a745",
         buttonDark: "#4c4637",
         buttonDarkSecondary: "#6a6456",
@@ -121,20 +126,19 @@ export const useThemeColors = () => {
         buttonDarkDisabled: "#c6c1b3",
 
         // TEXTO BOTONES
-        buttonText: "#f8e79b",
+        buttonText: "#fbf1cd",
         buttonTextLight: "#4c4637",
         buttonTextDark: "#fbf1cd",
         buttonTextDarkDisabled: "#878374",
 
         // BUSCADOR Y CATEGORÍAS
-        buscador: "#f8e79b",
-        categoriaButton: "#d9d6cc",
-        categoriaButtonSeleccionado: "#b2ab99",
-        categoriaText: "#4c4637",
+        buscador: "#f8f7f3",
+        categoriaButton: "#f8f7f3",
+        categoriaButtonSeleccionado: "#c6c1b3",
         buttonArrow: "#d9d6cc",
         buttonArrowDesactivado: "#ECEBE5",
         iconArrow: "#4c4637",
-        iconArrowDesactivado: "#D9D6CC",
+        iconArrowDesactivado: "#c3c1b3",
 
         // FILTROS
         filtroSeleccionado: "#b2ab99",
@@ -146,6 +150,7 @@ export const useThemeColors = () => {
 
         // BORDES
         border: "#4c4637",
+        borderFormulario: "#4c4637",
         line: "#4c4637",
       };
 };

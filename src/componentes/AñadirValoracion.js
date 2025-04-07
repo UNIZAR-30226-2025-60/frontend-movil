@@ -57,11 +57,11 @@ export default function AñadirValoracion({ route, correoUsuario }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.titulo, { color: colors.text }]}>Nueva valoración</Text>    
+      {/* <Text style={[styles.titulo, { color: colors.text }]}>Nueva valoración</Text>     */}
         
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Título:</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.icon }]}
+        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.borderFormulario }]}
         placeholder="Introduce tu título"
         placeholderTextColor={colors.textFormulario}
         value={titulo}
@@ -70,7 +70,7 @@ export default function AñadirValoracion({ route, correoUsuario }) {
 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Mensaje:</Text>
       <TextInput
-        style={[styles.inputGrande, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.icon }]}
+        style={[styles.inputGrande, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.borderFormulario }]}
         placeholder="Introduce tu valoración"
         placeholderTextColor={colors.textFormulario}
         value={mensaje}
@@ -88,15 +88,15 @@ export default function AñadirValoracion({ route, correoUsuario }) {
             <Ionicons
               name={estrella <= valoracion ? 'star' : 'star-outline'} // Usar Ionicons para la estrella rellena o vacía
               size={30}
-              color={estrella <= valoracion ? colors.star : colors.border}
+              color={estrella <= valoracion ? colors.star : colors.iconBorder}
             />
           </TouchableOpacity>
         ))}
       </View>
 
 
-      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.button }]} onPress={handleGuardar} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>{cargando ? "Cargando..." : "Enviar"}</Text>
+      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.buttonDark }]} onPress={handleGuardar} disabled={cargando}>
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Enviar"}</Text>
       </TouchableOpacity>
     
     </View>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: 8,
+      borderRadius: 22,
     },
     textoBoton: {
       fontSize: 18,

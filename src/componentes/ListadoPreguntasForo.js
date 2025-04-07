@@ -188,8 +188,8 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Si hay usuario logueado, permitimos publicar */}
       {correoUsuario && (
-        <View style={[{ padding: 10, backgroundColor: colors.backgroundSecondary }]}>
-          <Text style={[styles.tituloCampo, { color: colors.text }]}>¿Quieres preguntar algo?</Text>
+        <View style={[{ padding: 10, borderRadius: 10, backgroundColor: colors.backgroundForo }]}>
+          <Text style={[styles.tituloCampo, { color: colors.textDark }]}>¿Quieres preguntar algo?</Text>
           <View style={[styles.formContainer]}>
             <TextInput
               style={[
@@ -197,19 +197,19 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 {
                   backgroundColor: colors.backgroundFormulario,
                   borderColor: colors.border,
-                  color: colors.text
+                  color: colors.textDark
                 }
               ]}
               placeholder="Escribe tu pregunta..."
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.textDark}
               value={nuevaPregunta}
               onChangeText={setNuevaPregunta}
             />
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.buttonDark, borderRadius: 22 }]}
+              style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
               onPress={handleEnviarPregunta}
             >
-              <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Preguntar</Text>
+              <Text style={[styles.buttonText, { color: colors.buttonText }]}>Preguntar</Text>
             </TouchableOpacity>
           </View>
         </View>

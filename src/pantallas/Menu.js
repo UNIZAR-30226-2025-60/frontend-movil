@@ -16,9 +16,13 @@ export default function Menu({ correoUsuario }) {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Encabezado correoUsuario={correoUsuario} />
-      <BuscadorLibros setResultados={setResultados} categoria={categoriaSeleccionada} />
-      <FiltroCategorias onSelectCategoria={setCategoriaSeleccionada} />
-      <ListadoLibros libros={resultados} />
+      <View style={[styles.container2, { backgroundColor: colors.backgroundSubtitle }]}>
+        <BuscadorLibros setResultados={setResultados} categoria={categoriaSeleccionada} />
+        <FiltroCategorias onSelectCategoria={setCategoriaSeleccionada} />
+      </View>
+      <View style={[styles.container2]}>
+        <ListadoLibros libros={resultados} />
+      </View>
     </View>
   );
 }
@@ -26,5 +30,8 @@ export default function Menu({ correoUsuario }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  container2: {
+    paddingVertical: 7,
   },
 });

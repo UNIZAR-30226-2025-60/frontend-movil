@@ -192,9 +192,9 @@ export default function CrearLista({ correoUsuario, navigation }) {
             {/* Campo de nombre */}
             <Text style={[styles.label, { color: colors.text }]}>Nombre de la lista:</Text>
             <TextInput
-                style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario}]}
+                style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario}]}
                 placeholder="Ejemplo: Novelas Policiacas"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.textDark}
                 value={nombre}
                 onChangeText={setNombre}
             />
@@ -202,9 +202,9 @@ export default function CrearLista({ correoUsuario, navigation }) {
             {/* Campo de descripción */}
             <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
             <TextInput
-                style={[styles.textarea, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+                style={[styles.textarea, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
                 placeholder="Añade una descripción (opcional)"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.textDark}
                 value={descripcion}
                 onChangeText={setDescripcion}
                 multiline
