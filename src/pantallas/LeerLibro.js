@@ -1,6 +1,6 @@
 // LeerLibro.js
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal } from "react-native";
 import Pdf from "react-native-pdf";
 import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -21,6 +21,7 @@ export default function LeerLibro({ route, correoUsuario }) {
   const [pdfKey, setPdfKey] = useState(0);
   const [scale, setScale] = useState(1.0);
   const [paginasMarcadas, setPaginasMarcadas] = useState([]); // 🔥 Vector de páginas marcadas
+  const [modalVisible, setModalVisible] = useState(false);
 
   const pdfRef = useRef(null);
 
@@ -57,7 +58,6 @@ export default function LeerLibro({ route, correoUsuario }) {
 
   const obtenerPrimeraPagina = async () => {
     try {
-      console.log("ENLACE:", libro.enlace);
       const url = `${API_URL}/libros/enproceso/${correoUsuario}`;
       const respuesta = await fetch(url, {
         method: "GET",
@@ -91,7 +91,6 @@ export default function LeerLibro({ route, correoUsuario }) {
         console.log(`Error al obtener las páginas destacadas: ` + respuesta.error);
         throw new Error(`Error al obtener las páginas destacadas: ` + respuesta.error);
       }
-      console.log(`Páginas destacadas obtenidas correctamente`);
 
       const data = await respuesta.json();
       const paginas = data.map(item => item.pagina);
@@ -243,6 +242,11 @@ export default function LeerLibro({ route, correoUsuario }) {
   };
 
 
+  const handleVerPaginasDestacadas = async () => {
+    setModalVisible(true);
+  };
+
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {pdfPath ? (
@@ -257,11 +261,11 @@ export default function LeerLibro({ route, correoUsuario }) {
             </TouchableOpacity>
 
             {/* Control del Zoom y Marcador */}
-            <View style={[styles.zoomContainer, { backgroundColor: colors.backgroundHeader }]}>
+            <View style={[styles.zoomContainer, { backgroundColor: colors.backgroundMenuLibro }]}>
               <TouchableOpacity
                 style={[
                   styles.zoomButton,
-                  { backgroundColor: scale <= 1 ? colors.buttonLight : colors.buttonDark },
+                  { backgroundColor: scale <= 1 ? colors.buttonDarkDisabled : colors.buttonDarkSecondary },
                 ]}
                 onPress={decreaseZoom}
                 disabled={scale <= 1}
@@ -269,29 +273,38 @@ export default function LeerLibro({ route, correoUsuario }) {
                 <Icon
                   name="search-minus"
                   size={20}
-                  color={scale <= 1 ? colors.buttonTextLight : colors.buttonTextDark }
+                  color={scale <= 1 ? colors.buttonTextDarkDisabled : colors.buttonTextDark }
                 />
               </TouchableOpacity>
 
               <Text style={[styles.zoomText, { color: colors.text }]}>{(scale * 100).toFixed(0)}%</Text>
 
               <TouchableOpacity
-                style={[styles.zoomButton, { backgroundColor: scale >= 2 ? colors.buttonLight : colors.buttonDark },]}
+                style={[styles.zoomButton, { backgroundColor: scale >= 2 ? colors.buttonDarkDisabled : colors.buttonDarkSecondary },]}
                 onPress={increaseZoom}
                 disabled={scale >= 3}
               >
-                <Icon name="search-plus" size={20} color={scale >= 2 ? colors.buttonTextLight : colors.buttonTextDark } />
+                <Icon name="search-plus" size={20} color={scale >= 2 ? colors.buttonTextDarkDisabled : colors.buttonTextDark } />
               </TouchableOpacity>
 
-              {/* Botón de Marcador */}
+              {/* Botón de Marcador y Ver páginas destacadas*/}
               {correoUsuario && (
-                <TouchableOpacity style={styles.bookmarkButton} onPress={toggleBookmark}>
-                  <Icon
-                    name={paginasMarcadas.includes(currentPage) ? "bookmark" : "bookmark-o"}
-                    size={24}
-                    color={paginasMarcadas.includes(currentPage) ? colors.star : colors.icon}
-                  />
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity style={[styles.bookmarkButton]} onPress={toggleBookmark}>
+                    <Icon
+                      name={paginasMarcadas.includes(currentPage) ? "bookmark" : "bookmark-o"}
+                      size={24}
+                      color={paginasMarcadas.includes(currentPage) ? colors.star : colors.icon}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.viewBookmarksButton, { backgroundColor: colors.buttonDarkSecondary }]} onPress={handleVerPaginasDestacadas}>
+                    <Text
+                      style={[{ color: colors.buttonTextDark }]}
+                    >
+                      Ver páginas destacadas
+                    </Text>
+                  </TouchableOpacity>
+                </>
               )}
             </View>
           </View>
@@ -311,13 +324,18 @@ export default function LeerLibro({ route, correoUsuario }) {
           />
 
           {/* Botones de navegación */}
-          <View style={[styles.buttonContainer, { backgroundColor: colors.backgroundHeader }]}>
+          <View style={[styles.buttonContainer, { backgroundColor: colors.backgroundMenuLibro }]}>
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: currentPage <= 1 ? colors.buttonLight : colors.buttonDark, }]}
+              style={[styles.button, { backgroundColor: currentPage <= 1 ? colors.buttonDarkDisabled : colors.buttonDarkSecondary, }]}
               onPress={() => changePage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={[styles.buttonText, { color: currentPage <= 1 ? colors.buttonTextLight : colors.buttonTextDark,  }]}>Anterior</Text>
+              <Text 
+                style={[styles.buttonText, { color: currentPage <= 1 
+                      ? colors.buttonTextDarkDisabled : colors.buttonTextDark }]}
+              >
+                Anterior
+              </Text>
             </TouchableOpacity>
 
             <Text style={[styles.pageText, { color: colors.text }]}>
@@ -325,22 +343,13 @@ export default function LeerLibro({ route, correoUsuario }) {
             </Text>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                {
-                  backgroundColor:
-                    totalPages && currentPage >= totalPages
-                      ? colors.buttonLight
-                      : colors.buttonDark,
-                },
-              ]}
+              style={[ styles.button, { backgroundColor: totalPages && currentPage >= totalPages ? colors.buttonDarkDisabled : colors.buttonDarkSecondary }]}
               onPress={() => changePage(currentPage + 1)}
               disabled={totalPages && currentPage >= totalPages}
             >
               <Text 
                 style={[styles.buttonText, { color: totalPages && currentPage >= totalPages
-                      ? colors.buttonTextLight
-                      : colors.buttonTextDark, }]}
+                      ? colors.buttonTextDarkDisabled : colors.buttonTextDark }]}
               >
                 Siguiente
               </Text>
@@ -353,6 +362,48 @@ export default function LeerLibro({ route, correoUsuario }) {
           <Image source={cargandoGif} style={styles.loadingImage}/>
         </View>
       )}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={[styles.drawerOverlay]}>
+          <View style={[styles.drawer]}>
+            <Text style={[styles.drawerTitle, { color: colors.text }]}>Páginas destacadas</Text>
+
+            {paginasMarcadas.length === 0 ? (
+              <Text style={{ color: colors.text }}>No hay páginas destacadas aún</Text>
+            ) : (
+              paginasMarcadas
+                .sort((a, b) => a - b)
+                .map((page, index) => (
+                  <TouchableOpacity 
+                    key={index} 
+                    onPress={() => {setCurrentPage(page); setModalVisible(false); }}
+                    style={{ flexDirection: 'row', alignItems: 'center' }}
+                  >
+                    <Icon
+                      name="bookmark"
+                      size={24}
+                      color={colors.star}
+                    />
+                    <Text style={[styles.pageItem, { marginLeft: 10, color: colors.text }]}>Página {page}</Text>
+                  </TouchableOpacity>
+                ))
+            )}
+
+            <TouchableOpacity
+              style={[styles.closeButton, { backgroundColor: colors.buttonDarkSecondary }]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={{ color: colors.buttonTextDark }}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -405,8 +456,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   bookmarkButton: {
-    marginLeft: 10,
-    padding: 5,
+    padding: 10,
+    borderRadius: 22,
+  },
+  viewBookmarksButton: {
+    padding: 10,
+    borderRadius: 22,
   },
   loadingContainer: {
     flex: 1,
@@ -416,5 +471,44 @@ const styles = StyleSheet.create({
   loadingImage: {
     width: 160,
     height: 160,
+  },
+  // Estilos para el modal
+  pageItem: {
+    fontSize: 16,
+    paddingVertical: 5,
+  },
+  closeButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 22,
+    alignSelf: "flex-start",
+  },
+  drawerOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+  },
+  drawer: {
+    width: "80%",
+    height: "100%",
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: -2, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 10,
+  },
+  drawerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  pageItem: {
+    fontSize: 16,
+    paddingVertical: 6,
   },
 });

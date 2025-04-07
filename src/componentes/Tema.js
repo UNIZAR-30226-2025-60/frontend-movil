@@ -24,6 +24,7 @@ export const useThemeColors = () => {
         backgroundFormulario: "#B2AB99",
         backgroundSecondary: "#A5A294",
         backgroundMenu: "#6a6456",
+        backgroundMenuLibro: "#d9d6cc",
         //
 
         // TEXTO
@@ -50,11 +51,13 @@ export const useThemeColors = () => {
         buttonDarkTerciary: "#F4DD69",
         buttonLight: "#4c4637",
         buttonClose: "#FF5A5F",
+        buttonDarkDisabled: "#ecebe5",
 
         // TEXTO BOTONES
         buttonText: "#000000",
         buttonTextLight: "#f8e79b",
         buttonTextDark: "#4c4637",
+        buttonTextDarkDisabled: "#a5a294",
 
         // BUSCADOR Y CATEGORÍAS
         buscador: "#FBF1CD",
@@ -91,6 +94,7 @@ export const useThemeColors = () => {
         backgroundFormulario: "#f8e79b",
         backgroundSecondary: "#ecebe5",
         backgroundMenu: "#f8f7f3",
+        backgroundMenuLibro: "#d9d6cc",
 
         // TEXTO
         textHeader: "#4c4637",
@@ -114,11 +118,13 @@ export const useThemeColors = () => {
         buttonDarkTerciary: "#878374",
         buttonLight: "#f8e79b",
         buttonClose: "#FF5A5F",
+        buttonDarkDisabled: "#c6c1b3",
 
         // TEXTO BOTONES
-        buttonText: "#000000",
+        buttonText: "#f8e79b",
         buttonTextLight: "#4c4637",
-        buttonTextDark: "#f8e79b",
+        buttonTextDark: "#fbf1cd",
+        buttonTextDarkDisabled: "#878374",
 
         // BUSCADOR Y CATEGORÍAS
         buscador: "#f8e79b",
