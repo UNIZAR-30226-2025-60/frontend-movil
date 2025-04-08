@@ -40,14 +40,14 @@ export default function CambioNombre({ route, navigation }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.label, { color: colors.text }]}>Nombre actual:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
         value={usuario?.nombre || ""}
         editable={false}
       />
 
       <Text style={[styles.label, { color: colors.text }]}>Nuevo nombre:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
         onChangeText={setNuevoNombre}
       />
 

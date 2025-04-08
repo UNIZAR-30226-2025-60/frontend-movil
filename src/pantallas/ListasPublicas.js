@@ -76,12 +76,12 @@ export default function ListasPublicas({ correoUsuario }) {
    */
   const renderItem = ({ item }) => {
     return (
-      <View style={[styles.itemContainer, { backgroundColor: colors.background, borderColor: colors.border }]}>
+      <View style={[styles.itemContainer, { backgroundColor: colors.background, borderColor: colors.borderLista }]}>
         <TouchableOpacity
           style={styles.listaContenido}
           onPress={() => manejarListaPress(item)}
         >
-          {/* 📌 Si hay portada, la muestra; si no, muestra un ícono */}
+          {/* Si hay portada, la muestra; si no, muestra un ícono */}
           {item.portada ? (
             <Image 
               source={{ uri: item.portada }}

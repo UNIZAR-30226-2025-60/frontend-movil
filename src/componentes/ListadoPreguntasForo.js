@@ -278,7 +278,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           {misPreguntasOrdenadas.map((pregunta) => (
             <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
               {/* <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text> */}
-              <Text style={[styles.pregunta, { color: colors.text }]}>
+              <Text style={[styles.pregunta, { color: colors.textDark }]}>
                 {expandedQuestion[pregunta.id]
                   ? pregunta.cuestion
                   : pregunta.cuestion.length > 63
@@ -289,26 +289,25 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
               {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
               {pregunta.cuestion.length > 63 && (
                 <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
-                  <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
+                  <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
                     {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
                   </Text>
                 </TouchableOpacity>
               )}
 
               
-              
               <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10 }]}>
-                <Text style={[{ color: colors.textSecondary }]}>Por: {pregunta.usuario}    </Text>
-                <Text style={[{ color: colors.textSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
               </View>  
               <View style={[styles.mismaFila]}>
                 <Ionicons
                   name='chatbubble'
                   size={15}
-                  color={colors.textSecondary}
+                  color={colors.textDarkSecondary}
                   style={{ marginRight: 7 }}
                 />
-                <Text style={[{ color: colors.textSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
                
 
                 <TouchableOpacity
@@ -332,7 +331,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           {todasPreguntasOrdenadas.map((pregunta) => (
             <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
               {/* <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text> */}
-              <Text style={[styles.pregunta, { color: colors.text }]}>
+              <Text style={[styles.pregunta, { color: colors.textDark }]}>
                 {expandedQuestion[pregunta.id]
                   ? pregunta.cuestion
                   : pregunta.cuestion.length > 63
@@ -343,25 +342,24 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
               {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
               {pregunta.cuestion.length > 63 && (
                 <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
-                  <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
+                  <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
                     {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
                   </Text>
                 </TouchableOpacity>
               )}
-
               
               <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop:10 }]}>
-                <Text style={[{ color: colors.textSecondary }]}>Por: {pregunta.usuario}    </Text>
-                <Text style={[{ color: colors.textSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
               </View>  
               <View style={[styles.mismaFila]}>
                 <Ionicons
                   name='chatbubble'
                   size={15}
-                  color={colors.textSecondary}
+                  color={colors.textDarkSecondary}
                   style={{ marginRight: 7 }}
                 />
-                <Text style={[{ color: colors.textSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
                 
 
                 <TouchableOpacity

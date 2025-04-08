@@ -55,7 +55,7 @@ export default function CambioContrasena({ route, navigation }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
       <Text style={[styles.label, { color: colors.text }]}>Contraseña actual:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
         secureTextEntry
         value={oldPassword}
         onChangeText={setOldPassword}
@@ -63,7 +63,7 @@ export default function CambioContrasena({ route, navigation }) {
       
       <Text style={[styles.label, { color: colors.text }]}>Nueva contraseña:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
         secureTextEntry
         value={newPassword}
         onChangeText={setNewPassword}
@@ -71,7 +71,7 @@ export default function CambioContrasena({ route, navigation }) {
 
       <Text style={[styles.label, { color: colors.text }]}>Confirmar nueva contraseña:</Text>
       <TextInput
-        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}

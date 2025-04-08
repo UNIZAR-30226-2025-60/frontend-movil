@@ -63,9 +63,9 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Nombre:</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textDark, borderColor: colors.borderFormulario }]}
           placeholder="miNombre"
-          placeholderTextColor={colors.text}
+          placeholderTextColor={colors.textFormulario}
           value={nombre}
           onChangeText={setNombre}
           keyboardType="default"
@@ -75,9 +75,9 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico:</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textDark, borderColor: colors.borderFormulario }]}
           placeholder="ejemplo@ejemplo.com"
-          placeholderTextColor={colors.text}
+          placeholderTextColor={colors.textFormulario}
           value={correo}
           onChangeText={setCorreo}
           keyboardType="email-address"
@@ -88,26 +88,14 @@ export default function Registrarse({ setCorreoUsuario }) {
       <View style={styles.contenedorCampo}>
         <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña:</Text>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
+          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textDark, borderColor: colors.borderFormulario }]}
           placeholder="1234abc@"
-          placeholderTextColor={colors.text}
+          placeholderTextColor={colors.textFormulario}
           value={contrasena}
           onChangeText={setContrasena}
           secureTextEntry
         />
       </View>
-
-      {/* <View style={styles.contenedorCampo}>
-        <Text style={[styles.tituloCampo, { color: colors.text }]}>Repetir contraseña:</Text>
-        <TextInput
-          style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
-          placeholder="1234abc@"
-          placeholderTextColor={colors.text}
-          value={contrasenaRepetida}
-          onChangeText={setContrasenaRepetida}
-          secureTextEntry
-        />
-      </View> */}
 
       <TouchableOpacity 
         style={[styles.boton, { backgroundColor: colors.buttonDark }]} 
@@ -150,6 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 22,
+    marginTop: 10,
   },
   textoBoton: {
     fontSize: 18,

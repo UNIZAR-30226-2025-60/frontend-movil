@@ -90,10 +90,10 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
       </TouchableOpacity>
 
       {/* Pantalla Cargando... mientras se gestionan datos del login */}
-      <Modal visible={mostrarModal} animationType="fade" syle={{ backgroundColor: colors.background }}>
+      <Modal visible={mostrarModal} transparent={false}>
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
           <Text style={{ color: colors.text }}>Cargando...</Text>
-          <Image source={cargandoGif} style={styles.loadingImage}/>
+          {/* <Image source={cargandoGif} style={styles.loadingImage}/> */}
         </View>
       </Modal>
     </View>

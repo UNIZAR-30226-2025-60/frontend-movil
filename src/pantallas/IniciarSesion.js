@@ -57,9 +57,10 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
+      <Text style={[styles.titulo, { color: colors.text }]}>Iniciar sesión</Text>
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Correo electrónico:</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
+        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textDark, borderColor: colors.borderFormulario }]}
         placeholder="ejemplo@ejemplo.com"
         placeholderTextColor={colors.textDark}
         value={correo}
@@ -70,7 +71,7 @@ export default function IniciarSesion({ setCorreoUsuario }) {
 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Contraseña:</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.text, borderColor: colors.icon }]}
+        style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textDark, borderColor: colors.borderFormulario }]}
         placeholder="1234abc@"
         placeholderTextColor={colors.textDark}
         value={contrasena}
@@ -100,6 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   tituloCampo: {
     textAlign: 'left',

@@ -120,7 +120,7 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
             {respuestas.length > 0 ? (
               respuestas.map((respuesta) => (
                 <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-                  <Text style={[styles.mensaje, { color: colors.text }]}>
+                  <Text style={[styles.mensaje, { color: colors.textDark }]}>
                     {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 63
                       ? respuesta.mensaje_respuesta
                       : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
@@ -128,45 +128,47 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
 
                   {respuesta.mensaje_respuesta.length > 63 && (
                     <TouchableOpacity onPress={() => toggleExpandedRespuesta(respuesta.id)}>
-                      <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
+                      <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
                         {expandedRespuestas[respuesta.id] ? 'Ver menos' : 'Ver más'}
                       </Text>
                     </TouchableOpacity>
                   )}
 
                   <View style={[styles.mismaFila]}>
-                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {respuesta.usuario_respuesta}</Text>
-                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
+                    <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Por: {respuesta.usuario_respuesta}</Text>
+                    <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
                   </View>
                 </View>
               ))
             ) : (
-              <Text style={[styles.sinRespuestas, { color: colors.textSecondary }]}>Aún no hay respuestas.</Text>
+              <Text style={[styles.sinRespuestas, { color: colors.text }]}>Aún no hay respuestas.</Text>
             )}
         </ScrollView>
+
+
         {correoUsuario ? (
-            <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border }]}>
-              <Text style={[styles.tituloCampo, { color: colors.text }]}>Mensaje:</Text>
+            <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border, backgroundColor: colors.backgroundForo }]}>
+              <Text style={[styles.tituloCampo, { color: colors.textDark }]}>Mensaje:</Text>
               <View style={[styles.formContainer]}>
                 <TextInput
                   style={[
                     styles.input,
                     {
                       borderColor: colors.border,
-                      color: colors.text,
+                      color: colors.textDark,
                       backgroundColor: colors.backgroundFormulario
                     }
                   ]}
                   placeholder="Escribe tu respuesta..."
-                  placeholderTextColor={colors.textSecondary}
+                  placeholderTextColor={colors.textFormulario}
                   value={nuevaRespuesta}
                   onChangeText={setNuevaRespuesta}
                 />
                 <TouchableOpacity
-                  style={[styles.button, { backgroundColor: colors.buttonDark, borderRadius: 22 }]}
+                  style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
                   onPress={handleEnviarRespuesta}
                 >
-                  <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Enviar</Text>
+                  <Text style={[styles.buttonText, { color: colors.buttonText }]}>Enviar</Text>
                 </TouchableOpacity>
               </View>
             </View>

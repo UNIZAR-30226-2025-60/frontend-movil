@@ -22,7 +22,7 @@ export const useThemeColors = () => {
         buttonArrow: "#fef9d2",
         // ahora
         backgroundFormulario: "#B2AB99",
-        backgroundSecondary: "#A5A294",
+        backgroundSecondary: "#c3c1b3",
         backgroundMenu: "#6a6456",
         backgroundMenuLibro: "#d9d6cc",
         //
@@ -36,6 +36,7 @@ export const useThemeColors = () => {
         textDark: "#4c4637",
         textLight: "#FBF1CD",
         textSecondary: "#F8E79B",
+        textDarkSecondary: "#6a6456",
         subtitleText: "#ecebe5",
         // ahora
         textTerciary: "#B2AB99",
@@ -83,6 +84,7 @@ export const useThemeColors = () => {
         // BORDES
         border: "#4c4637",
         borderFormulario: "#ecebe5",
+        borderLista: "#f8f7f3",
         line: "#FBF1CD",
       }
     : { /***************************************/
@@ -109,6 +111,7 @@ export const useThemeColors = () => {
         textTerciary: "#878374",
         textFormulario: "#4c4637",
         subtitleText: "#4c4637",
+        textDarkSecondary: "#6a6456",
 
         // ICONOS
         icon: "#4c4637",
@@ -151,6 +154,7 @@ export const useThemeColors = () => {
         // BORDES
         border: "#4c4637",
         borderFormulario: "#4c4637",
+        borderLista: "#4c4637",
         line: "#4c4637",
       };
 };

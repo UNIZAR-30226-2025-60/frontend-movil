@@ -119,7 +119,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
     const isMenuVisible = menuVisibleId === item.nombre; // usas el nombre como “ID”
 
     return (
-      <View style={[styles.itemContainer, { borderColor: colors.border }]}>
+      <View style={[styles.itemContainer, { borderColor: colors.borderLista }]}>
         <TouchableOpacity
           onPress={() => {
             if (modoSeleccion) {
@@ -279,11 +279,11 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             if (item.esNueva) {
               return (
                 <TouchableOpacity
-                  style={[styles.itemContainer, styles.addContainer, { borderColor: colors.border }]}
+                  style={[styles.itemContainer, styles.addContainer, { borderColor: colors.borderLista }]}
                   color={[colors.text]}
                   onPress={() => navigation.navigate("CrearLista")}
                 >
-                  <Ionicons name="add-circle-outline" size={50} color={colors.icon} />
+                  <Ionicons name="add-circle-outline" size={50} color={colors.borderLista} />
                   <Text style={[styles.nombreLista, { color: colors.text }]}>
                     Crear lista
                   </Text>
