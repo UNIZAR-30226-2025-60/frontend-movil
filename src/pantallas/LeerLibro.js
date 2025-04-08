@@ -81,7 +81,7 @@ export default function LeerLibro({ route, correoUsuario }) {
 
   const obtenerPaginasDestacadas = async () => {
     try {
-      const url = `${API_URL}/fragmentos?correo=${correoUsuario}&enlace=${encodeURIComponent(libro.enlace)}`;
+      const url = `${API_URL}/fragmentos/obtenerFragmentos?correo=${correoUsuario}&enlace=${encodeURIComponent(libro.enlace)}`;
       const respuesta = await fetch(url, {
         method: "GET",
         headers: { "Content-Type": "application/json" },

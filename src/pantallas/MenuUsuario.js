@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import imagenPortadaLibro from "../../assets/imagen-portada-login.png";
-import imagenFondoLibro from "./book-right.jpg";
+import imagenFondoLibro from "../../assets/libro-abierto.png";
 
 
 const { width } = Dimensions.get('window');
@@ -35,11 +35,11 @@ export default function MenuUsuario({ setCorreoUsuario }) {
 
   const rotation = useSharedValue(0);
   const scale = useSharedValue(1);
-  const opacity = useSharedValue(0);
+  // const opacity = useSharedValue(0);
 
   const openBook = () => {
     rotation.value = withTiming(150, { duration: 1000 }, () => {
-      opacity.value = withTiming(1, { duration: 0 });
+      // opacity.value = withTiming(1, { duration: 0 });
     });
     scale.value = withTiming(0.5, { duration: 1000 });
     
@@ -61,7 +61,7 @@ export default function MenuUsuario({ setCorreoUsuario }) {
 
   const animatedTextStyle = useAnimatedStyle(() => {
     return {
-      opacity: opacity.value,
+      // opacity: opacity.value,
     };
   });
 
@@ -81,11 +81,10 @@ export default function MenuUsuario({ setCorreoUsuario }) {
         <Animated.View style={[styles.textContainer, animatedTextStyle, { backgroundImage: imagenFondoLibro, backgroundSize: 'cover' }]}>
           <ImageBackground
             source={imagenFondoLibro}
-            style={styles.imagenFondoLibro}
-            imageStyle={{ resizeMode: 'cover' }}
+            style={[styles.imagenFondoLibro, { resizeMode: 'cover' }]}
           >
             <View style={styles.centeredContent}> 
-              <Text style={[styles.titulo, { color: colors.text }]}>¡Bienvenido a Bookly!</Text>
+              <Text style={[styles.titulo, { color: colors.text }]}>¡Bienvenido    a Bookly!</Text>
 
               <TouchableOpacity 
                 style={[styles.boton, { backgroundColor: colors.buttonDark }]}
@@ -145,13 +144,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   imagenFondoLibro: {
-    width: IMAGE_WIDTH,
+    width: IMAGE_WIDTH*1,
     height: IMAGE_HEIGHT,
   },
   centeredContent: {
     justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+    marginLeft: 15,
+    marginRight: 30,
     height: '100%',
   },
 });
