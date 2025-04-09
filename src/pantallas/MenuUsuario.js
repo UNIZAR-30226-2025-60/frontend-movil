@@ -12,7 +12,7 @@ import imagenPortadaLibro from "../../assets/imagen-portada-login.png";
 import imagenFondoLibro from "../../assets/libro-abierto.png";
 
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const IMAGE_WIDTH = width*0.5;
 const IMAGE_HEIGHT = IMAGE_WIDTH*(7/5); // Relación de aspecto 5:7
@@ -35,17 +35,14 @@ export default function MenuUsuario({ setCorreoUsuario }) {
 
   const rotation = useSharedValue(0);
   const scale = useSharedValue(1);
-  // const opacity = useSharedValue(0);
+  const opacity = useSharedValue(0);
 
   const openBook = () => {
-    rotation.value = withTiming(150, { duration: 1000 }, () => {
-      // opacity.value = withTiming(1, { duration: 0 });
-    });
+    rotation.value = withTiming(150, { duration: 1000 });
     scale.value = withTiming(0.5, { duration: 1000 });
-    
+    opacity.value = withTiming(1, { delay: 700, duration: 500 });
     setBookOpened(true);
   };
-
 
   const animatedCoverStyle = useAnimatedStyle(() => {
     return {
@@ -61,31 +58,21 @@ export default function MenuUsuario({ setCorreoUsuario }) {
 
   const animatedTextStyle = useAnimatedStyle(() => {
     return {
-      // opacity: opacity.value,
+      opacity: opacity.value,
     };
   });
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Pressable onPress={openBook}>
-        <Animated.View style={[styles.bookCover, animatedCoverStyle]}>
-          <Image
-            source={imagenPortadaLibro}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        </Animated.View>
-      </Pressable>
 
       {bookOpened && 
-        <Animated.View style={[styles.textContainer, animatedTextStyle, { backgroundImage: imagenFondoLibro, backgroundSize: 'cover' }]}>
+        <Animated.View 
+          style={[styles.textContainer, animatedTextStyle]}>
           <ImageBackground
             source={imagenFondoLibro}
             style={[styles.imagenFondoLibro, { resizeMode: 'cover' }]}
           >
             <View style={styles.centeredContent}> 
-              <Text style={[styles.titulo, { color: colors.text }]}>¡Bienvenido    a Bookly!</Text>
-
               <TouchableOpacity 
                 style={[styles.boton, { backgroundColor: colors.buttonDark }]}
                 onPress={() => bookOpened && navigation.navigate("IniciarSesion")}
@@ -104,6 +91,24 @@ export default function MenuUsuario({ setCorreoUsuario }) {
           </ImageBackground>
         </Animated.View>
       }
+
+      <Pressable onPress={openBook}>
+        <Animated.View style={[styles.bookCover, animatedCoverStyle]}>
+          <Image
+            source={imagenPortadaLibro}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </Animated.View>
+      </Pressable>
+
+      {!bookOpened && 
+        <View style={styles.bienvenida}>
+          <Text style={[styles.bienvenidaTexto, { color: colors.text }]}>¡Bienvenido a Bookly!</Text>
+          <Text style={[styles.instrucciones, { color: colors.text }]}>Pulse en el libro para acceder</Text>
+        </View>
+      }
+
     </View>
   );
 };
@@ -114,9 +119,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+    postion: 'relative',
   },
   bookCover: {
     position: 'relative',
+    zIndex: 10,
   },
   image: {
     width: IMAGE_WIDTH,
@@ -124,7 +131,8 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     position: 'absolute',
-    left: width/3,
+    left: (width-IMAGE_WIDTH)/2+12,
+    zIndex: 1,
   },
   titulo: {
     fontSize: 24,
@@ -152,6 +160,22 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 30,
     height: '100%',
+  },
+  bienvenida: {
+    position: 'absolute',
+    top: 70, // puedes ajustar este valor si quieres más o menos separación
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  bienvenidaTexto: {
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+  instrucciones: {
+    marginTop: 20,
+    fontSize: 24,
+    // fontWeight: 'bold',
   },
 });
 
