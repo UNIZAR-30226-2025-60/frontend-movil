@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { useThemeColors } from "../componentes/Tema"; 
+import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 export default function CambioContrasena({ route, navigation }) {
   const { correoUsuario } = route.params;  // Recibimos el correo del usuario
   const colors = useThemeColors();
-  
+
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,7 +29,7 @@ export default function CambioContrasena({ route, navigation }) {
       const response = await fetch(`${API_URL}/usuarios/usuario/cambiar-contrasena`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           correo: correoUsuario, // Enviamos el correo del usuario
           oldPassword: oldPassword,           // Enviamos la contraseña vieja
           newPassword: newPassword           // Enviamos la nueva contraseña
@@ -52,7 +52,7 @@ export default function CambioContrasena({ route, navigation }) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}> 
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.label, { color: colors.text }]}>Contraseña actual:</Text>
       <TextInput
         style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
@@ -60,7 +60,7 @@ export default function CambioContrasena({ route, navigation }) {
         value={oldPassword}
         onChangeText={setOldPassword}
       />
-      
+
       <Text style={[styles.label, { color: colors.text }]}>Nueva contraseña:</Text>
       <TextInput
         style={[styles.input, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
@@ -77,9 +77,22 @@ export default function CambioContrasena({ route, navigation }) {
         onChangeText={setConfirmPassword}
       />
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: colors.buttonDark }]} onPress={handlePasswordChange}>
+      {/* Botón Confirmar */}
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors.buttonDark }]}
+        onPress={handlePasswordChange}
+      >
         <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Confirmar</Text>
       </TouchableOpacity>
+
+      {/* Botón Cancelar */}
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors.buttonSec, marginTop: 10 }]}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={[styles.buttonText, { color: colors.buttonText }]}>Cancelar</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }

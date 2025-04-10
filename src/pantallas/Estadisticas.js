@@ -13,14 +13,14 @@ export default function Estadisticas({ correoUsuario }) {
 
    const [top3Mes, setTop3Mes] = useState([]);
    const [top3Anio, setTop3Anio] = useState([]);
-   const [personalStats, setPersonalStats] = useState(null);
+   const [globalStats, setGlobalStats] = useState(null);
    const [monthlyStats, setMonthlyStats] = useState(null);
    const [yearlyStats, setYearlyStats] = useState(null);
-   const [showNoTematicasMsg, setShowNoTematicasMsg] = useState(false);
    const [showNoValoracionesMsg, setShowNoValoracionesMsg] = useState(false);
    const [popularBooks, setPopularBooks] = useState([]);
    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // mes actual
    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());   // año actual
+   const [librosRecomendados, setLibrosRecomendados] = useState([]);
 
    // Listas de opciones para el Picker
    const MONTHS = [
@@ -99,14 +99,7 @@ export default function Estadisticas({ correoUsuario }) {
          const response = await fetch(`${API_URL}/estadisticas/generales/${encodeURIComponent(correoUsuario)}`);
          if (response.ok) {
             const data = await response.json();
-            setPersonalStats(data);
-
-            // Verificar si "tematicas" viene vacío
-            if (!data.tematicas || data.tematicas.length === 0) {
-               setShowNoTematicasMsg(true);
-            } else {
-               setShowNoTematicasMsg(false);
-            }
+            setGlobalStats(data);
          } else {
             console.error("Error al obtener estadísticas personales");
          }
@@ -170,6 +163,21 @@ export default function Estadisticas({ correoUsuario }) {
       }
    };
 
+   const fetchLibrosRecomendados = async () => {
+      try {
+         const response = await fetch(`${API_URL}/estadisticas/librosrecomendados/${encodeURIComponent(correoUsuario)}`);
+         if (response.ok) {
+            const data = await response.json();
+            setLibrosRecomendados(data);
+         } else {
+            console.error("Error al obtener libros recomendados");
+         }
+      } catch (error) {
+         console.error("Error al obtener libros recomendados", error);
+      }
+   };
+
+
    // Se ejecuta cada vez que se enfoca la pantalla
    useFocusEffect(
       useCallback(() => {
@@ -180,6 +188,7 @@ export default function Estadisticas({ correoUsuario }) {
             fetchPersonalStats();
             fetchMonthlyStats();
             fetchYearlyStats();
+            fetchLibrosRecomendados();
          }
       }, [correoUsuario, selectedMonth, selectedYear])
    );
@@ -218,7 +227,7 @@ export default function Estadisticas({ correoUsuario }) {
                         {/* Círculo 3: Leídos total */}
                         <View style={[styles.statCircle, { backgroundColor: colors.background }]}>
                            <Text style={styles.statNumber}>
-                              {personalStats?.totalLibrosLeidos ?? 0}
+                              {globalStats?.totalLibrosLeidos ?? 0}
                            </Text>
                            <Text style={styles.statLabel}>Leídos total</Text>
                         </View>
@@ -226,7 +235,14 @@ export default function Estadisticas({ correoUsuario }) {
                   </View>
 
                   {/* BLOQUE 2: Mensaje de temáticas */}
-                  {showNoTematicasMsg && (
+                  {yearlyStats?.tematicasMasLeidas?.length > 0 ? (
+                     <View style={[styles.blockContainer, { backgroundColor: colors.backgroundSecondary }]}>
+                        <Text style={[styles.sectionMainTitle, { color: colors.text }]}>Temáticas más leídas:</Text>
+                        {yearlyStats.tematicasMasLeidas.map((tema, index) => (
+                           <Text key={index} style={{ color: colors.text }}>{tema}</Text>
+                        ))}
+                     </View>
+                  ) : (
                      <View style={[styles.blockContainer, { backgroundColor: colors.backgroundSecondary }]}>
                         <Text style={[styles.messageText, { color: colors.text }]}>
                            ¡Ups! No hay suficiente información para mostrar las temáticas más leídas o recomendar otros libros.
@@ -234,14 +250,59 @@ export default function Estadisticas({ correoUsuario }) {
                      </View>
                   )}
 
-                  {/* BLOQUE 3: Mensaje de valoraciones */}
-                  {showNoValoracionesMsg && (
-                     <View style={[styles.blockContainer, { backgroundColor: colors.backgroundSecondary }]}>
-                        <Text style={[styles.messageText, { color: colors.text }]}>
-                           ¡Hey! Todavía no has valorado ningún libro.
-                        </Text>
+
+                  {/* LIBROS RECOMENDADOS */}
+                  {librosRecomendados?.length > 0 && (
+                     <View style={styles.sectionSpacing}>
+                        <Text style={[styles.sectionMainTitle, { color: colors.text }]}>Libros recomendados:</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                           {librosRecomendados.map((libro, index) => (
+                              <TouchableOpacity
+                                 key={index}
+                                 style={styles.popularItem}
+                                 onPress={() => navigation.push("Detalles", { libro, correoUsuario })}
+                              >
+                                 <View style={[styles.bookCoverPlaceholder, { backgroundColor: colors.background }]}>
+                                    <Image source={{ uri: libro.imagen_portada }} style={styles.bookCoverImage} />
+                                 </View>
+                                 <Text style={[styles.bookTitle, { color: colors.text }]}>{libro.nombre}</Text>
+                                 <Text style={[styles.bookAuthor, { color: colors.text }]}>{libro.autor}</Text>
+                              </TouchableOpacity>
+                           ))}
+                        </ScrollView>
                      </View>
                   )}
+
+                  {/* BLOQUE 3: Mensaje de valoraciones */}
+                  <View style={styles.sectionSpacing}>
+                     <Text style={[styles.sectionMainTitle, { color: colors.text }]}>
+                        Libros que más te han gustado:
+                     </Text>
+
+                     {globalStats?.librosMasValorados?.length > 0 ? (
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                           {globalStats.librosMasValorados.map((libro, index) => (
+                              <TouchableOpacity
+                                 key={index}
+                                 style={styles.popularItem}
+                                 onPress={() => navigation.push("Detalles", { libro, correoUsuario })}
+                              >
+                                 <View style={[styles.bookCoverPlaceholder, { backgroundColor: colors.background }]}>
+                                    <Image source={{ uri: libro.imagen_portada }} style={styles.bookCoverImage} />
+                                 </View>
+                                 <Text style={[styles.bookTitle, { color: colors.text }]}>{libro.nombre}</Text>
+                                 <Text style={[styles.bookAuthor, { color: colors.text }]}>{libro.autor}</Text>
+                              </TouchableOpacity>
+                           ))}
+                        </ScrollView>
+                     ) : (
+                        <View style={[styles.blockContainer, { backgroundColor: colors.backgroundSecondary }]}>
+                           <Text style={[styles.messageText, { color: colors.text }]}>
+                              ¡Hey! Todavía no has valorado ningún libro.
+                           </Text>
+                        </View>
+                     )}
+                  </View>
                </>
             )}
 
@@ -348,6 +409,9 @@ const styles = StyleSheet.create({
    blockContainer: {
       borderRadius: 8,
       padding: 16,
+      marginBottom: 20,
+   },
+   sectionSpacing: {
       marginBottom: 20,
    },
    sectionMainTitle: {

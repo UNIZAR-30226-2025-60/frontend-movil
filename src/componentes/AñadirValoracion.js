@@ -32,7 +32,7 @@ export default function AñadirValoracion({ route, correoUsuario }) {
       const respuesta = await fetch(`${API_URL}/opiniones`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           usuario_id: correoUsuario,
           libro_id: libro.enlace,
           titulo_resena: titulo,
@@ -58,7 +58,7 @@ export default function AñadirValoracion({ route, correoUsuario }) {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* <Text style={[styles.titulo, { color: colors.text }]}>Nueva valoración</Text>     */}
-        
+
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Título:</Text>
       <TextInput
         style={[styles.input, { backgroundColor: colors.backgroundFormulario, color: colors.textFormulario, borderColor: colors.borderFormulario }]}
@@ -95,71 +95,86 @@ export default function AñadirValoracion({ route, correoUsuario }) {
       </View>
 
 
-      <TouchableOpacity style={[styles.boton, { backgroundColor: colors.buttonDark }]} onPress={handleGuardar} disabled={cargando}>
-        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>{cargando ? "Cargando..." : "Enviar"}</Text>
+      {/* Botón Enviar */}
+      <TouchableOpacity
+        style={[styles.boton, { backgroundColor: colors.buttonDark }]}
+        onPress={handleGuardar}
+        disabled={cargando}
+      >
+        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>
+          {cargando ? "Cargando..." : "Enviar"}
+        </Text>
       </TouchableOpacity>
-    
+
+      {/* Botón Cancelar */}
+      <TouchableOpacity
+        style={[styles.boton, { backgroundColor: colors.buttonSec, marginTop: 10 }]}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Cancelar</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
     //   alignItems: 'center',
-      padding: 20,
-    },
-    titulo: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    },
-    tituloCampo: {
-      textAlign: 'left',
-      marginBottom: 5,
-    },
-    input: {
-      width: '100%',
-      height: 50,
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 15,
-      paddingTop: 12,
-      marginBottom: 15,
-      fontSize: 16,
-      textAlignVertical: 'top',
-    },
-    inputGrande: {
-      width: '100%',
-      height: 150,
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 15,
-      paddingTop: 12,
-      marginBottom: 15,
-      fontSize: 16,
-      textAlignVertical: 'top',
-    },
-    estrellasContainer: {
-      width: "60%",
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 15,
-    },
-    estrella: {
-      padding: 5,
-    },
-    boton: {
-      width: '100%',
-      height: 50,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 22,
-    },
-    textoBoton: {
-      fontSize: 18,
-      fontWeight: 'bold',
-    },
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  tituloCampo: {
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingTop: 12,
+    marginBottom: 15,
+    fontSize: 16,
+    textAlignVertical: 'top',
+  },
+  inputGrande: {
+    width: '100%',
+    height: 150,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingTop: 12,
+    marginBottom: 15,
+    fontSize: 16,
+    textAlignVertical: 'top',
+  },
+  estrellasContainer: {
+    width: "60%",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 15,
+  },
+  estrella: {
+    padding: 5,
+  },
+  boton: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 22,
+  },
+  textoBoton: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });

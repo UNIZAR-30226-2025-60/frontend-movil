@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Switch, Modal, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
+import NombreUsuario from "../componentes/NombreUsuario";
 import { Ionicons } from 'react-native-vector-icons';
 import { API_URL } from '../../config';
 
@@ -19,6 +20,8 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
   const [todasPreguntasOrdenadas, setTodasPreguntasOrdenadas] = useState([]);
   const [misPreguntasOrdenadas, setMisPreguntasOrdenadas] = useState([]);
+  const [preguntaSeleccionada, setPreguntaSeleccionada] = useState(null);
+
 
   const opcionesOrden = [
     { id: 'antigua', label: 'más antiguas' },
@@ -56,7 +59,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
         throw new Error("Error al obtener tus preguntas");
       }
       const data = await response.json();
-      
+
       // Obtener número de respuestas para cada pregunta
       const preguntasConRespuestas = await Promise.all(
         data.map(async (pregunta) => ({
@@ -104,10 +107,9 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     }
   };
 
-
   const handleEnviarPregunta = async () => {
     if (!nuevaPregunta.trim()) return;
-  
+
     try {
       const response = await fetch(`${API_URL}/preguntas`, {
         method: 'POST',
@@ -117,12 +119,12 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           pregunta: nuevaPregunta
         })
       });
-  
+
       if (!response.ok) {
         throw new Error("Error al enviar la pregunta");
       }
       const data = await response.json();
-      
+
       setNuevaPregunta('');
       // Recarga las preguntas después de agregar una nueva
       cargarTodasPreguntas();
@@ -143,7 +145,23 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     }));
   };
 
+  const handleEliminarPregunta = async (idPregunta) => {
+    try {
+      const response = await fetch(`${API_URL}/preguntas/${idPregunta}`, {
+        method: 'DELETE',
+      });
 
+      if (!response.ok) {
+        throw new Error("Error al eliminar la pregunta");
+      }
+
+      // Recargar preguntas actualizadas
+      await cargarMisPreguntas();
+      await cargarTodasPreguntas();
+    } catch (error) {
+      console.error("Error eliminando pregunta:", error);
+    }
+  };
 
   const seleccionarOrden = (opcion) => {
     setOrdenSeleccionado(opcion.label);
@@ -215,7 +233,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
         </View>
       )}
 
-      
+
       <View>
         {correoUsuario && (
           <View style={[{ flexDirection: 'row', alignItems: 'center', flex: 1, marginTop: 7 }]}>
@@ -227,21 +245,21 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           </View>
         )}
 
-        <TouchableOpacity 
-          style={[styles.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
+        <TouchableOpacity
+          style={[styles.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
           onPress={handleOrdenarPor}
         >
           <Text style={[{ color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}</Text>
           <Ionicons
             name='caret-down'
             size={15}
-            color={ colors.buttonTextDark }
+            color={colors.buttonTextDark}
             style={{ marginLeft: 7 }}
           />
         </TouchableOpacity>
       </View>
-      
-          
+
+
       {/* Modal que despliega las opciones de ordenación */}
       <Modal
         visible={modalOrdenarVisible}
@@ -282,8 +300,8 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 {expandedQuestion[pregunta.id]
                   ? pregunta.cuestion
                   : pregunta.cuestion.length > 63
-                  ? `${pregunta.cuestion.substring(0, 63)}...`
-                  : pregunta.cuestion}
+                    ? `${pregunta.cuestion.substring(0, 63)}...`
+                    : pregunta.cuestion}
               </Text>
 
               {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
@@ -295,11 +313,12 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 </TouchableOpacity>
               )}
 
-              
+
               <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10 }]}>
-                <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text>
+                {/* <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text> */}
+                <NombreUsuario correo={pregunta.usuario} />
                 <Text style={[{ color: colors.textDarkSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
-              </View>  
+              </View>
               <View style={[styles.mismaFila]}>
                 <Ionicons
                   name='chatbubble'
@@ -308,7 +327,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                   style={{ marginRight: 7 }}
                 />
                 <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
-               
+
 
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
@@ -321,7 +340,14 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 >
                   <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
                 </TouchableOpacity>
-              </View> 
+
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: 'red', alignSelf: 'flex-start' }]}
+                  onPress={() => handleEliminarPregunta(pregunta.id)}
+                >
+                  <Text style={[styles.buttonText, { color: '#fff' }]}>Eliminar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ))}
         </View>
@@ -335,8 +361,8 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 {expandedQuestion[pregunta.id]
                   ? pregunta.cuestion
                   : pregunta.cuestion.length > 63
-                  ? `${pregunta.cuestion.substring(0, 63)}...`
-                  : pregunta.cuestion}
+                    ? `${pregunta.cuestion.substring(0, 63)}...`
+                    : pregunta.cuestion}
               </Text>
 
               {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
@@ -347,11 +373,11 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                   </Text>
                 </TouchableOpacity>
               )}
-              
-              <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop:10 }]}>
+
+              <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
                 <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text>
                 <Text style={[{ color: colors.textDarkSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
-              </View>  
+              </View>
               <View style={[styles.mismaFila]}>
                 <Ionicons
                   name='chatbubble'
@@ -360,7 +386,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                   style={{ marginRight: 7 }}
                 />
                 <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
-                
+
 
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
@@ -373,6 +399,51 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 >
                   <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>{pregunta.numRespuestas > 0 ? 'Ver respuestas' : 'Ver respuestas'}</Text>
                 </TouchableOpacity>
+
+                {pregunta.usuario === correoUsuario && (
+                  <View style={{ position: 'relative' }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setPreguntaSeleccionada(preguntaSeleccionada === pregunta.id ? null : pregunta.id)
+                      }
+                      style={{
+                        padding: 5,
+                        marginLeft: 8,
+                      }}
+                    >
+                      <Ionicons name="ellipsis-vertical" size={20} color={colors.textDarkSecondary} />
+                    </TouchableOpacity>
+
+                    {preguntaSeleccionada === pregunta.id && (
+                      <View style={{
+                        position: 'absolute',
+                        top: 30,
+                        right: 0,
+                        backgroundColor: '#fff',
+                        borderRadius: 6,
+                        padding: 8,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 4,
+                        elevation: 6,
+                        zIndex: 1000
+                      }}>
+                        <TouchableOpacity
+                          style={{ flexDirection: 'row', alignItems: 'center' }}
+                          onPress={() => {
+                            setPreguntaSeleccionada(null);
+                            handleEliminarPregunta(pregunta.id);
+                          }}
+                        >
+                          <Ionicons name="trash-outline" size={18} color="red" />
+                          <Text style={{ marginLeft: 6, fontSize: 14, color: 'red' }}>Eliminar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                )}
+
               </View>
             </View>
           ))}

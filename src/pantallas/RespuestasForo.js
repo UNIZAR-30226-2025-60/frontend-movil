@@ -1,18 +1,20 @@
 // RespuestasForo.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, Button, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TextInput, Alert, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Ionicons } from 'react-native-vector-icons';
 import { useThemeColors } from '../componentes/Tema';
 import { API_URL } from '../../config';
 
-export default function RespuestasForo({ route, navigation, correoUsuario }) {
+export default function RespuestasForo({ route, correoUsuario }) {
   // Se espera que la pantalla reciba el id de la pregunta y opcionalmente el texto de la misma
   const colors = useThemeColors();
 
-  const { preguntaId, cuestion } = route.params;  
+  const { preguntaId, cuestion } = route.params;
   const [respuestas, setRespuestas] = useState([]);
   const [nuevaRespuesta, setNuevaRespuesta] = useState('');
   const [expanded, setExpanded] = useState(false);
   const [expandedRespuestas, setExpandedRespuestas] = useState({});
+  const [respuestaSeleccionada, setRespuestaSeleccionada] = useState(null);
 
   useEffect(() => {
     cargarRespuestas();
@@ -51,7 +53,6 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
       if (!response.ok) {
         throw new Error('Error al enviar respuesta');
       }
-      const data = await response.json();
       // Limpiar el campo y recargar las respuestas para ver el nuevo mensaje
       setNuevaRespuesta('');
       cargarRespuestas();
@@ -67,9 +68,40 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
     }));
   };
 
+  const mostrarMenu = (respuestaId) => {
+    setRespuestaSeleccionada(respuestaId);
+  };
+
+  const handleEliminarRespuesta = (respuestaId) => {
+    Alert.alert(
+      'Eliminar respuesta',
+      '¿Estás seguro de que deseas eliminar esta respuesta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(`${API_URL}/respuestas/${respuestaId}`, {
+                method: 'DELETE',
+              });
+
+              if (!response.ok) throw new Error('No se pudo eliminar la respuesta');
+              cargarRespuestas();
+            } catch (error) {
+              console.error('Error al eliminar la respuesta:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-        
+    <TouchableWithoutFeedback onPress={() => setRespuestaSeleccionada(null)}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+
         <View style={[styles.headerPregunta, { backgroundColor: colors.backgroundSubtitle }]}>
           <Text style={[styles.titulo, { color: colors.text }]}>Pregunta:</Text>
           {/* <Text style={[styles.cuestion, { color: colors.text }]}>{cuestion}</Text> */}
@@ -89,94 +121,107 @@ export default function RespuestasForo({ route, navigation, correoUsuario }) {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {/* Mostrar el título o enunciado de la pregunta */}
-            <Text style={[styles.titulo, { color: colors.text }]}>Respuestas:</Text>
-            {/* {respuestas.length > 0 ? (
-              respuestas.map((respuesta) => (
-                <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-                  <Text style={[styles.mensaje, { color: colors.text }]}>
-                    {expandedRespuesta || respuesta.mensaje_respuesta.length <= 63
-                      ? respuesta.mensaje_respuesta
-                      : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
+          {/* Mostrar el título o enunciado de la pregunta */}
+          <Text style={[styles.titulo, { color: colors.text }]}>Respuestas:</Text>
+          {respuestas.length > 0 ? (
+            respuestas.map((respuesta) => (
+              <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+                <Text style={[styles.mensaje, { color: colors.textDark }]}>
+                  {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 63
+                    ? respuesta.mensaje_respuesta
+                    : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
+                </Text>
+
+                {respuesta.mensaje_respuesta.length > 63 && (
+                  <TouchableOpacity onPress={() => toggleExpandedRespuesta(respuesta.id)}>
+                    <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
+                      {expandedRespuestas[respuesta.id] ? 'Ver menos' : 'Ver más'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <View style={[styles.mismaFila]}>
+                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>
+                    Por: {respuesta.usuario_respuesta}
                   </Text>
-
-                  {respuesta.mensaje_respuesta.length > 63 && (
-                    <TouchableOpacity onPress={() => setExpandedRespuesta(!expandedRespuesta)}>
-                      <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
-                        {expandedRespuesta ? 'Ver menos' : 'Ver más'}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                  
-                  <View style={[styles.mismaFila]}>
-                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Por: {respuesta.usuario_respuesta}    </Text>
-                    <Text style={[styles.usuario, { color: colors.textSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
-                  </View>
-                </View>
-              ))
-            ) : (
-              <Text style={[styles.sinRespuestas, { color: colors.textSecondary }]}>Aún no hay respuestas.</Text>
-            )} */}
-            {respuestas.length > 0 ? (
-              respuestas.map((respuesta) => (
-                <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-                  <Text style={[styles.mensaje, { color: colors.textDark }]}>
-                    {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 63
-                      ? respuesta.mensaje_respuesta
-                      : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
+                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>
+                    Fecha: {new Date(respuesta.fecha).toLocaleDateString()}
                   </Text>
-
-                  {respuesta.mensaje_respuesta.length > 63 && (
-                    <TouchableOpacity onPress={() => toggleExpandedRespuesta(respuesta.id)}>
-                      <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
-                        {expandedRespuestas[respuesta.id] ? 'Ver menos' : 'Ver más'}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-
-                  <View style={[styles.mismaFila]}>
-                    <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Por: {respuesta.usuario_respuesta}</Text>
-                    <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
-                  </View>
                 </View>
-              ))
-            ) : (
-              <Text style={[styles.sinRespuestas, { color: colors.text }]}>Aún no hay respuestas.</Text>
-            )}
+
+                {respuesta.usuario_respuesta === correoUsuario && (
+                  <View style={{ position: 'absolute', top: 10, right: 10 }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setRespuestaSeleccionada(
+                          respuestaSeleccionada === respuesta.id ? null : respuesta.id
+                        )
+                      }
+                      style={styles.botonMenu}
+                    >
+                      <Ionicons name="ellipsis-vertical" size={20} color={colors.textDark} />
+                    </TouchableOpacity>
+
+                    {respuestaSeleccionada === respuesta.id && (
+                      <View style={[styles.menuOpciones, { backgroundColor: colors.background }]}>
+                        <TouchableOpacity
+                          style={styles.opcionMenu}
+                          onPress={() => {
+                            setRespuestaSeleccionada(null);
+                            handleEliminarRespuesta(respuesta.id);
+                          }}
+                        >
+                          <Ionicons name="trash-outline" size={18} color="red" />
+                          <Text style={[styles.textoOpcion, { color: "red" }]}>Eliminar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+
+                  </View>
+                )}
+
+              </View>
+            ))
+          ) : (
+            <Text style={[styles.sinRespuestas, { color: colors.text }]}>Aún no hay respuestas.</Text>
+          )}
+
         </ScrollView>
 
 
         {correoUsuario ? (
-            <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border, backgroundColor: colors.backgroundForo }]}>
-              <Text style={[styles.tituloCampo, { color: colors.textDark }]}>Mensaje:</Text>
-              <View style={[styles.formContainer]}>
-                <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      borderColor: colors.border,
-                      color: colors.textDark,
-                      backgroundColor: colors.backgroundFormulario
-                    }
-                  ]}
-                  placeholder="Escribe tu respuesta..."
-                  placeholderTextColor={colors.textFormulario}
-                  value={nuevaRespuesta}
-                  onChangeText={setNuevaRespuesta}
-                />
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
-                  onPress={handleEnviarRespuesta}
-                >
-                  <Text style={[styles.buttonText, { color: colors.buttonText }]}>Enviar</Text>
-                </TouchableOpacity>
-              </View>
+          <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border, backgroundColor: colors.backgroundForo }]}>
+            <Text style={[styles.tituloCampo, { color: colors.textDark }]}>Mensaje:</Text>
+            <View style={[styles.formContainer]}>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    borderColor: colors.border,
+                    color: colors.textDark,
+                    backgroundColor: colors.backgroundFormulario
+                  }
+                ]}
+                placeholder="Escribe tu respuesta..."
+                placeholderTextColor={colors.textFormulario}
+                value={nuevaRespuesta}
+                onChangeText={setNuevaRespuesta}
+              />
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
+                onPress={handleEnviarRespuesta}
+              >
+                <Text style={[styles.buttonText, { color: colors.buttonText }]}>Enviar</Text>
+              </TouchableOpacity>
             </View>
+          </View>
         ) : (
           <Text style={[styles.aviso, { color: colors.buttonSec }]}>Debes iniciar sesión para responder</Text>
         )}
-        </View>
-    );
+
+      </View>
+    </TouchableWithoutFeedback >
+  );
 }
 
 const styles = StyleSheet.create({
@@ -191,11 +236,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     marginVertical: 12,
     borderRadius: 8
-  },
-  titulo: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 6
   },
   cuestion: {
     fontSize: 16,
@@ -222,9 +262,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5
   },
-  fecha: {
-    fontSize: 12,
-  },
   sinRespuestas: {
     textAlign: 'center',
     marginVertical: 20,
@@ -233,8 +270,6 @@ const styles = StyleSheet.create({
   formContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // padding: 10,
-    // borderTopWidth: 1,
   },
   input: {
     flex: 1,
@@ -262,5 +297,33 @@ const styles = StyleSheet.create({
   mismaFila: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  opcionMenu: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  menuOpciones: {
+    position: 'absolute',
+    top: 35,
+    right: 5,
+    borderRadius: 6,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  textoOpcion: {
+    marginLeft: 8,
+    fontSize: 14,
+  },
+  botonMenu: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    padding: 5,
   },
 });

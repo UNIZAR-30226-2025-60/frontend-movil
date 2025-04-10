@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { useThemeColors } from "../componentes/Tema"; 
+import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
 export default function CambioNombre({ route, navigation }) {
   const { usuario } = route.params;  // Recibimos el correo del usuario
   const colors = useThemeColors();
 
-  const [ nuevoNombre, setNuevoNombre ] = useState("");
+  const [nuevoNombre, setNuevoNombre] = useState("");
 
   const handleCambiarNombre = async () => {
     try {
-          // Realizamos la petición al backend para cambiar la contraseña
-          const response = await fetch(`${API_URL}/usuarios/usuario/cambiar-nombre`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              correo: usuario.correoUsuario,
-              nombre: nuevoNombre,
-            }),
-          });
-    
-          const data = await response.json();
-    
-          // Verificamos si la respuesta fue exitosa
-          if (!response.ok) throw new Error(data.message || "Error al cambiar el nombre");
-    
-          // Mostramos mensaje de éxito y navegamos hacia atrás
-          Alert.alert("Éxito", "Nombre actualizado correctamente", [
-            { text: "OK", onPress: () => navigation.goBack() },
-          ]);
-        } catch (error) {
-          // Manejamos los errores de la petición
-          Alert.alert("Error", error.message);
-        }
+      // Realizamos la petición al backend para cambiar la contraseña
+      const response = await fetch(`${API_URL}/usuarios/usuario/cambiar-nombre`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          correo: usuario.correoUsuario,
+          nombre: nuevoNombre,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Verificamos si la respuesta fue exitosa
+      if (!response.ok) throw new Error(data.message || "Error al cambiar el nombre");
+
+      // Mostramos mensaje de éxito y navegamos hacia atrás
+      Alert.alert("Éxito", "Nombre actualizado correctamente", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch (error) {
+      // Manejamos los errores de la petición
+      Alert.alert("Error", error.message);
+    }
   }
 
   return (
@@ -51,9 +51,22 @@ export default function CambioNombre({ route, navigation }) {
         onChangeText={setNuevoNombre}
       />
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: colors.buttonDark }]} onPress={handleCambiarNombre}>
+      {/* Botón Confirmar */}
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors.buttonDark }]}
+        onPress={handleCambiarNombre}
+      >
         <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Confirmar</Text>
       </TouchableOpacity>
+
+      {/* Botón Cancelar */}
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors.buttonSec, marginTop: 10 }]}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={[styles.buttonText, { color: colors.buttonText }]}>Cancelar</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };
