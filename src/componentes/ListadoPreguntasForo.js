@@ -240,6 +240,8 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
             <Switch
               onValueChange={toggleSwitch}
               value={verMisPreguntas}
+              trackColor={{ false: colors.switchFondoNoSeleccionado, true: colors.switchFondoSeleccionado }}
+              thumbColor={verMisPreguntas ? colors.switchBotonSeleeccionado : colors.switchBotonNoSeleeccionado }
             />
             <Text style={[{ color: colors.text }]}>Ver mis preguntas</Text>
           </View>
@@ -314,10 +316,11 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
               )}
 
 
-              <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10 }]}>
+              <View style={[styles.mismaFila, {  flexWrap: 'wrap', fontSize: 10, marginBottom: 10 }]}>
                 {/* <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text> */}
+                <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
                 <NombreUsuario correo={pregunta.usuario} />
-                <Text style={[{ color: colors.textDarkSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
               </View>
               <View style={[styles.mismaFila]}>
                 <Ionicons
@@ -330,7 +333,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
 
                 <TouchableOpacity
-                  style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
+                  style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
                   onPress={() =>
                     navigation.navigate('RespuestasForo', {
                       preguntaId: pregunta.id,
@@ -338,7 +341,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                     })
                   }
                 >
-                  <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Ver respuestas</Text>
+                  <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -374,9 +377,10 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 </TouchableOpacity>
               )}
 
-              <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
-                <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text>
-                <Text style={[{ color: colors.textDarkSecondary }]}>Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+              <View style={[styles.mismaFila, { flexWrap: 'wrap', fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
+                <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
+                <NombreUsuario correo={pregunta.usuario} />
+                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
               </View>
               <View style={[styles.mismaFila]}>
                 <Ionicons
@@ -389,7 +393,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
 
                 <TouchableOpacity
-                  style={[styles.button, { backgroundColor: colors.buttonDarkSecondary, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
+                  style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
                   onPress={() =>
                     navigation.navigate('RespuestasForo', {
                       preguntaId: pregunta.id,
@@ -397,7 +401,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                     })
                   }
                 >
-                  <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>{pregunta.numRespuestas > 0 ? 'Ver respuestas' : 'Ver respuestas'}</Text>
+                  <Text style={[styles.buttonText, { color: colors.buttonText }]}>{pregunta.numRespuestas > 0 ? 'Ver respuestas' : 'Ver respuestas'}</Text>
                 </TouchableOpacity>
 
                 {pregunta.usuario === correoUsuario && (

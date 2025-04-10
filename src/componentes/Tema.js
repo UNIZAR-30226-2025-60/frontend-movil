@@ -26,7 +26,7 @@ export const useThemeColors = () => {
         backgroundMenu: "#6a6456",
         backgroundMenuLibro: "#d9d6cc",
         //
-        backgroundModal: "#fbf1cd",
+        backgroundModal: "#c3c1b3",
         backgroundCheckbox: "#f8f7f3",
         backgroundForo: "#ecebe5",
 
@@ -76,6 +76,10 @@ export const useThemeColors = () => {
         // FILTROS
         filtroSeleccionado: "#C3C1B3",
         filtroNoSeleccionado: "#878374",
+        switchFondoSeleccionado: "#f8f7f3",
+        switchFondoNoSeleccionado: "#a5a294",
+        switchBotonSeleeccionado: "#f4dd69",
+        switchBotonNoSeleeccionado: "#d9d6cc",
 
         // VALORACIONES
         progressFilled: "#f4dd69",
@@ -146,6 +150,10 @@ export const useThemeColors = () => {
         // FILTROS
         filtroSeleccionado: "#b2ab99",
         filtroNoSeleccionado: "#ecebe5",
+        switchFondoSeleccionado: "#c3c1b3",
+        switchFondoNoSeleccionado: "#a5a294",
+        switchBotonSeleeccionado: "#f4dd69",
+        switchBotonNoSeleeccionado: "#d9d6cc",
 
         // VALORACIONES
         progressFilled: "#f4dd69",

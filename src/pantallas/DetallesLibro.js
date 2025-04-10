@@ -482,7 +482,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
           </View>
           
           {/* 📌 Botones: Leer */}
-          <View style={stylesGeneral.fila}>
+          <View style={[stylesGeneral.fila, { flexWrap: 'wrap' }]}>
             <TouchableOpacity 
               style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
               onPress={handleLeer}
@@ -518,8 +518,8 @@ export default function DetallesLibro({ route, correoUsuario }) {
       {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
 
-{/* 📌 Más libros del autor */}
-{libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
+      {/* 📌 Más libros del autor */}
+      {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
         <View>
           <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -598,7 +598,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             {/* <FontAwesomeIcon icon={faClock} style={[stylesAcercaDe.icono, { color: colors.text }]} /> */}
             <View style={stylesAcercaDe.textoSubcolumna}>
               <Text style={{ color: colors.text }}>{libro.horas_lectura}</Text>
-              <Text style={{ color: colors.text }}>horas de lectura</Text>
+              <Text style={{ color: colors.text }}>horas</Text>
             </View>
           </View>
           
@@ -629,7 +629,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 7 }}>
             {Array(estrellasLlenas).fill(<Ionicons name="star" size={20} color={colors.star} />)}
-            {Array(estrellasVacías).fill(<Ionicons name="star-outline" size={20} color={colors.border} />)}
+            {Array(estrellasVacías).fill(<Ionicons name="star-outline" size={20} color={colors.iconBorder} />)}
             <Text style={[{ color: colors.text, marginLeft: 5 }]}>({totalValoraciones})</Text>
             {/* {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))} */}
           </View>
@@ -640,7 +640,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
           const porcentaje = ((conteo[num] || 0) / totalValoraciones) * 100; // Calcula el porcentaje
           return (
             <View key={num} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
-              <Text style={{ width: 100, color: colors.text }}>{num} ESTRELLA</Text>
+              <Text style={{ width: 100, color: colors.text }}>{num} ESTRELLA{num !== 1 && 'S'}</Text>
               <View style={{ flex: 1, height: 8, backgroundColor: colors.progressNotFilled, marginLeft: 5, borderRadius: 4 }}>
                 <View style={{
                   height: '100%',
@@ -803,14 +803,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
             style={{
               marginTop: 10,
               padding: 12,
-              backgroundColor: colors.background,
+              backgroundColor: colors.button,
               borderRadius: 22,
               
               alignItems: 'center',
             }}
             onPress={() => navigation.navigate("CrearLista")}
           >
-            <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 15 }}>+ Nueva lista</Text>
+            <Text style={{ color: colors.textLight, fontWeight: 'bold', fontSize: 15 }}>+ Nueva lista</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -823,12 +823,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
 const stylesAcercaDe = StyleSheet.create({
   columnas3: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 16,
   },
   columna: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 4,
   },
   subcolumna: {
     flexDirection: 'row',
@@ -837,8 +840,8 @@ const stylesAcercaDe = StyleSheet.create({
     marginBottom: '10',
   },
   textoSubcolumna: {
-    justifyContent: 'left',
-    alignItems: 'left',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   icono: {
     marginRight: 10,
@@ -892,6 +895,7 @@ const stylesGeneral = StyleSheet.create({
 
   // 📌 Estilo del título de las secciones
   titulo: {
+    fontSize: 18,
     fontWeight: 'bold',
     paddingBottom: 10,
   },
@@ -909,7 +913,7 @@ const stylesGeneral = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 22,
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 5,
     alignSelf: 'flex-start',
   },
   fila: {

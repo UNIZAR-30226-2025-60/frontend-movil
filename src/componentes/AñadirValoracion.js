@@ -95,25 +95,27 @@ export default function AñadirValoracion({ route, correoUsuario }) {
       </View>
 
 
-      {/* Botón Enviar */}
-      <TouchableOpacity
-        style={[styles.boton, { backgroundColor: colors.buttonDark }]}
-        onPress={handleGuardar}
-        disabled={cargando}
-      >
-        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>
-          {cargando ? "Cargando..." : "Enviar"}
-        </Text>
-      </TouchableOpacity>
+      
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
+        {/* Botón Cancelar */}
+        <TouchableOpacity
+          style={[styles.boton, { backgroundColor: colors.buttonDarkSecondary }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Cancelar</Text>
+        </TouchableOpacity>
 
-      {/* Botón Cancelar */}
-      <TouchableOpacity
-        style={[styles.boton, { backgroundColor: colors.buttonSec, marginTop: 10 }]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Cancelar</Text>
-      </TouchableOpacity>
-
+        {/* Botón Confirmar */}
+        <TouchableOpacity
+          style={[styles.boton, { backgroundColor: colors.buttonDark }]}
+          onPress={handleGuardar}
+          disabled={cargando}
+        >
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>
+            {cargando ? "Cargando..." : "Confirmar"}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -167,11 +169,15 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   boton: {
-    width: '100%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // width: '100%',
+    // height: 50,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // borderRadius: 22,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 22,
+    alignItems: 'center'
   },
   textoBoton: {
     fontSize: 18,

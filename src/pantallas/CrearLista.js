@@ -202,7 +202,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
       {/* Campo de descripción */}
       <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
       <TextInput
-        style={[styles.textarea, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.text }]}
+        style={[styles.textarea, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
         placeholder="Añade una descripción (opcional)"
         placeholderTextColor={colors.textDark}
         value={descripcion}
@@ -227,21 +227,23 @@ export default function CrearLista({ correoUsuario, navigation }) {
         ))}
       </View>
 
-      {/* Botón Confirmar */}
-      <TouchableOpacity
-        style={[styles.boton, { backgroundColor: colors.buttonDark }]}
-        onPress={crearLista}
-      >
-        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Confirmar</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
+        {/* Botón Cancelar */}
+        <TouchableOpacity
+          style={[styles.boton, { backgroundColor: colors.buttonDarkTerciary }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Cancelar</Text>
+        </TouchableOpacity>
 
-      {/* Botón Cancelar debajo */}
-      <TouchableOpacity
-        style={[styles.boton, { backgroundColor: colors.buttonSec, marginTop: 10 }]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={[styles.textoBoton, { color: colors.buttonText }]}>Cancelar</Text>
-      </TouchableOpacity>
+        {/* Botón Confirmar */}
+        <TouchableOpacity
+          style={[styles.boton, { backgroundColor: colors.buttonDark }]}
+          onPress={crearLista}
+        >
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Confirmar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -316,6 +318,7 @@ const styles = StyleSheet.create({
 
   // Modal overlay (fondo semitransparente)
   modalOverlay: {
+    marginTop: 60,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -375,7 +378,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start'
   },
   boton: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 22,
     alignItems: 'center'
   },

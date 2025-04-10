@@ -77,22 +77,24 @@ export default function CambioContrasena({ route, navigation }) {
         onChangeText={setConfirmPassword}
       />
 
-      {/* Botón Confirmar */}
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.buttonDark }]}
-        onPress={handlePasswordChange}
-      >
-        <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Confirmar</Text>
-      </TouchableOpacity>
 
-      {/* Botón Cancelar */}
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.buttonSec, marginTop: 10 }]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={[styles.buttonText, { color: colors.buttonText }]}>Cancelar</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
+        {/* Botón Cancelar */}
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.buttonDarkTerciary }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Cancelar</Text>
+        </TouchableOpacity>
 
+        {/* Botón Confirmar */}
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.buttonDark }]}
+          onPress={handlePasswordChange}
+        >
+          <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Confirmar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -114,7 +116,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 22,
     alignItems: "center",
   },

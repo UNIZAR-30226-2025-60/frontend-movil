@@ -74,17 +74,17 @@ export default function MenuUsuario({ setCorreoUsuario }) {
           >
             <View style={styles.centeredContent}> 
               <TouchableOpacity 
-                style={[styles.boton, { backgroundColor: colors.buttonDark }]}
+                style={[styles.boton, { backgroundColor: colors.button }]}
                 onPress={() => bookOpened && navigation.navigate("IniciarSesion")}
               >
-                <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Iniciar sesión</Text>
+                <Text style={[styles.textoBoton, { color: colors.textLight }]}>Iniciar sesión</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
-                style={[styles.boton, styles.botonSecundario, { backgroundColor: colors.buttonDark }]}
+                style={[styles.boton, styles.botonSecundario, { backgroundColor: colors.button }]}
                 onPress={() => bookOpened && navigation.navigate("Registrarse")}
               >
-                <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Registrarse</Text>
+                <Text style={[styles.textoBoton, { color: colors.textLight }]}>Registrarse</Text>
               </TouchableOpacity>
 
             </View>
@@ -102,13 +102,14 @@ export default function MenuUsuario({ setCorreoUsuario }) {
         </Animated.View>
       </Pressable>
 
-      {!bookOpened && 
+      
         <View style={styles.bienvenida}>
           <Text style={[styles.bienvenidaTexto, { color: colors.text }]}>¡Bienvenido a Bookly!</Text>
-          <Text style={[styles.instrucciones, { color: colors.text }]}>Pulse en el libro para acceder</Text>
+          {!bookOpened && 
+            <Text style={[styles.instrucciones, { color: colors.text }]}>Pulse en el libro para acceder</Text>
+          }
         </View>
-      }
-
+      
     </View>
   );
 };

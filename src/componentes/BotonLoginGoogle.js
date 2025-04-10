@@ -93,7 +93,7 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
       <Modal visible={mostrarModal} transparent={false}>
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
           <Text style={{ color: colors.text }}>Cargando...</Text>
-          {/* <Image source={cargandoGif} style={styles.loadingImage}/> */}
+          <Image source={cargandoGif} style={styles.loadingImage}/>
         </View>
       </Modal>
     </View>

@@ -140,13 +140,9 @@ export default function RespuestasForo({ route, correoUsuario }) {
                   </TouchableOpacity>
                 )}
 
-                <View style={[styles.mismaFila]}>
-                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>
-                    Por: {respuesta.usuario_respuesta}
-                  </Text>
-                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>
-                    Fecha: {new Date(respuesta.fecha).toLocaleDateString()}
-                  </Text>
+                <View style={[styles.mismaFila, { flexWrap: 'wrap' }]}>
+                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Por: {respuesta.usuario_respuesta}   </Text>
+                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
                 </View>
 
                 {respuesta.usuario_respuesta === correoUsuario && (
