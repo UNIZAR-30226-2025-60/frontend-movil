@@ -117,7 +117,7 @@ export default function Estadisticas({ correoUsuario }) {
             const data = await response.json();
             setMonthlyStats(data || {});
          } else {
-            console.warn("No se encontraron estadísticas mensuales");
+            console.log("No se encontraron estadísticas mensuales");
          }
       } catch (error) {
          console.error("Error al obtener estadísticas mensuales", error);
@@ -201,15 +201,15 @@ export default function Estadisticas({ correoUsuario }) {
             {/* =============================
                     MIS ESTADÍSTICAS (PERSONALES)
                    ============================= */}
-            <Text style={[styles.sectionMainTitle, { color: colors.text }]}>Mis Estadísticas</Text>
-
             {correoUsuario && (
                <>
+                  <Text style={[styles.sectionMainTitle, { color: colors.text }]}>Mis Estadísticas</Text>
+               
                   {/* BLOQUE 1: Estadísticas personales (3 círculos) */}
                   <View style={[styles.statsContainer, { backgroundColor: colors.backgroundSecondary }]}>
                      <View style={styles.statsRow}>
                         {/* Círculo 1: En proceso */}
-                        <View style={[styles.statCircle, { backgroundColor: colors.background }]}>
+                        <View style={[styles.statCircle, { backgroundColor: colors.backgroundCirculoEstadisticas }]}>
                            <Text style={styles.statNumber}>
                               {yearlyStats?.libros_en_progreso ?? 0}
                            </Text>
@@ -217,7 +217,7 @@ export default function Estadisticas({ correoUsuario }) {
                         </View>
 
                         {/* Círculo 2: Leídos mes */}
-                        <View style={[styles.statCircle, { backgroundColor: colors.background }]}>
+                        <View style={[styles.statCircle, { backgroundColor: colors.backgroundCirculoEstadisticas }]}>
                            <Text style={styles.statNumber}>
                               {monthlyStats?.totalLibrosLeidos ?? 0}
                            </Text>
@@ -225,7 +225,7 @@ export default function Estadisticas({ correoUsuario }) {
                         </View>
 
                         {/* Círculo 3: Leídos total */}
-                        <View style={[styles.statCircle, { backgroundColor: colors.background }]}>
+                        <View style={[styles.statCircle, { backgroundColor: colors.backgroundCirculoEstadisticas }]}>
                            <Text style={styles.statNumber}>
                               {globalStats?.totalLibrosLeidos ?? 0}
                            </Text>
@@ -237,9 +237,9 @@ export default function Estadisticas({ correoUsuario }) {
                   {/* BLOQUE 2: Mensaje de temáticas */}
                   {yearlyStats?.tematicasMasLeidas?.length > 0 ? (
                      <View style={[styles.blockContainer, { backgroundColor: colors.backgroundSecondary }]}>
-                        <Text style={[styles.sectionMainTitle, { color: colors.text }]}>Temáticas más leídas:</Text>
+                        <Text style={[styles.sectionMainTitle, { color: colors.textDark }]}>Temáticas más leídas:</Text>
                         {yearlyStats.tematicasMasLeidas.map((tema, index) => (
-                           <Text key={index} style={{ color: colors.text }}>{tema}</Text>
+                           <Text key={index} style={{ color: colors.textDark }}>{tema}</Text>
                         ))}
                      </View>
                   ) : (
@@ -303,8 +303,11 @@ export default function Estadisticas({ correoUsuario }) {
                         </View>
                      )}
                   </View>
+
+                  <View style={[styles.linea, { backgroundColor: colors.line, height: 2.5 }]} />
                </>
             )}
+
 
             {/* ============================
                     ESTADÍSTICAS GENERALES
@@ -478,4 +481,8 @@ const styles = StyleSheet.create({
       fontSize: 12,
       textAlign: 'center',
    },
+   linea: {
+      width: '100%',
+      marginVertical: 5,
+    },
 });

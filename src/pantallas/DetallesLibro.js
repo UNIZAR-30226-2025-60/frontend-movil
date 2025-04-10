@@ -482,7 +482,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
           </View>
           
           {/* 📌 Botones: Leer */}
-          <View style={[stylesGeneral.fila, { flexWrap: 'wrap' }]}>
+          <View style={[stylesGeneral.fila/*, { flexWrap: 'wrap' }*/]}>
             <TouchableOpacity 
               style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
               onPress={handleLeer}

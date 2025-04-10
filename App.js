@@ -184,16 +184,16 @@ function DrawerNavigator({ correoUsuario }) {
         {props => <ForoStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
 
+      <Drawer.Screen name="Estadísticas">
+        {(props) => <EstadisticasStack {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
+
       <Drawer.Screen name="Listas públicas">
         {(props) => <ListasPublicasStack {...props} correoUsuario={correoUsuario} />}
       </Drawer.Screen>
 
       {correoUsuario && (
         <>
-          <Drawer.Screen name="Estadísticas">
-            {(props) => <EstadisticasStack {...props} correoUsuario={correoUsuario} />}
-          </Drawer.Screen>
-
           <Drawer.Screen name="Mis Listas">
             {(props) => <MisListasStack {...props} correoUsuario={correoUsuario} />}
           </Drawer.Screen>

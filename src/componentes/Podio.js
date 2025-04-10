@@ -39,7 +39,7 @@ function PodioColumna({ height, user, place }) {
    let baseColor = '#ccc';
    switch (place) {
       case 1: baseColor = '#FFD700'; break;
-      case 2: baseColor = '#C0C0C0'; break;
+      case 2: baseColor = '#a5a294'; break;
       case 3: baseColor = '#CD7F32'; break;
       default: break;
    }
@@ -61,7 +61,7 @@ function PodioColumna({ height, user, place }) {
    return (
       <View style={styles.columnaContainer}>
          {/* Nombre del usuario */}
-         <Text numberOfLines={2} style={[styles.userText, { color: colors.text }, getTextAlignmentStyles(place)]}>
+         <Text numberOfLines={2} style={[styles.userText, { color: colors.textDark }, getTextAlignmentStyles(place)]}>
             {mostrarNombre}
          </Text>
 
@@ -79,12 +79,12 @@ function PodioColumna({ height, user, place }) {
 
          {/* Base del podio */}
          <View style={[styles.basePodio, { backgroundColor: baseColor, height }]}>
-            <Text style={[styles.placeText, { color: colors.text }]}>{place}</Text>
+            <Text style={[styles.placeText, { color: colors.textDark }]}>{place}</Text>
          </View>
 
          {/* Libros leídos */}
          <Text
-            style={[styles.booksReadText, { color: colors.text }, getTextAlignmentStyles(place)]}>
+            style={[styles.booksReadText, { color: colors.textDark }, getTextAlignmentStyles(place)]}>
             {user.libros_leidos || 0} libros
          </Text>
       </View>
@@ -101,7 +101,7 @@ export default function Podio({ data, titulo }) {
    if (!data || data.length === 0) {
       return (
          <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>{titulo}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textDark }]}>{titulo}</Text>
             <Text style={[styles.infoText, { color: colors.textSecondary }]}>---</Text>
          </View>
       );
@@ -121,7 +121,7 @@ export default function Podio({ data, titulo }) {
 
    return (
       <View style={[styles.sectionContainer, { backgroundColor: colors.backgroundSecondary }]}>
-         <Text style={[styles.sectionTitle, { color: colors.text }]}>{titulo}</Text>
+         <Text style={[styles.sectionTitle, { color: colors.textDark }]}>{titulo}</Text>
 
          <View style={styles.podiumRow}>
             {/* Segundo lugar */}

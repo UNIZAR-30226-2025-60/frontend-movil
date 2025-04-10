@@ -75,6 +75,7 @@ export default function AñadirValoracion({ route, correoUsuario }) {
         placeholderTextColor={colors.textFormulario}
         value={mensaje}
         onChangeText={setMensaje}
+        multiline={true}
       />
 
       <Text style={[styles.tituloCampo, { color: colors.text }]}>Puntuación del 1 al 5:</Text>
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
-    paddingTop: 12,
+    paddingVertical: 8,
     marginBottom: 15,
     fontSize: 16,
     textAlignVertical: 'top',

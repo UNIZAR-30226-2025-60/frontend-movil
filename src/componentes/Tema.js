@@ -29,6 +29,7 @@ export const useThemeColors = () => {
         backgroundModal: "#c3c1b3",
         backgroundCheckbox: "#f8f7f3",
         backgroundForo: "#ecebe5",
+        backgroundCirculoEstadisticas: "#f8f7f3",
 
         // TEXTO
         textHeader: "#4c4637",
@@ -105,6 +106,7 @@ export const useThemeColors = () => {
         backgroundMenuLibro: "#d9d6cc",
         backgroundModal: "#f8f7f3",
         backgroundForo: "#ecebe5",
+        backgroundCirculoEstadisticas: "#f8f7f3",
 
         // TEXTO
         textHeader: "#4c4637",

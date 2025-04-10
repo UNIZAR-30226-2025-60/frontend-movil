@@ -202,33 +202,44 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     setModalOrdenarVisible(true);
   };
 
+
+  const handleChangePregunta = (texto) => {
+    if (texto.length > 350) {
+      alert("La pregunta no puede tener más de 350 caracteres.");
+      return;
+    }
+    setNuevaPregunta(texto);
+  };
+  
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Si hay usuario logueado, permitimos publicar */}
       {correoUsuario && (
         <View style={[{ padding: 10, borderRadius: 10, backgroundColor: colors.backgroundForo }]}>
-          <Text style={[styles.tituloCampo, { color: colors.textDark }]}>¿Quieres preguntar algo?</Text>
+          <Text style={[styles.tituloCampo, { flexWrap: 'wrap', color: colors.textDark }]}>¿Quieres preguntar algo?</Text>
           <View style={[styles.formContainer]}>
-            <TextInput
-              style={[
-                styles.textInput,
-                {
-                  backgroundColor: colors.backgroundFormulario,
-                  borderColor: colors.border,
-                  color: colors.textDark
-                }
-              ]}
-              placeholder="Escribe tu pregunta..."
-              placeholderTextColor={colors.textDark}
-              value={nuevaPregunta}
-              onChangeText={setNuevaPregunta}
-            />
+            <View style={[styles.textInput, { flex: 1, backgroundColor: colors.backgroundFormulario, borderColor: colors.border }]}>
+              <TextInput
+                style={[{ color: colors.textDark, height: 30, }]}
+                placeholder="Escribe tu pregunta..."
+                placeholderTextColor={colors.textDark}
+                value={nuevaPregunta}
+                onChangeText={handleChangePregunta}
+              />
+
+              <Text style={{ color: colors.textDark, textAlign: 'right', marginRight: 8, fontSize: 12 }}>
+                {nuevaPregunta.length}/350 caracteres
+              </Text>
+            </View>
+
             <TouchableOpacity
               style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
               onPress={handleEnviarPregunta}
             >
               <Text style={[styles.buttonText, { color: colors.buttonText }]}>Preguntar</Text>
             </TouchableOpacity>
+
           </View>
         </View>
       )}
@@ -377,7 +388,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 </TouchableOpacity>
               )}
 
-              <View style={[styles.mismaFila, { flexWrap: 'wrap', fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
+              <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
                 <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
                 <NombreUsuario correo={pregunta.usuario} />
                 <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
@@ -464,12 +475,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textInput: {
-    flex: 1,
-    marginRight: 8,
+    // flex: 1,
+    // marginRight: 8,
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 2,
     borderRadius: 5,
-    borderWidth: 1
+    borderWidth: 1,
+    textAlignVertical: 'top',
   },
   aviso: {
     padding: 10,

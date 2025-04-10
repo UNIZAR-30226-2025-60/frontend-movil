@@ -276,7 +276,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
         {modoSeleccion && listasSeleccionadas.size > 0 && (
           <View style={styles.barraSeleccion}>
             <TouchableOpacity
-              style={[styles.botonAccion, { backgroundColor: colors.buttonSec }]}
+              style={[styles.botonAccion, { backgroundColor: colors.buttonDark }]}
               onPress={() => {
                 Alert.alert(
                   'Eliminar listas',
@@ -300,17 +300,17 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                 );
               }}
             >
-              <Text style={{ color: colors.buttonText, fontWeight: 'bold' }}>Eliminar seleccionadas</Text>
+              <Text style={{ color: colors.buttonTextDark, fontWeight: 'bold' }}>Eliminar seleccionadas</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.botonAccion, { backgroundColor: colors.button }]}
+              style={[styles.botonAccion, { backgroundColor: colors.buttonDarkSecondary }]}
               onPress={() => {
                 setModoSeleccion(false);
                 setListasSeleccionadas(new Set());
               }}
             >
-              <Text style={{ color: colors.buttonText }}>Cancelar</Text>
+              <Text style={{ color: colors.buttonTextDark }}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   botonAccion: {
     width: '80%',
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 22,
     alignItems: 'center',
   },
   botonMenu: {

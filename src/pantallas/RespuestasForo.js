@@ -98,6 +98,16 @@ export default function RespuestasForo({ route, correoUsuario }) {
     );
   };
 
+
+  
+  const handleChangeRespuesta = (texto) => {
+    if (texto.length > 350) {
+      alert("La respuesta no puede tener más de 350 caracteres.");
+      return;
+    }
+    setNuevaRespuesta(texto);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={() => setRespuestaSeleccionada(null)}>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -189,20 +199,20 @@ export default function RespuestasForo({ route, correoUsuario }) {
           <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border, backgroundColor: colors.backgroundForo }]}>
             <Text style={[styles.tituloCampo, { color: colors.textDark }]}>Mensaje:</Text>
             <View style={[styles.formContainer]}>
-              <TextInput
-                style={[
-                  styles.input,
-                  {
-                    borderColor: colors.border,
-                    color: colors.textDark,
-                    backgroundColor: colors.backgroundFormulario
-                  }
-                ]}
-                placeholder="Escribe tu respuesta..."
-                placeholderTextColor={colors.textFormulario}
-                value={nuevaRespuesta}
-                onChangeText={setNuevaRespuesta}
-              />
+              <View style={[styles.input, { flex: 1, backgroundColor: colors.backgroundFormulario, borderColor: colors.border }]}>
+                <TextInput
+                  style={[{ color: colors.textDark, height: 30, }]}
+                  placeholder="Escribe tu respuesta..."
+                  placeholderTextColor={colors.textFormulario}
+                  value={nuevaRespuesta}
+                  onChangeText={handleChangeRespuesta}
+                />
+             
+                <Text style={{ color: colors.textDark, textAlign: 'right', marginRight: 8, fontSize: 12 }}>
+                  {nuevaRespuesta.length}/350 caracteres
+                </Text>
+              </View>
+
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
                 onPress={handleEnviarRespuesta}
@@ -256,7 +266,8 @@ const styles = StyleSheet.create({
   mensaje: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5
+    marginBottom: 5,
+    marginRight: 30,
   },
   sinRespuestas: {
     textAlign: 'center',
