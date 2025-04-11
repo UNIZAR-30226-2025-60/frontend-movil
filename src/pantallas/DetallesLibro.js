@@ -61,6 +61,23 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const estrellasLlenas = Math.floor(promedio);
   const estrellasVacías = 5 - estrellasLlenas;
 
+  const [botonOrdenarLayout, setBotonOrdenarLayout] = useState(null);
+  const botonOrdenarRef = React.useRef(null);
+
+  const mostrarDropdown = () => {
+    console.log("Dentro de mostrarDropDown");
+    if (botonOrdenarRef.current) {
+      console.log("AQUI");
+      // Esperamos a que el botón se haya renderizado
+      botonOrdenarRef.current.measure((x, y, width, height, pageX, pageY) => {
+        // Se aseguran las coordenadas correctas para el dropdown
+        setBotonOrdenarLayout({ x: pageX, y: height + 7, width: 200 });
+        setModalOrdenarVisible(true); // Mostramos el modal
+      });
+    }
+  };
+  
+
   // Constantes para la sinopsis
   const MAX_LINES = 6;  
   const MAX_CHARACTERS = 250;
@@ -402,15 +419,6 @@ export default function DetallesLibro({ route, correoUsuario }) {
       Alert.alert("Error", "Hubo un problema al crear la lista");
     }
   };
-  
-  const handleCerrarModal = () => {
-    setModalVisible(false);
-    obtenerListasDondeEstaLibro(); // 📌 Recargar listas al cerrar
-  };
-
-  const handleOrdenarPor = () => {
-    setModalOrdenarVisible(true);
-  };
 
   useEffect(() => {
     setValoracionesOrdenadas(valoraciones);
@@ -678,8 +686,9 @@ export default function DetallesLibro({ route, correoUsuario }) {
           {valoraciones.length > 0 ? (
             <View>
               <TouchableOpacity 
+                ref={botonOrdenarRef}
                 style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
-                onPress={handleOrdenarPor}
+                onPress={mostrarDropdown}
               >
                 <Text style={[{ color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}</Text>
                 <Ionicons
@@ -691,7 +700,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
               </TouchableOpacity>
 
               {/* Modal que despliega las opciones de ordenación */}
-              <Modal
+              {/* <Modal
                 visible={modalOrdenarVisible}
                 transparent={true}
                 animationType="fade"
@@ -717,7 +726,32 @@ export default function DetallesLibro({ route, correoUsuario }) {
                     />
                   </View>
                 </TouchableOpacity>
-              </Modal>
+              </Modal> */}
+              {modalOrdenarVisible && botonOrdenarLayout && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: botonOrdenarLayout.y,
+                    left: botonOrdenarLayout.x,
+                    width: botonOrdenarLayout.width,
+                    backgroundColor: colors.background,
+                    borderRadius: 10,
+                    padding: 10,
+                    elevation: 5,
+                    zIndex: 1000,
+                  }}
+                >
+                  {opcionesOrden.map((opcion) => (
+                    <TouchableOpacity
+                      key={opcion.id}
+                      onPress={() => seleccionarOrden(opcion)}
+                      style={{ paddingVertical: 8 }}
+                    >
+                      <Text>{opcion.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
 
               {valoracionesOrdenadas.map((item) => (
                 <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}-${item.fecha}`}>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Switch, Modal, FlatList } from 'react-native';
+import { findNodeHandle, UIManager } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import NombreUsuario from "../componentes/NombreUsuario";
@@ -22,6 +23,9 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
   const [misPreguntasOrdenadas, setMisPreguntasOrdenadas] = useState([]);
   const [preguntaSeleccionada, setPreguntaSeleccionada] = useState(null);
 
+  const [botonOrdenarLayout, setBotonOrdenarLayout] = useState(null);
+  const botonOrdenarRef = React.useRef(null);
+
 
   const opcionesOrden = [
     { id: 'antigua', label: 'más antiguas' },
@@ -33,6 +37,16 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
   const [modalOrdenarVisible, setModalOrdenarVisible] = useState(false);
   const [ordenSeleccionado, setOrdenSeleccionado] = useState('ninguno');
 
+  const mostrarDropdown = () => {
+    if (botonOrdenarRef.current) {
+      // Usamos ref.measure en lugar de UIManager.measure
+      botonOrdenarRef.current.measure((x, y, width, height, pageX, pageY) => {
+        setBotonOrdenarLayout({ x: pageX, y: height + 10, width: 200 });
+        setModalOrdenarVisible(true);
+      });
+    }
+  };
+  
 
   // Al montar el componente, cargamos ambas listas
   useEffect(() => {
@@ -258,7 +272,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           </View>
         )}
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
           onPress={handleOrdenarPor}
         >
@@ -269,12 +283,22 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
             color={colors.buttonTextDark}
             style={{ marginLeft: 7 }}
           />
+        </TouchableOpacity> */}
+        <TouchableOpacity
+          ref={botonOrdenarRef}
+          onPress={mostrarDropdown}
+          style={[styles.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
+        >
+          <Text style={[{ color: colors.buttonTextDark }]}>
+            {ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}
+          </Text>
+          <Ionicons name='caret-down' size={15} color={colors.buttonTextDark} style={{ marginLeft: 7 }} />
         </TouchableOpacity>
       </View>
 
 
       {/* Modal que despliega las opciones de ordenación */}
-      <Modal
+      {/* <Modal
         visible={modalOrdenarVisible}
         transparent={true}
         animationType="fade"
@@ -300,7 +324,35 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
             />
           </View>
         </TouchableOpacity>
-      </Modal>
+      </Modal> */}
+      {modalOrdenarVisible && botonOrdenarLayout && (
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: botonOrdenarLayout.y,
+            left: botonOrdenarLayout.x,
+            width: botonOrdenarLayout.width,
+            backgroundColor: colors.background,
+            borderRadius: 10,
+            padding: 10,
+            elevation: 5,
+            zIndex: 1000
+          }}
+          activeOpacity={1}
+          onPressOut={() => setModalOrdenarVisible(false)}
+        >
+          {opcionesOrden.map(opcion => (
+            <TouchableOpacity
+              key={opcion.id}
+              onPress={() => seleccionarOrden(opcion)}
+              style={{ paddingVertical: 8 }}
+            >
+              <Text>{opcion.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </TouchableOpacity>
+      )}
+
 
 
       {verMisPreguntas ? (
