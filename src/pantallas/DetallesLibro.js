@@ -452,6 +452,16 @@ export default function DetallesLibro({ route, correoUsuario }) {
     setValoracionesOrdenadas(val);
   };
 
+  const formatearFecha = (fecha) => {
+    const date = new Date(fecha); // Convierte la fecha en un objeto Date
+    const dia = String(date.getDate()).padStart(2, '0'); // Asegura que el día tenga 2 dígitos
+    const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0, así que le sumamos 1
+    const anio = date.getFullYear(); // Obtiene el año completo
+    
+    return `${dia}-${mes}-${anio}`;
+  };
+  
+
   // 📌 Renderización del componente
   return (
     <ScrollView contentContainerStyle={[stylesGeneral.container, { backgroundColor: colors.background }]}>
@@ -602,7 +612,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
               .filter((item) => item.nombre !== libro.nombre)
               .map((item) => (
               <TouchableOpacity
-                key={item.enlace}
+                key={`${item.enlace}-${item.nombre}`}
                 onPress={() => navigation.push("Detalles", { libro: item })}
                 style={{ marginRight: 10, alignItems: "center" }}
               >
@@ -699,34 +709,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                 />
               </TouchableOpacity>
 
-              {/* Modal que despliega las opciones de ordenación */}
-              {/* <Modal
-                visible={modalOrdenarVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={() => setModalOrdenarVisible(false)}
-              >
-                <TouchableOpacity
-                  style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-                  onPress={() => setModalOrdenarVisible(false)}
-                >
-                  <View style={{ backgroundColor: 'white', padding: 15, borderRadius: 10, width: 250 }}>
-                    <Text style={{ fontWeight: 'bold' }}>Ordenar por:</Text>
-                    <FlatList
-                      data={opcionesOrden}
-                      keyExtractor={(item) => item.id}
-                      renderItem={({ item }) => (
-                        <TouchableOpacity
-                          style={{ padding: 10 }}
-                          onPress={() => seleccionarOrden(item)}
-                        >
-                          <Text>{item.label}</Text>
-                        </TouchableOpacity>
-                      )}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </Modal> */}
+              {/* Dropdown que despliega las opciones de ordenación */}
               {modalOrdenarVisible && botonOrdenarLayout && (
                 <View
                   style={{
@@ -734,7 +717,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                     top: botonOrdenarLayout.y,
                     left: botonOrdenarLayout.x,
                     width: botonOrdenarLayout.width,
-                    backgroundColor: colors.background,
+                    backgroundColor: colors.backgroundModal,
                     borderRadius: 10,
                     padding: 10,
                     elevation: 5,
@@ -762,7 +745,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                     ))}
                   </View>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
-                  <Text style={{ color: colors.textTerciary }}>Por {item.usuario_id} el {item.fecha}</Text>
+                  <Text style={{ color: colors.textTerciary }}>Por {item.usuario_id} el {formatearFecha(item.fecha)}</Text>
                 
                   <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 1 }]} />
                 </View>
@@ -886,16 +869,14 @@ const stylesGeneral = StyleSheet.create({
   // 📌 Sección superior (Portada + Información)
   containerPrincipio: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
+    padding: 10,
   },
   columnaIzquierda: {
     flex: 1,  // Ocupa 1 parte del espacio disponible
-    alignItems: 'center',
   },
   columnaDerecha: {
     flex: 2,  // Ocupa 2 partes del espacio disponible
-    paddingLeft: 16,
+    alignItems: 'flex-start',
   },
 
   // 📌 Diseño de las filas en la interfaz

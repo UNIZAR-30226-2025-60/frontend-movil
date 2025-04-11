@@ -271,7 +271,7 @@ export default function LeerLibro({ route, correoUsuario }) {
                 />
               </TouchableOpacity>
 
-              <Text style={[styles.zoomText, { color: colors.text }]}>{(scale * 100).toFixed(0)}%</Text>
+              <Text style={[styles.zoomText, { color: colors.textDark }]}>{(scale * 100).toFixed(0)}%</Text>
 
               <TouchableOpacity
                 style={[styles.zoomButton, { backgroundColor: scale >= 2 ? colors.buttonDarkDisabled : colors.buttonDarkSecondary },]}
@@ -332,7 +332,7 @@ export default function LeerLibro({ route, correoUsuario }) {
               </Text>
             </TouchableOpacity>
 
-            <Text style={[styles.pageText, { color: colors.text }]}>
+            <Text style={[styles.pageText, { color: colors.textDark }]}>
               Página {currentPage} de {totalPages ?? "?"}
             </Text>
 

@@ -224,6 +224,15 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     }
     setNuevaPregunta(texto);
   };
+
+  const formatearFecha = (fecha) => {
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+    
+    return `${dia}-${mes}-${anio}`;
+  };
   
 
   return (
@@ -332,7 +341,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
             top: botonOrdenarLayout.y,
             left: botonOrdenarLayout.x,
             width: botonOrdenarLayout.width,
-            backgroundColor: colors.background,
+            backgroundColor: colors.backgroundModal,
             borderRadius: 10,
             padding: 10,
             elevation: 5,
@@ -383,7 +392,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
                 {/* <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text> */}
                 <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
                 <NombreUsuario correo={pregunta.usuario} />
-                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {formatearFecha(pregunta.fecha_mensaje)}</Text>
               </View>
               <View style={[styles.mismaFila]}>
                 <Ionicons
@@ -443,7 +452,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
               <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
                 <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
                 <NombreUsuario correo={pregunta.usuario} />
-                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {formatearFecha(pregunta.fecha_mensaje)}</Text>
               </View>
               <View style={[styles.mismaFila]}>
                 <Ionicons
