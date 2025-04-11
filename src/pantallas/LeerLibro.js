@@ -17,6 +17,7 @@ export default function LeerLibro({ route, correoUsuario }) {
 
   const [pdfPath, setPdfPath] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const currentPageRef = useRef(currentPage);
   const [totalPages, setTotalPages] = useState(libro.num_paginas || null);
   const [pdfKey, setPdfKey] = useState(0);
   const [scale, setScale] = useState(1.0);
@@ -27,6 +28,102 @@ export default function LeerLibro({ route, correoUsuario }) {
 
   const increaseZoom = () => setScale((prev) => Math.min(prev + 0.1, 2));
   const decreaseZoom = () => setScale((prev) => Math.max(prev - 0.1, 1));
+
+  // Configuramos la cabecera con el título y la flecha de volver
+  useEffect(() => {
+    navigation.setOptions({
+      title: `Leyendo: ${libro.nombre}`,
+      headerStyle: { backgroundColor: colors.backgroundHeader },
+      headerTintColor: colors.textHeader,
+      headerBackTitle: "Atrás",
+    });
+  });
+
+  useEffect(() => {
+    const finalizar = navigation.addListener('beforeRemove', async (e) => {
+      e.preventDefault();
+
+      try {
+        if (correoUsuario) {
+          console.log("SI hay correo");
+          // 1. Ha acabado la lectura de todo el libro
+          if (libro.num_paginas == currentPageRef.current) {
+            // Eliminamos el libro de en proceso, si estuviese ahí
+            const respuestaDelete = await fetch(`${API_URL}/libros/enproceso`, {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ 
+                correo: correoUsuario,
+                enlace: libro.enlace
+              }),
+            });
+    
+            const dataDelete = await respuestaDelete.json();
+            if (!respuestaDelete.ok) {
+              console.error("Error al eliminar el libro de 'En proceso':", dataDelete.error);
+            } else {
+              console.log("Libro eliminado de 'En Proceso':", dataDelete.message);
+            }
+  
+            // Añadimos el libro a leidos
+            const respuesta = await fetch(`${API_URL}/libros/leidos`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ 
+                correo: correoUsuario,
+                enlace: libro.enlace,
+              }),
+            });
+  
+            if (!respuesta.ok) {
+              console.log("Hay un error");
+              const errorData = await respuesta.json();
+                throw new Error(errorData.error || "No se pudo agregar el libro a Leídos");
+            }
+  
+  
+            console.log("Finalizada la lectura del libro correctamente");
+            Alert.alert("✅ Fin de la lectura", "Ha finalizado la lectura del libro correctamente");
+          } 
+  
+          // 2. Aún no ha leído todo el libro
+          else {
+            const respuesta = await fetch(`${API_URL}/libros/enproceso`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ 
+                correo: correoUsuario,
+                enlace: libro.enlace,
+                pagina: currentPageRef.current
+              }),
+            });
+            if (!respuesta.ok) {
+              throw new Error(respuesta.error);
+            }
+  
+            console.log("Lectura finalizada correctamente en la página " + currentPageRef.current);
+            Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPageRef.current}`);
+  
+          }
+        }
+        else {
+          console.log("NO hay correo");
+
+          console.log("Lectura finalizada correctamente");
+          Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPageRef.current}`);
+        }
+
+        navigation.dispatch(e.data.action);
+  
+      } catch (error) {
+        console.log("Error al guardar la página de finalización de la lectura", respuesta.error);
+        Alert.alert("⚠️ Error al guardar la página de finalización de la lectura", respuesta.error);
+      }
+    });
+
+    return finalizar; // Limpia el listener al desmontar el componente
+  }, [navigation]);
+
 
   useEffect(() => {
     const downloadPdf = async () => {
@@ -109,6 +206,11 @@ export default function LeerLibro({ route, correoUsuario }) {
     }
   };
 
+  useEffect(() => {
+    currentPageRef.current = currentPage;
+  }, [currentPage]);
+  
+
   // ✅ Agrega o quita la página actual del vector de marcadas
   const toggleBookmark = async () => {
     const isMarked = paginasMarcadas.includes(currentPage);
@@ -141,106 +243,6 @@ export default function LeerLibro({ route, correoUsuario }) {
       }
   };
 
-  // Función para finalizar lectura
-  const finalizarLectura = async () => {
-    try {
-      if (correoUsuario) {
-        // 1. Ha acabado la lectura de todo el libro
-        if (libro.num_paginas == currentPage) {
-          // Eliminamos el libro de en proceso, si estuviese ahí
-          const respuestaDelete = await fetch(`${API_URL}/libros/enproceso`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              correo: correoUsuario,
-              enlace: libro.enlace
-            }),
-          });
-  
-          const dataDelete = await respuestaDelete.json();
-          if (!respuestaDelete.ok) {
-            console.error("Error al eliminar el libro de 'En proceso':", dataDelete.error);
-          } else {
-            console.log("Libro eliminado de 'En Proceso':", dataDelete.message);
-          }
-
-          // Añadimos el libro a leidos
-          // ESTO FALLA
-          // FALTA AÑADIR EL LIBRO A TABLA "leidos"
-          // 
-          const respuesta = await fetch(`${API_URL}/libros/leidos`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              correo: correoUsuario,
-              enlace: libro.enlace,
-            }),
-          });
-
-          if (!respuesta.ok) {
-            console.log("Hay un error");
-            const errorData = await respuesta.json();
-              throw new Error(errorData.error || "No se pudo agregar el libro a Leídos");
-          }
-
-
-          console.log("Finalizada la lectura del libro correctamente");
-          Alert.alert("✅ Fin de la lectura", "Ha finalizado la lectura del libro correctamente", [
-            {
-                text: "OK",
-                onPress: () => navigation.goBack(),
-            },
-          ]);
-        } 
-
-        // 2. Aún no ha leído todo el libro
-        else {
-          const respuesta = await fetch(`${API_URL}/libros/enproceso`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              correo: correoUsuario,
-              enlace: libro.enlace,
-              pagina: currentPage
-            }),
-          });
-          if (!respuesta.ok) {
-            throw new Error(respuesta.error);
-          }
-
-          console.log("Lectura finalizada correctamente en la página " + currentPage);
-          Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPage}`, [
-            {
-              text: "OK",
-              onPress: () => navigation.goBack(),
-            },
-          ]);
-
-        }
-      }
-
-      else {
-
-        console.log("Lectura finalizada correctamente");
-        Alert.alert("✅ Lectura Finalizada", `Terminaste en la página ${currentPage}`, [
-          {
-            text: "OK",
-            onPress: () => navigation.goBack(),
-          },
-        ]);
-      }
-
-    } catch (error) {
-      console.log("Error al guardar la página de finalización de la lectura", respuesta.error);
-      Alert.alert("⚠️ Error al guardar la página de finalización de la lectura", respuesta.error, [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    }
-  };
-
 
   const handleVerPaginasDestacadas = async () => {
     setModalVisible(true);
@@ -252,14 +254,6 @@ export default function LeerLibro({ route, correoUsuario }) {
       {pdfPath ? (
         <>
           <View>
-            {/* Botón Finalizar Lectura */}
-            <TouchableOpacity
-              style={[styles.finishButton, { backgroundColor: colors.buttonDark }]}
-              onPress={finalizarLectura}
-            >
-              <Text style={[styles.buttonText, { color: colors.buttonTextDark }]}>Finalizar Lectura</Text>
-            </TouchableOpacity>
-
             {/* Control del Zoom y Marcador */}
             <View style={[styles.zoomContainer, { backgroundColor: colors.backgroundMenuLibro }]}>
               <TouchableOpacity

@@ -518,39 +518,6 @@ export default function DetallesLibro({ route, correoUsuario }) {
       {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
 
-      {/* 📌 Más libros del autor */}
-      {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
-        <View>
-          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {librosDelAutor
-              .filter((item) => item.nombre !== libro.nombre)
-              .map((item) => (
-              <TouchableOpacity
-                key={item.enlace}
-                onPress={() => navigation.push("Detalles", { libro: item })}
-                style={{ marginRight: 10, alignItems: "center" }}
-              >
-                <Image
-                  source={{ uri: item.imagen_portada }}
-                  style={{ width: 100, height: 150, borderRadius: 5 }}
-                />
-                <Text
-                  style={{ width: 100, textAlign: "center", color: colors.text }}
-                  numberOfLines={2}
-                >
-                  {item.nombre}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
-        
-        </View>
-      )}
-
-
       {/* 📌 Sinopsis del libro */}
       <View>
         <Text 
@@ -618,7 +585,39 @@ export default function DetallesLibro({ route, correoUsuario }) {
       {/* 📌 Línea divisoria */}
       <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
 
-    
+      {/* 📌 Más libros del autor */}
+      {libro.autor !== "Anónimo" && librosDelAutor.length > 1 && (
+        <View>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Más de {libro.autor}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {librosDelAutor
+              .filter((item) => item.nombre !== libro.nombre)
+              .map((item) => (
+              <TouchableOpacity
+                key={item.enlace}
+                onPress={() => navigation.push("Detalles", { libro: item })}
+                style={{ marginRight: 10, alignItems: "center" }}
+              >
+                <Image
+                  source={{ uri: item.imagen_portada }}
+                  style={[stylesGeneral.imagen_portada]}
+                />
+                <Text
+                  style={{ width: 100, textAlign: "center", color: colors.text }}
+                  numberOfLines={2}
+                >
+                  {item.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
+        
+        </View>
+      )}
+
+      
       {/* 📌 Sección de valoraciones */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
@@ -879,6 +878,10 @@ const stylesGeneral = StyleSheet.create({
   imagen_portada_libro: {
     width: 100,
     height: 150,
+  },
+  imagen_portada: {
+    width: 70,
+    height: 105,
   },
 
   // 📌 Contenedor general

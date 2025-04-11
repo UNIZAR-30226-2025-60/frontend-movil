@@ -17,16 +17,6 @@ export default function Registrarse({ setCorreoUsuario }) {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  // Configuramos la cabecera con el título y la flecha de volver
-  useEffect(() => {
-    navigation.setOptions({
-      title: "Registrarse",
-      headerStyle: { backgroundColor: colors.backgroundHeader },
-      headerTintColor: colors.text,
-      headerBackTitle: "Atrás",
-    });
-  }, [navigation, colors]);
-
   const handleLogin = async () => {
     if (!nombre || !correo || !contrasena) {
       Alert.alert("⚠️ Error", "Por favor, completa todos los campos");
