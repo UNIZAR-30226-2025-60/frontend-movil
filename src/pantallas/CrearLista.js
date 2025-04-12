@@ -56,14 +56,15 @@ export default function CrearLista({ correoUsuario, navigation }) {
         const resp = await fetch(`${API_URL}/listas/portadas-temas`);
         const data = await resp.json();
 
-        const fotosOriginales = data.map(item => ({
-          foto: item.foto
+        const fotosConvertidas = data.map(item => ({
+          original: item.foto,
+          foto: convertirDriveLink(item.foto)
         }));
-        const sinDuplicados = filtrarDuplicados(fotosOriginales); // Quita duplicados si los hay
+        const sinDuplicados = filtrarDuplicados(fotosConvertidas); // Quita duplicados si los hay
         setImagenesPortada(sinDuplicados);
 
         if (sinDuplicados.length > 0) {
-          setPortadaSeleccionada(sinDuplicados[0].foto);
+          setPortadaSeleccionada(sinDuplicados[0].original);
         }
       } catch (error) {
         console.error("Error al obtener portadas:", error);
@@ -133,19 +134,19 @@ export default function CrearLista({ correoUsuario, navigation }) {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => {
-                    if (portadaSeleccionada === item.foto) {
+                    if (portadaSeleccionada === item.original) {
                       setPortadaSeleccionada(null);
                     } else {
-                      setPortadaSeleccionada(item.foto);
+                      setPortadaSeleccionada(item.original);
                     }
                     // No cerramos el modal
                   }}
                 >
                   <Image
-                    source={{ uri: convertirDriveLink(item.foto) }}
+                    source={{ uri: item.foto }}
                     style={[
                       styles.imagenPortadaModal,
-                      portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
+                      portadaSeleccionada === item.original ? styles.imagenSeleccionada : {}
                     ]}
                   />
                 </TouchableOpacity>

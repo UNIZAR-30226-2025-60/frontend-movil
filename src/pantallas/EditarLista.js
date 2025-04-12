@@ -24,7 +24,7 @@ export default function EditarLista({ route, navigation }) {
   const [imagenesPortada, setImagenesPortada] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-    // Función para filtrar duplicados (por si el backend envía repeticiones)
+  // Función para filtrar duplicados (por si el backend envía repeticiones)
   function filtrarDuplicados(array) {
     const seen = new Set();
     return array.filter(item => {
@@ -40,7 +40,7 @@ export default function EditarLista({ route, navigation }) {
   function convertirDriveLink(url) {
     // Si es null o undefined, devolvemos null (o "" si prefieres)
     if (!url) return null;
-    
+
     if (url.includes("uc?id=")) return url;
     const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//);
     if (match) {
@@ -56,8 +56,15 @@ export default function EditarLista({ route, navigation }) {
       try {
         const resp = await fetch(`${API_URL}/listas/portadas-temas`);
         const data = await resp.json();
-        const fotosOriginales = data.map(item => ({ foto: item.foto }));
-        setImagenesPortada(filtrarDuplicados(fotosOriginales));
+        const fotosConvertidas = data.map(item => ({
+          original: item.foto,
+          foto: convertirDriveLink(item.foto)
+        }));
+        setImagenesPortada(filtrarDuplicados(fotosConvertidas));
+        // Inicialmente seleccionamos la primera portada usando el enlace original
+        if (fotosConvertidas.length > 0) {
+          setPortadaSeleccionada(fotosConvertidas[0].original);
+        }
       } catch (error) {
         console.error("Error al obtener portadas:", error);
       }
@@ -122,18 +129,18 @@ export default function EditarLista({ route, navigation }) {
           <TouchableOpacity
             key={index}
             onPress={() => {
-              if (portadaSeleccionada === item.foto) {
+              if (portadaSeleccionada === item.original) {
                 setPortadaSeleccionada(null);
               } else {
-                setPortadaSeleccionada(item.foto);
+                setPortadaSeleccionada(item.original);
               }
             }}
           >
             <Image
-              source={{ uri: convertirDriveLink(item.foto) }}
+              source={{ uri: item.foto }}
               style={[
                 styles.imagenPortada,
-                portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
+                portadaSeleccionada === item.original ? styles.imagenSeleccionada : {}
               ]}
             />
           </TouchableOpacity>
@@ -169,21 +176,18 @@ export default function EditarLista({ route, navigation }) {
               style={{ maxHeight: '80%', marginTop: 10, marginBottom: 15 }}
               showsVerticalScrollIndicator={true}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    if (portadaSeleccionada === item.foto) {
-                      setPortadaSeleccionada(null);
-                    } else {
-                      setPortadaSeleccionada(item.foto);
-                    }
-                    // NO se cierra el modal automáticamente
-                  }}
-                >
+                <TouchableOpacity onPress={() => {
+                  if (portadaSeleccionada === item.original) {
+                    setPortadaSeleccionada(null);
+                  } else {
+                    setPortadaSeleccionada(item.original);
+                  }
+                }}>
                   <Image
-                    source={{ uri: convertirDriveLink(item.foto) }}
+                    source={{ uri: item.foto }}
                     style={[
                       styles.imagenPortadaModal,
-                      portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
+                      portadaSeleccionada === item.original ? styles.imagenSeleccionada : {}
                     ]}
                   />
                 </TouchableOpacity>
@@ -261,32 +265,32 @@ export default function EditarLista({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20 
+  container: {
+    flex: 1,
+    padding: 20
   },
-  titulo: { 
-    fontSize: 22, 
-    fontWeight: 'bold', 
-    marginBottom: 20, 
-    textAlign: 'center' 
+  titulo: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center'
   },
-  label: { 
-    fontSize: 16, 
-    marginBottom: 5 
+  label: {
+    fontSize: 16,
+    marginBottom: 5
   },
-  input: { 
-    borderWidth: 1, 
-    padding: 10, 
-    borderRadius: 5, 
-    marginBottom: 15 
+  input: {
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15
   },
-  textarea: { 
-    borderWidth: 1, 
-    padding: 10, 
-    borderRadius: 5, 
-    height: 80, 
-    marginBottom: 15 
+  textarea: {
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    height: 80,
+    marginBottom: 15
   },
 
   // Vista principal de imágenes (primeras 3)
@@ -349,16 +353,16 @@ const styles = StyleSheet.create({
   listaModal: {
     justifyContent: 'center',
   },
-  
-  radioContainer: { 
-    flexDirection: 'row', 
-    justifyContent: 'center', 
-    marginBottom: 20 
+
+  radioContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20
   },
-  radioButton: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginHorizontal: 10 
+  radioButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10
   },
   radioOuter: {
     width: 24,
@@ -374,16 +378,16 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
   },
-  radioLabel: { 
-    fontSize: 16 
+  radioLabel: {
+    fontSize: 16
   },
-  boton: { 
-    padding: 15, 
-    borderRadius: 22, 
-    alignItems: 'center' 
+  boton: {
+    padding: 15,
+    borderRadius: 22,
+    alignItems: 'center'
   },
-  textoBoton: { 
-    fontSize: 16, 
-    fontWeight: 'bold' 
+  textoBoton: {
+    fontSize: 16,
+    fontWeight: 'bold'
   },
 });

@@ -64,6 +64,12 @@ export default function MisListas({ correoUsuario, navigation, route }) {
       const respuesta = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}`);
       const datos = await respuesta.json();
 
+      const listasConPortada = datos.map(lista => ({
+        ...lista,
+        original: lista.portada,                    // Guarda el link original
+        foto: convertirDriveLink(lista.portada)     // Calcula el link transformado
+      }));
+
       // Filtrar todas las listas que NO sean "Mis Favoritos", "Leídos" o "En proceso"
       const listasFiltradas = datos.filter(
         (lista) =>
@@ -150,7 +156,8 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                   nombreLista: item.nombre,
                   descripcionLista: item.descripcion,
                   esPublica: item.publica,
-                  portada: convertirDriveLink(item.portada),
+                  portada: item.original,
+                  portadaTransformada: item.foto,
                   url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
                 });
               }
@@ -190,7 +197,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             </View>
           )}
           {item.portada ? (
-            <Image source={{ uri: convertirDriveLink(item.portada) }} style={styles.listaImagen} />
+            <Image source={{ uri: item.foto }} style={styles.listaImagen} />
           ) : (
             <Ionicons name="book-outline" size={70} color={colors.icon} />
           )}
