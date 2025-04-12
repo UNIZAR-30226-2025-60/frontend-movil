@@ -13,7 +13,11 @@ export default function NombreUsuario({ correo, estilo = {} }) {
       const obtenerNombre = async () => {
          try {
             const response = await fetch(`${API_URL}/usuario/${encodeURIComponent(correo)}`);
-            if (!response.ok) throw new Error('No se pudo obtener el nombre');
+            if (!response.ok) {
+               console.warn('No se pudo obtener el nombre, usando el correo como fallback');
+               setNombre(correo);
+               return;
+            }
             const data = await response.json();
             setNombre(data.nombre || correo);
          } catch (error) {

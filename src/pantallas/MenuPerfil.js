@@ -139,7 +139,7 @@ export default function MenuPerfil({ route, navig }) {
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[styles.modalTitle, { color: colors.textLight }]}>Selecciona una nueva imagen</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Selecciona una nueva imagen</Text>
             <FlatList
               data={imagenes}
               keyExtractor={(item) => item}
@@ -151,10 +151,10 @@ export default function MenuPerfil({ route, navig }) {
               )}
             />
             <TouchableOpacity
-              style={[styles.closeButton, { backgroundColor: colors.buttonClose }]}
+              style={[styles.closeButton, { backgroundColor: colors.buttonDark }]}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={[styles.closeButtonText, { color: colors.textLight }]}>Cerrar</Text>
+              <Text style={[styles.closeButtonText, { color: colors.buttonTextDark }]}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>

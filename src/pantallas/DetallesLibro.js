@@ -16,6 +16,7 @@ import { Ionicons } from 'react-native-vector-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faFileWord } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
+import NombreUsuario from "../componentes/NombreUsuario";
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
@@ -729,7 +730,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                     ))}
                   </View>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
-                  <Text style={{ color: colors.textTerciary }}>Por {item.usuario_id} el {item.fecha}</Text>
+                  <Text style={{ color: colors.textTerciary }}>Por <NombreUsuario correo={item.usuario_id} /> el {item.fecha}</Text>
                 
                   <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 1 }]} />
                 </View>

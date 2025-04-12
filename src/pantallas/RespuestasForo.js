@@ -83,12 +83,13 @@ export default function RespuestasForo({ route, correoUsuario }) {
           style: 'destructive',
           onPress: async () => {
             try {
-              const response = await fetch(`${API_URL}/respuestas/${respuestaId}`, {
+              // Llama al endpoint correcto del backend
+              const response = await fetch(`${API_URL}/BorroRespuestas/${respuestaId}`, {
                 method: 'DELETE',
               });
 
               if (!response.ok) throw new Error('No se pudo eliminar la respuesta');
-              cargarRespuestas();
+              cargarRespuestas(); // Recarga las respuestas después de eliminar
             } catch (error) {
               console.error('Error al eliminar la respuesta:', error);
             }
@@ -98,8 +99,6 @@ export default function RespuestasForo({ route, correoUsuario }) {
     );
   };
 
-
-  
   const handleChangeRespuesta = (texto) => {
     if (texto.length > 350) {
       alert("La respuesta no puede tener más de 350 caracteres.");
@@ -135,7 +134,12 @@ export default function RespuestasForo({ route, correoUsuario }) {
           <Text style={[styles.titulo, { color: colors.text }]}>Respuestas:</Text>
           {respuestas.length > 0 ? (
             respuestas.map((respuesta) => (
-              <View key={respuesta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+              <View key={respuesta.id} style={[styles.card,
+              {
+                backgroundColor: colors.backgroundSecondary,
+                zIndex: respuestaSeleccionada === respuesta.id ? 100 : 0
+              }
+              ]}>
                 <Text style={[styles.mensaje, { color: colors.textDark }]}>
                   {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 63
                     ? respuesta.mensaje_respuesta
@@ -207,7 +211,7 @@ export default function RespuestasForo({ route, correoUsuario }) {
                   value={nuevaRespuesta}
                   onChangeText={handleChangeRespuesta}
                 />
-             
+
                 <Text style={{ color: colors.textDark, textAlign: 'right', marginRight: 8, fontSize: 12 }}>
                   {nuevaRespuesta.length}/350 caracteres
                 </Text>
@@ -235,13 +239,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContainer: {
-    padding: 10
+    padding: 10,
   },
   headerPregunta: {
     padding: 16,
     marginHorizontal: 8,
     marginVertical: 12,
-    borderRadius: 8
+    borderRadius: 8,
   },
   cuestion: {
     fontSize: 16,
@@ -249,7 +253,7 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10
+    marginBottom: 10,
   },
   card: {
     padding: 15,
@@ -258,10 +262,12 @@ const styles = StyleSheet.create({
     elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowRadius: 5
+    shadowRadius: 5,
+    position: 'relative',
+    overflow: 'visible',
   },
   usuario: {
-    marginBottom: 5
+    marginBottom: 5,
   },
   mensaje: {
     fontSize: 16,
@@ -272,7 +278,7 @@ const styles = StyleSheet.create({
   sinRespuestas: {
     textAlign: 'center',
     marginVertical: 20,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   formContainer: {
     flexDirection: 'row',
@@ -284,11 +290,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    marginRight: 10
+    marginRight: 10,
   },
   aviso: {
     textAlign: 'center',
-    padding: 10
+    padding: 10,
   },
   button: {
     borderRadius: 22,

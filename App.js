@@ -36,6 +36,10 @@ import ListasPublicas from './src/pantallas/ListasPublicas';
 import CrearLista from './src/pantallas/CrearLista';
 import EditarLista from './src/pantallas/EditarLista';
 import AñadirValoracion from './src/componentes/AñadirValoracion';
+import AvisoLegal from './src/componentes/AvisoLegal';
+import PoliticaPrivacidad from './src/componentes/PoliticaPrivacidad';
+import Contacto from './src/componentes/Contacto';
+import FooterDrawer from './src/componentes/FooterDrawer';
 
 // Importación del tema de colores
 import { useThemeColors } from './src/componentes/Tema';
@@ -112,11 +116,12 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
         name="MenuPerfil"
         component={MenuPerfil}
         initialParams={{ correoUsuario, setCorreoUsuario }}
-        options={{ 
-          headerShown: true, 
+        options={{
+          headerShown: true,
           title: "Mi Perfil",
           headerStyle: { backgroundColor: colors.backgroundHeader },
-          headerTintColor: colors.textHeader, }}
+          headerTintColor: colors.textHeader,
+        }}
       />
 
       <Stack.Screen
@@ -168,12 +173,13 @@ function DrawerNavigator({ correoUsuario }) {
 
   return (
     <Drawer.Navigator
+      drawerContent={(props) => <FooterDrawer {...props} />}
       screenOptions={{
-        drawerStyle: { backgroundColor: colors.backgroundMenu, },  // Color de fondo del Drawer
-        drawerLabelStyle: { color: colors.text, },  // Color del texto de las opciones
-        // Para cuando el item está seleccionado
-        drawerActiveTintColor: colors.text, // El texto del ítem seleccionado será el color de fondo
-        headerShown: false, // Oculta el header en todas las pantallas
+        drawerStyle: { backgroundColor: colors.backgroundMenu },
+        drawerLabelStyle: { color: colors.text },
+        drawerActiveTintColor: colors.textDark, // Texto activo
+        drawerActiveBackgroundColor: colors.switchFondoSeleccionado, // Fondo activo
+        headerShown: false,
       }}
     >
       <Drawer.Screen name="Inicio">
@@ -211,6 +217,39 @@ function DrawerNavigator({ correoUsuario }) {
           </Drawer.Screen>
         </>
       )}
+
+      {/* Se deben definir las pantallas de AvisoLegal, PoliticaPrivacidad y Contacto,
+          aunque no se muestren en la lista principal del Drawer (la navegación se realiza desde el FooterDrawer) */}
+      <Drawer.Screen
+        name="AvisoLegal"
+        options={{
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
+        }}
+      >
+        {(props) => <AvisoLegal {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
+
+      <Drawer.Screen
+        name="PoliticaPrivacidad"
+        options={{
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
+        }}
+      >
+        {(props) => <PoliticaPrivacidad {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
+
+      <Drawer.Screen
+        name="Contacto"
+        options={{
+          headerShown: false,
+          drawerItemStyle: { display: 'none' },
+        }}
+      >
+        {(props) => <Contacto {...props} correoUsuario={correoUsuario} />}
+      </Drawer.Screen>
+
     </Drawer.Navigator>
   );
 }

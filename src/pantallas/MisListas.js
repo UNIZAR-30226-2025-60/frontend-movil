@@ -16,6 +16,20 @@ import Encabezado from '../componentes/Encabezado';
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 
+// Función para transformar el link original a un formato visualizable
+const convertirDriveLink = (url) => {
+  // Si es null o undefined, devolvemos null (o "" si prefieres)
+  if (!url) return null;
+  // Si ya tiene el formato transformado, se retorna directamente
+  if (url.includes("uc?id=")) return url;
+  const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//);
+  if (match) {
+    const fileId = match[1];
+    return `https://drive.google.com/uc?id=${fileId}`;
+  }
+  return url;
+};
+
 export default function MisListas({ correoUsuario, navigation, route }) {
   // 📌 Datos de navegación y tema
   const colors = useThemeColors();
@@ -70,14 +84,11 @@ export default function MisListas({ correoUsuario, navigation, route }) {
   };
 
   /**
-   * 📌 Elimina una lista, excepto "Mis Favoritos".
+   * 📌 Elimina una lista.
    */
   const eliminarLista = async (nombreLista, sinConfirmacion = false) => {
-    if (nombreLista === "Mis Favoritos") return;
-
     const ejecutarEliminacion = async () => {
       try {
-        //const res = await fetch(`${API_URL}/listas/${correoUsuario}/${nombreLista}`, {
         const res = await fetch(`${API_URL}/listas/${encodeURIComponent(correoUsuario)}/${encodeURIComponent(nombreLista)}`, {
           method: "DELETE",
         });
@@ -139,7 +150,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                   nombreLista: item.nombre,
                   descripcionLista: item.descripcion,
                   esPublica: item.publica,
-                  portada: item.portada,
+                  portada: convertirDriveLink(item.portada),
                   url: `${API_URL}/listas/${correoUsuario}/${encodeURIComponent(item.nombre)}/libros`
                 });
               }
@@ -179,7 +190,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             </View>
           )}
           {item.portada ? (
-            <Image source={{ uri: item.portada }} style={styles.listaImagen} />
+            <Image source={{ uri: convertirDriveLink(item.portada) }} style={styles.listaImagen} />
           ) : (
             <Ionicons name="book-outline" size={70} color={colors.icon} />
           )}
@@ -229,7 +240,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
 
   return (
     <TouchableWithoutFeedback onPress={() => setMenuVisibleId(null)} accessible={false}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
 
         {/* 📌 Encabezado de la pantalla */}
         <Encabezado titulo="Mis Listas" correoUsuario={correoUsuario} />
@@ -270,7 +281,7 @@ export default function MisListas({ correoUsuario, navigation, route }) {
             }
           }}
           numColumns={2}
-          contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
+          contentContainerStyle={[styles.container]}
         />
 
         {modoSeleccion && listasSeleccionadas.size > 0 && (

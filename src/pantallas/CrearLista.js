@@ -35,6 +35,9 @@ export default function CrearLista({ correoUsuario, navigation }) {
 
   // Convierte links de Drive “/view?usp=sharing” a “uc?id=...”
   function convertirDriveLink(url) {
+    // Si es null o undefined, devolvemos null (o "" si prefieres)
+    if (!url) return null;
+
     if (url.includes("uc?id=")) return url;
     const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//);
     if (match) {
@@ -53,11 +56,10 @@ export default function CrearLista({ correoUsuario, navigation }) {
         const resp = await fetch(`${API_URL}/listas/portadas-temas`);
         const data = await resp.json();
 
-        // Convertir y (opcional) filtrar duplicados
-        const fotosConvertidas = data.map(item => ({
-          foto: convertirDriveLink(item.foto)
+        const fotosOriginales = data.map(item => ({
+          foto: item.foto
         }));
-        const sinDuplicados = filtrarDuplicados(fotosConvertidas); // Quita duplicados si los hay
+        const sinDuplicados = filtrarDuplicados(fotosOriginales); // Quita duplicados si los hay
         setImagenesPortada(sinDuplicados);
 
         if (sinDuplicados.length > 0) {
@@ -96,6 +98,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
         Alert.alert('✅ Éxito', 'Lista creada correctamente.');
         navigation.goBack(); // Volver a MisListas
       } else {
+        const respuestaTexto = await respuesta.text();
         Alert.alert('Error', `No se pudo crear la lista. Respuesta: ${respuestaTexto}`);
       }
     } catch (error) {
@@ -139,7 +142,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
                   }}
                 >
                   <Image
-                    source={{ uri: item.foto }}
+                    source={{ uri: convertirDriveLink(item.foto) }}
                     style={[
                       styles.imagenPortadaModal,
                       portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
@@ -166,16 +169,14 @@ export default function CrearLista({ correoUsuario, navigation }) {
     setModalVisible(true);
   };
 
-
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       <View style={[styles.card, { backgroundColor: colors.backgroundSecondary, alignItems: 'center' }]}>
-        <Text style={{ fontSize: 15, marginBottom: 10, textAlign: 'justify' }}>¿Quieres compartir tus recomendaciones o prefieres mantener tu lista sólo para ti? ¡Tú decides! Crea listas públicas para inspirar a otros, o privadas para disfrutar en solitario</Text>
+        <Text style={{ fontSize: 15, marginBottom: 10, textAlign: 'justify' }}>¿Quieres compartir tus recomendaciones o prefieres mantener tu lista sólo para ti? ¡Tú decides! Crea listas públicas para inspirar a otros, o privadas para disfrutar en solitario.</Text>
 
         <Image
-          source={{ uri: portadaSeleccionada }}
+          source={{ uri: convertirDriveLink(portadaSeleccionada) }}
           style={[styles.imagenPortadaLista]}
         />
 
@@ -200,15 +201,36 @@ export default function CrearLista({ correoUsuario, navigation }) {
       />
 
       {/* Campo de descripción */}
-      <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
-      <TextInput
-        style={[styles.textarea, { borderColor: colors.borderFormulario, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
-        placeholder="Añade una descripción (opcional)"
-        placeholderTextColor={colors.textDark}
-        value={descripcion}
-        onChangeText={setDescripcion}
-        multiline
-      />
+      <View style={{ position: 'relative' }}>
+        <TextInput
+          style={[
+            styles.textarea,
+            {
+              borderColor: colors.borderFormulario,
+              backgroundColor: colors.backgroundFormulario,
+              color: colors.textDark
+            }
+          ]}
+          placeholder="Añade una descripción (opcional)"
+          placeholderTextColor={colors.textDark}
+          value={descripcion}
+          onChangeText={setDescripcion}
+          multiline
+          maxLength={350}  // Limita la entrada a 350 caracteres (opcional)
+        />
+        <Text
+          style={{
+            position: 'absolute',
+            right: 10,
+            bottom: 20,
+            color: colors.textDark,
+            fontSize: 15,
+          }}
+        >
+          {descripcion.length}/350 caracteres
+        </Text>
+      </View>
+
 
       {/* Selector de privacidad con radio buttons */}
       <Text style={[styles.label, { color: colors.text }]}>Privacidad:</Text>
@@ -227,7 +249,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
         ))}
       </View>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
         {/* Botón Cancelar */}
         <TouchableOpacity
           style={[styles.boton, { backgroundColor: colors.buttonDarkTerciary }]}
@@ -274,9 +296,11 @@ const styles = StyleSheet.create({
   textarea: {
     borderWidth: 1,
     padding: 10,
+    paddingBottom: 30,
     borderRadius: 5,
-    height: 80,
-    marginBottom: 15
+    height: 120,
+    marginBottom: 15,
+    textAlignVertical: 'top',
   },
 
   // 📌 Estilos para las imágenes de portada
