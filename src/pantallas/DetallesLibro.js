@@ -16,6 +16,7 @@ import { Ionicons } from 'react-native-vector-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faFileWord } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
+import NombreUsuario from "../componentes/NombreUsuario";
 import { useThemeColors } from "../componentes/Tema";
 import { API_URL } from "../../config";
 

@@ -38,6 +38,9 @@ export default function EditarLista({ route, navigation }) {
 
   // Convierte links de Drive del tipo "/file/d/FILE_ID/view?usp=sharing" a "https://drive.google.com/uc?id=FILE_ID"
   function convertirDriveLink(url) {
+    // Si es null o undefined, devolvemos null (o "" si prefieres)
+    if (!url) return null;
+    
     if (url.includes("uc?id=")) return url;
     const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//);
     if (match) {
@@ -53,11 +56,8 @@ export default function EditarLista({ route, navigation }) {
       try {
         const resp = await fetch(`${API_URL}/listas/portadas-temas`);
         const data = await resp.json();
-        // Convertir cada enlace y filtrar duplicados
-        const fotosConvertidas = data.map(item => ({
-          foto: convertirDriveLink(item.foto)
-        }));
-        setImagenesPortada(filtrarDuplicados(fotosConvertidas));
+        const fotosOriginales = data.map(item => ({ foto: item.foto }));
+        setImagenesPortada(filtrarDuplicados(fotosOriginales));
       } catch (error) {
         console.error("Error al obtener portadas:", error);
       }
@@ -130,7 +130,7 @@ export default function EditarLista({ route, navigation }) {
             }}
           >
             <Image
-              source={{ uri: item.foto }}
+              source={{ uri: convertirDriveLink(item.foto) }}
               style={[
                 styles.imagenPortada,
                 portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}
@@ -180,7 +180,7 @@ export default function EditarLista({ route, navigation }) {
                   }}
                 >
                   <Image
-                    source={{ uri: item.foto }}
+                    source={{ uri: convertirDriveLink(item.foto) }}
                     style={[
                       styles.imagenPortadaModal,
                       portadaSeleccionada === item.foto ? styles.imagenSeleccionada : {}

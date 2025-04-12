@@ -1,7 +1,7 @@
 // ListadoPreguntasForo.js
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Switch, Modal, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, TouchableOpacity, Switch, Modal, FlatList } from 'react-native';
 import { findNodeHandle, UIManager } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
@@ -9,16 +9,111 @@ import NombreUsuario from "../componentes/NombreUsuario";
 import { Ionicons } from 'react-native-vector-icons';
 import { API_URL } from '../../config';
 
+// Componente reutilizable para mostrar una tarjeta de pregunta
+const PreguntaCard = ({
+  pregunta,
+  correoUsuario,
+  colors,
+  expandedQuestion,
+  toggleExpand,
+  handleEliminarPregunta,
+  preguntaSeleccionada,
+  setPreguntaSeleccionada,
+  navigation
+}) => {
+  return (
+    <View style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
+      {pregunta.usuario === correoUsuario && (
+        <View style={{ position: 'absolute', top: 10, right: 10 }}>
+          <TouchableOpacity
+            onPress={() =>
+              setPreguntaSeleccionada(preguntaSeleccionada === pregunta.id ? null : pregunta.id)
+            }
+            style={{ padding: 5 }}
+          >
+            <Ionicons name="ellipsis-vertical" size={20} color={colors.textDarkSecondary} />
+          </TouchableOpacity>
+          {preguntaSeleccionada === pregunta.id && (
+            <View style={[styles.modalView, { backgroundColor: colors.backgroundModal }]}>
+              <TouchableOpacity
+                style={styles.menuOptionButton}
+                onPress={() => {
+                  setPreguntaSeleccionada(null);
+                  handleEliminarPregunta(pregunta.id);
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color="red" />
+                <Text style={{ marginLeft: 6, fontSize: 14, color: 'red' }}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      )}
+
+      <Text style={[styles.pregunta, { color: colors.textDark }]}>
+        {expandedQuestion[pregunta.id]
+          ? pregunta.cuestion
+          : pregunta.cuestion.length > 63
+            ? `${pregunta.cuestion.substring(0, 63)}...`
+            : pregunta.cuestion}
+      </Text>
+
+      {pregunta.cuestion.length > 63 && (
+        <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
+          <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
+            {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      <View style={[styles.mismaFila, { flexWrap: 'wrap', marginBottom: 10, marginTop: 10 }]}>
+        <Text style={{ color: colors.textDarkSecondary }}>Por: </Text>
+        <NombreUsuario correo={pregunta.usuario} />
+        <Text style={{ color: colors.textDarkSecondary }}>
+          {"   "}Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}
+        </Text>
+      </View>
+
+      <View style={[styles.mismaFila]}>
+        <Ionicons
+          name="chatbubble"
+          size={15}
+          color={colors.textDarkSecondary}
+          style={{ marginRight: 7 }}
+        />
+        <Text style={{ color: colors.textDarkSecondary }}>
+          {pregunta.numRespuestas} respuestas
+        </Text>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]}
+          onPress={() =>
+            navigation.navigate('RespuestasForo', {
+              preguntaId: pregunta.id,
+              cuestion: pregunta.cuestion,
+            })
+          }
+        >
+          <Text style={[styles.buttonText, { color: colors.buttonText }]}>
+            Ver respuestas
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
 export default function ListadoPreguntasForo({ correoUsuario }) {
   const colors = useThemeColors();
   const navigation = useNavigation();
+
+  // Estados principales
   const [misPreguntas, setMisPreguntas] = useState([]);
   const [todasPreguntas, setTodasPreguntas] = useState([]);
   const [nuevaPregunta, setNuevaPregunta] = useState('');
   const [verMisPreguntas, setVerMisPreguntas] = useState(false);
   const [expandedQuestion, setExpandedQuestion] = useState({});
 
+  // Estados para las listas ordenadas y el menú de eliminación
   const [todasPreguntasOrdenadas, setTodasPreguntasOrdenadas] = useState([]);
   const [misPreguntasOrdenadas, setMisPreguntasOrdenadas] = useState([]);
   const [preguntaSeleccionada, setPreguntaSeleccionada] = useState(null);
@@ -26,7 +121,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
   const [botonOrdenarLayout, setBotonOrdenarLayout] = useState(null);
   const botonOrdenarRef = React.useRef(null);
 
-
+  // Estados para el modal de ordenación
   const opcionesOrden = [
     { id: 'antigua', label: 'más antiguas' },
     { id: 'reciente', label: 'más recientes' },
@@ -46,7 +141,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
       });
     }
   };
-  
+
 
   // Al montar el componente, cargamos ambas listas
   useEffect(() => {
@@ -56,25 +151,24 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     }
   }, [correoUsuario]);
 
+  // Actualizar las listas ordenadas cuando se actualicen las preguntas
   useEffect(() => {
     setTodasPreguntasOrdenadas(todasPreguntas);
-  }, [todasPreguntas]);
-
-  useEffect(() => {
     setMisPreguntasOrdenadas(misPreguntas);
-  }, [misPreguntas]);
+  }, [todasPreguntas, misPreguntas]);
 
-  // Carga solo las preguntas del usuario logueado
+  // Función para cargar las preguntas del usuario
   const cargarMisPreguntas = async () => {
     try {
-      // Llamamos a /preguntas con el query param usuarioCorreo
-      const response = await fetch(`${API_URL}/preguntas?usuarioCorreo=${correoUsuario}`);
+      const url = `${API_URL}/preguntas?usuarioCorreo=${correoUsuario}`;
+      const response = await fetch(url);
+      const text = await response.text();
       if (!response.ok) {
-        throw new Error("Error al obtener tus preguntas");
+        throw new Error(`Error HTTP ${response.status}: ${text}`);
       }
-      const data = await response.json();
+      const data = JSON.parse(text);
 
-      // Obtener número de respuestas para cada pregunta
+      // Agregar número de respuestas a cada pregunta
       const preguntasConRespuestas = await Promise.all(
         data.map(async (pregunta) => ({
           ...pregunta,
@@ -83,21 +177,18 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
       );
       setMisPreguntas(preguntasConRespuestas);
     } catch (error) {
-      console.error(error);
+      console.error("Error en cargarMisPreguntas:", error);
     }
   };
 
-  // Carga todas las preguntas del foro
+  // Función para cargar todas las preguntas del foro
   const cargarTodasPreguntas = async () => {
     try {
-      // Llamamos a /preguntas sin query param
       const response = await fetch(`${API_URL}/preguntas`);
       if (!response.ok) {
         throw new Error("Error al obtener todas las preguntas");
       }
       const data = await response.json();
-
-      // Obtener número de respuestas para cada pregunta
       const preguntasConRespuestas = await Promise.all(
         data.map(async (pregunta) => ({
           ...pregunta,
@@ -106,10 +197,11 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
       );
       setTodasPreguntas(preguntasConRespuestas);
     } catch (error) {
-      console.error(error);
+      console.error("Error en cargarTodasPreguntas:", error);
     }
   };
 
+  // Función para obtener el número de respuestas de una pregunta
   const obtenerNumeroRespuestas = async (preguntaId) => {
     try {
       const response = await fetch(`${API_URL}/obtenerNumeroRespuestas?preguntaId=${preguntaId}`);
@@ -121,9 +213,9 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     }
   };
 
+  // Enviar nueva pregunta
   const handleEnviarPregunta = async () => {
     if (!nuevaPregunta.trim()) return;
-
     try {
       const response = await fetch(`${API_URL}/preguntas`, {
         method: 'POST',
@@ -133,90 +225,99 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           pregunta: nuevaPregunta
         })
       });
-
       if (!response.ok) {
-        throw new Error("Error al enviar la pregunta");
+        const errorText = await response.text();
+        throw new Error(`Error ${response.status}: ${errorText}`);
       }
-      const data = await response.json();
-
+      await response.json();
       setNuevaPregunta('');
-      // Recarga las preguntas después de agregar una nueva
       cargarTodasPreguntas();
-      cargarMisPreguntas();
+      if (correoUsuario) cargarMisPreguntas();
     } catch (error) {
       console.error(error);
     }
   };
 
+  // Alternar la vista de "mis preguntas"
   const toggleSwitch = () => {
     setVerMisPreguntas(!verMisPreguntas);
   };
 
+  // Alternar la expansión de la pregunta para ver más/menos contenido
   const toggleExpand = (id) => {
-    setExpandedQuestion((prevState) => ({
+    setExpandedQuestion(prevState => ({
       ...prevState,
-      [id]: !prevState[id],
+      [id]: !prevState[id]
     }));
   };
 
-  const handleEliminarPregunta = async (idPregunta) => {
-    try {
-      const response = await fetch(`${API_URL}/preguntas/${idPregunta}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al eliminar la pregunta");
-      }
-
-      // Recargar preguntas actualizadas
-      await cargarMisPreguntas();
-      await cargarTodasPreguntas();
-    } catch (error) {
-      console.error("Error eliminando pregunta:", error);
-    }
+  // Eliminar pregunta
+  const handleEliminarPregunta = (idPregunta) => {
+    Alert.alert(
+      'Eliminar pregunta',
+      '¿Estás seguro de que deseas eliminar esta pregunta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(`${API_URL}/BorroPreguntas/${idPregunta}`, {
+                method: 'DELETE',
+              });
+              if (!response.ok) {
+                throw new Error("Error al eliminar la pregunta");
+              }
+              await cargarMisPreguntas();
+              await cargarTodasPreguntas();
+            } catch (error) {
+              console.error("Error eliminando pregunta:", error);
+            }
+          },
+        },
+      ]
+    );
   };
 
+
+  // Función para ordenar las preguntas según el criterio seleccionado
+  const ordenarPreguntas = (preguntas, criterio) => {
+    if (criterio === 'ninguno') return preguntas;
+    const sorted = [...preguntas];
+    switch (criterio) {
+      case 'más respuestas':
+        sorted.sort((a, b) => b.numRespuestas - a.numRespuestas);
+        break;
+      case 'menos respuestas':
+        sorted.sort((a, b) => a.numRespuestas - b.numRespuestas);
+        break;
+      case 'antigua':
+        sorted.sort((a, b) => new Date(a.fecha_mensaje) - new Date(b.fecha_mensaje));
+        break;
+      case 'reciente':
+        sorted.sort((a, b) => new Date(b.fecha_mensaje) - new Date(a.fecha_mensaje));
+        break;
+      default:
+        break;
+    }
+    return sorted;
+  };
+
+  // Seleccionar la opción de ordenación
   const seleccionarOrden = (opcion) => {
     setOrdenSeleccionado(opcion.label);
     setModalOrdenarVisible(false);
-
-    let preg = [...todasPreguntas];
-    let misPreg = [...misPreguntas];
-
-    switch (opcion.id) {
-      case 'más respuestas':
-        preg.sort((a, b) => b.numRespuestas - a.numRespuestas);
-        misPreg.sort((a, b) => b.numRespuestas - a.numRespuestas);
-        break;
-      case 'menos respuestas':
-        preg.sort((a, b) => a.numRespuestas - b.numRespuestas);
-        misPreg.sort((a, b) => a.numRespuestas - b.numRespuestas);
-        break;
-      case 'antigua':
-        preg.sort((a, b) => new Date(a.fecha_mensaje) - new Date(b.fecha_mensaje));
-        misPreg.sort((a, b) => new Date(a.fecha_mensaje) - new Date(b.fecha_mensaje));
-        break;
-      case 'reciente':
-        preg.sort((a, b) => new Date(b.fecha_mensaje) - new Date(a.fecha_mensaje));
-        misPreg.sort((a, b) => new Date(b.fecha_mensaje) - new Date(a.fecha_mensaje));
-        break;
-      case 'ninguno':
-      default:
-        preg = [...todasPreguntas]; // Restaurar sin ordenar
-        misPreg = [...misPreguntas]; // Restaurar sin ordenar
-        break;
-    }
-
-    setTodasPreguntasOrdenadas(preg);
-    setMisPreguntasOrdenadas(misPreg);
+    setTodasPreguntasOrdenadas(ordenarPreguntas(todasPreguntas, opcion.id));
+    setMisPreguntasOrdenadas(ordenarPreguntas(misPreguntas, opcion.id));
   };
 
-  const handleOrdenarPor = async () => {
+  // Mostrar modal de ordenación
+  const handleOrdenarPor = () => {
     setModalOrdenarVisible(true);
   };
 
-
+  // Manejar el cambio en el input de la nueva pregunta
   const handleChangePregunta = (texto) => {
     if (texto.length > 350) {
       alert("La pregunta no puede tener más de 350 caracteres.");
@@ -225,59 +326,48 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     setNuevaPregunta(texto);
   };
 
-  const formatearFecha = (fecha) => {
-    const date = new Date(fecha);
-    const dia = String(date.getDate()).padStart(2, '0');
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const anio = date.getFullYear();
-    
-    return `${dia}-${mes}-${anio}`;
-  };
-  
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Si hay usuario logueado, permitimos publicar */}
+      {/* Sección para publicar nueva pregunta si hay usuario logueado */}
       {correoUsuario && (
-        <View style={[{ padding: 10, borderRadius: 10, backgroundColor: colors.backgroundForo }]}>
-          <Text style={[styles.tituloCampo, { flexWrap: 'wrap', color: colors.textDark }]}>¿Quieres preguntar algo?</Text>
-          <View style={[styles.formContainer]}>
+        <View style={{ padding: 10, borderRadius: 10, backgroundColor: colors.backgroundForo }}>
+          <Text style={[styles.tituloCampo, { flexWrap: 'wrap', color: colors.textDark }]}>
+            ¿Quieres preguntar algo?
+          </Text>
+          <View style={styles.formContainer}>
             <View style={[styles.textInput, { flex: 1, backgroundColor: colors.backgroundFormulario, borderColor: colors.border }]}>
               <TextInput
-                style={[{ color: colors.textDark, height: 30, }]}
+                style={{ color: colors.textDark, height: 30 }}
                 placeholder="Escribe tu pregunta..."
                 placeholderTextColor={colors.textDark}
                 value={nuevaPregunta}
                 onChangeText={handleChangePregunta}
               />
-
               <Text style={{ color: colors.textDark, textAlign: 'right', marginRight: 8, fontSize: 12 }}>
                 {nuevaPregunta.length}/350 caracteres
               </Text>
             </View>
-
             <TouchableOpacity
               style={[styles.button, { backgroundColor: colors.button, borderRadius: 22 }]}
               onPress={handleEnviarPregunta}
             >
               <Text style={[styles.buttonText, { color: colors.buttonText }]}>Preguntar</Text>
             </TouchableOpacity>
-
           </View>
         </View>
       )}
 
-
       <View>
         {correoUsuario && (
-          <View style={[{ flexDirection: 'row', alignItems: 'center', flex: 1, marginTop: 7 }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginTop: 7 }}>
             <Switch
               onValueChange={toggleSwitch}
               value={verMisPreguntas}
               trackColor={{ false: colors.switchFondoNoSeleccionado, true: colors.switchFondoSeleccionado }}
-              thumbColor={verMisPreguntas ? colors.switchBotonSeleeccionado : colors.switchBotonNoSeleeccionado }
+              thumbColor={verMisPreguntas ? colors.switchBotonSeleeccionado : colors.switchBotonNoSeleeccionado}
             />
-            <Text style={[{ color: colors.text }]}>Ver mis preguntas</Text>
+            <Text style={{ color: colors.text }}>Ver mis preguntas</Text>
           </View>
         )}
 
@@ -285,9 +375,11 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
           style={[styles.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
           onPress={handleOrdenarPor}
         >
-          <Text style={[{ color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}</Text>
+          <Text style={{ color: colors.buttonTextDark }}>
+            {ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}
+          </Text>
           <Ionicons
-            name='caret-down'
+            name="caret-down"
             size={15}
             color={colors.buttonTextDark}
             style={{ marginLeft: 7 }}
@@ -323,10 +415,7 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
               data={opcionesOrden}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={{ padding: 10 }}
-                  onPress={() => seleccionarOrden(item)}
-                >
+                <TouchableOpacity style={{ padding: 10 }} onPress={() => seleccionarOrden(item)}>
                   <Text>{item.label}</Text>
                 </TouchableOpacity>
               )}
@@ -365,71 +454,82 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
 
       {verMisPreguntas ? (
-        // Sección: Mis preguntas
         <View style={styles.section}>
           {misPreguntasOrdenadas.map((pregunta) => (
             <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
               {/* <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text> */}
-              <Text style={[styles.pregunta, { color: colors.textDark }]}>
-                {expandedQuestion[pregunta.id]
-                  ? pregunta.cuestion
-                  : pregunta.cuestion.length > 63
-                    ? `${pregunta.cuestion.substring(0, 63)}...`
-                    : pregunta.cuestion}
-              </Text>
+      <Text style={[styles.pregunta, { color: colors.textDark }]}>
+        {expandedQuestion[pregunta.id]
+          ? pregunta.cuestion
+          : pregunta.cuestion.length > 63
+            ? `${pregunta.cuestion.substring(0, 63)}...`
+            : pregunta.cuestion}
+      </Text>
 
-              {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
-              {pregunta.cuestion.length > 63 && (
-                <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
-                  <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
-                    {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-
-              <View style={[styles.mismaFila, {  flexWrap: 'wrap', fontSize: 10, marginBottom: 10 }]}>
-                {/* <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text> */}
-                <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
-                <NombreUsuario correo={pregunta.usuario} />
-                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {formatearFecha(pregunta.fecha_mensaje)}</Text>
-              </View>
-              <View style={[styles.mismaFila]}>
-                <Ionicons
-                  name='chatbubble'
-                  size={15}
-                  color={colors.textDarkSecondary}
-                  style={{ marginRight: 7 }}
-                />
-                <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
+      {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
+      {pregunta.cuestion.length > 63 && (
+        <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
+          <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
+            {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
+          </Text>
+        </TouchableOpacity>
+      )}
 
 
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
-                  onPress={() =>
-                    navigation.navigate('RespuestasForo', {
-                      preguntaId: pregunta.id,
-                      cuestion: pregunta.cuestion,
-                    })
-                  }
-                >
-                  <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
-                </TouchableOpacity>
+      <View style={[styles.mismaFila, { flexWrap: 'wrap', fontSize: 10, marginBottom: 10 }]}>
+        {/* <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text> */}
+        <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
+        <NombreUsuario correo={pregunta.usuario} />
+        <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
+      </View>
+      <View style={[styles.mismaFila]}>
+        <Ionicons
+          name='chatbubble'
+          size={15}
+          color={colors.textDarkSecondary}
+          style={{ marginRight: 7 }}
+        />
+        <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
 
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: 'red', alignSelf: 'flex-start' }]}
-                  onPress={() => handleEliminarPregunta(pregunta.id)}
-                >
-                  <Text style={[styles.buttonText, { color: '#fff' }]}>Eliminar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-        </View>
+
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
+          onPress={() =>
+            navigation.navigate('RespuestasForo', {
+              preguntaId: pregunta.id,
+              cuestion: pregunta.cuestion,
+            })
+          }
+        >
+          <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: 'red', alignSelf: 'flex-start' }]}
+          onPress={() => handleEliminarPregunta(pregunta.id)}
+        >
+          <Text style={[styles.buttonText, { color: '#fff' }]}>Eliminar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  ))
+}
+        </View >
       ) : (
-        // Sección: Todas las preguntas
-        <View style={styles.section}>
-          {todasPreguntasOrdenadas.map((pregunta) => (
+  <View style={styles.section}>
+    {todasPreguntasOrdenadas.map((pregunta) => (
+            <PreguntaCard
+            key={pregunta.id}
+            pregunta={pregunta}
+            correoUsuario={correoUsuario}
+            colors={colors}
+            expandedQuestion={expandedQuestion}
+            toggleExpand={toggleExpand}
+            handleEliminarPregunta={handleEliminarPregunta}
+            preguntaSeleccionada={preguntaSeleccionada}
+            setPreguntaSeleccionada={setPreguntaSeleccionada}
+            navigation={navigation}
+          />
             <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
               {/* <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text> */}
               <Text style={[styles.pregunta, { color: colors.textDark }]}>
@@ -522,10 +622,10 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
 
               </View>
             </View>
-          ))}
-        </View>
-      )}
-    </View>
+    ))}
+  </View>
+)}
+    </View >
   );
 }
 
@@ -536,8 +636,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textInput: {
-    // flex: 1,
-    // marginRight: 8,
     paddingHorizontal: 10,
     paddingVertical: 2,
     borderRadius: 5,
@@ -555,7 +653,27 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 2 // Sombra en Android
+    elevation: 2
+  },
+  modalView: {
+    position: 'absolute',
+    top: 30,
+    right: 0,
+    borderRadius: 6,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+    zIndex: 1000,
+  },
+  menuOptionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    minWidth: 90,
   },
   pregunta: {
     fontWeight: 'bold',
@@ -605,4 +723,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignSelf: 'flex-start',
   },
+  menuIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 8,
+    zIndex: 10,
+  },
+  section: {
+    marginTop: 10
+  }
 });
