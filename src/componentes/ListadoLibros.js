@@ -54,6 +54,8 @@ export default function ListadoLibros({ libros }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    paddingTop: 20,
+    paddingBottom: 200,
   },
   itemContainer: {
     width: '48%',  // flex: 1,  OBLIGO MANUALMENTE A QUE OCUPE LA MITAD DE LA PANTALLA

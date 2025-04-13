@@ -523,7 +523,7 @@ function MisListasStack({ correoUsuario }) {
       <Stack.Screen name="EditarLista" component={EditarLista}
         options={({ route }) => ({
           headerShown: true,
-          title: "Crear Lista",
+          title: "Editar Lista",
           headerStyle: { backgroundColor: colors.backgroundHeader }, // Fondo oscuro o claro del encabezado
           headerTintColor: colors.textHeader, // Color del texto del título
         })}

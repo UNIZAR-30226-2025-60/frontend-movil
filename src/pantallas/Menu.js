@@ -1,5 +1,5 @@
 // Menu.js
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet } from 'react-native';
 import ListadoLibros from '../componentes/ListadoLibros';
 import Encabezado from '../componentes/Encabezado';
@@ -18,7 +18,11 @@ export default function Menu({ correoUsuario }) {
       <Encabezado correoUsuario={correoUsuario} />
       <View style={[styles.container2, { backgroundColor: colors.backgroundSubtitle }]}>
         <BuscadorLibros setResultados={setResultados} categoria={categoriaSeleccionada} />
-        <FiltroCategorias onSelectCategoria={setCategoriaSeleccionada} />
+
+        <View style={{ marginTop: 10 }}>
+          <FiltroCategorias onSelectCategoria={setCategoriaSeleccionada} />
+        </View>
+        
       </View>
       <View style={[styles.container2]}>
         <ListadoLibros libros={resultados} />

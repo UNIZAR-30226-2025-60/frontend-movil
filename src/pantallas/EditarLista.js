@@ -10,6 +10,7 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal } from 'react-native';
 import { useThemeColors } from '../componentes/Tema';
+import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "../../config";
 
 export default function EditarLista({ route, navigation }) {
@@ -157,6 +158,10 @@ export default function EditarLista({ route, navigation }) {
     );
   }
 
+  const handleEditarFotoPerfil = () => {
+    setModalVisible(true);
+  };
+
   // Renderiza el modal con el resto de las imágenes; no se cierra automáticamente al pulsar.
   function renderModalTodasImagenes() {
     return (
@@ -208,6 +213,22 @@ export default function EditarLista({ route, navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+
+      <View style={[styles.card, { backgroundColor: colors.backgroundSecondary, alignItems: 'center' }]}>
+        <Image
+          source={{ uri: convertirDriveLink(portadaSeleccionada) }}
+          style={[styles.imagenPortada]}
+        />
+        <TouchableOpacity
+          style={[styles.botonEditar, { backgroundColor: colors.buttonDark, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }]}
+          onPress={handleEditarFotoPerfil}
+        >
+          <Ionicons name="pencil" size={17} color={colors.buttonTextDark} style={{ marginRight: 7 }} />
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Editar foto de lista</Text>
+        </TouchableOpacity>
+        {renderModalTodasImagenes()}
+      </View>
+
       {/* Campo de nombre */}
       <Text style={[styles.label, { color: colors.text }]}>Nombre de la lista:</Text>
       <TextInput
@@ -220,19 +241,28 @@ export default function EditarLista({ route, navigation }) {
 
       {/* Campo de descripción */}
       <Text style={[styles.label, { color: colors.text }]}>Descripción:</Text>
-      <TextInput
-        style={[styles.textarea, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario }]}
-        placeholder="Descripción (opcional)"
-        placeholderTextColor={colors.textSecondary}
-        value={descripcion}
-        onChangeText={setDescripcion}
-        multiline
-      />
-
-      {/* Vista principal de imágenes */}
-      <Text style={[styles.label, { color: colors.text }]}>Elige una imagen para la portada:</Text>
-      {renderImagenesPrincipales()}
-      {renderModalTodasImagenes()}
+      <View style={{ position: 'relative' }}>
+        <TextInput
+          style={[styles.textarea, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
+          placeholder="Añade una descripción (opcional)"
+          placeholderTextColor={colors.textSecondary}
+          value={descripcion}
+          onChangeText={setDescripcion}
+          multiline
+          maxLength={350}  // Limita a 350 caracteres
+        />
+        <Text
+          style={{
+            position: 'absolute',
+            right: 10,
+            bottom: 20,
+            color: colors.textDark,
+            fontSize: 15,
+          }}
+        >
+          {descripcion.length}/350 caracteres
+        </Text>
+      </View>
 
       {/* Selector de privacidad */}
       <Text style={[styles.label, { color: colors.text }]}>Privacidad:</Text>
@@ -254,12 +284,24 @@ export default function EditarLista({ route, navigation }) {
       </View>
 
       {/* Botón para confirmar edición */}
-      <TouchableOpacity
-        style={[styles.boton, { backgroundColor: colors.buttonDark }]}
-        onPress={editarLista}
-      >
-        <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Guardar cambios</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Botón Cancelar */}
+        <TouchableOpacity
+          style={[styles.boton, { backgroundColor: colors.buttonDarkTerciary }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Cancelar</Text>
+        </TouchableOpacity>
+
+        {/* Botón Confirmar */}
+        <TouchableOpacity
+          style={[styles.boton, { backgroundColor: colors.buttonDark }]}
+          onPress={editarLista}
+        >
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Guardar cambios</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 }
@@ -267,7 +309,8 @@ export default function EditarLista({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20
+    padding: 20,
+    justifyContent: 'center'
   },
   titulo: {
     fontSize: 22,
@@ -289,31 +332,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
-    height: 80,
-    marginBottom: 15
+    height: 120,
+    marginBottom: 15,
+    textAlignVertical: 'top',
   },
-
-  // Vista principal de imágenes (primeras 3)
   imagenesContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
   },
   imagenPortada: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     marginHorizontal: 5,
     borderRadius: 5
   },
   imagenSeleccionada: {
     borderWidth: 3,
-    borderColor: 'blue',
-    opacity: 1.0,
+    opacity: 4.5,
   },
   verMasContainer: {
     width: 80,
     height: 80,
-    marginHorizontal: 5,
+    marginRight: 5,
     borderRadius: 5,
     borderStyle: 'dashed',
     borderWidth: 2,
@@ -324,9 +365,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-
-  // Modal
   modalOverlay: {
+    marginTop: 60,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -381,13 +421,30 @@ const styles = StyleSheet.create({
   radioLabel: {
     fontSize: 16
   },
+  botonEditar: {
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    marginTop: 7,
+    borderRadius: 22,
+    alignSelf: 'flex-start'
+  },
   boton: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 22,
     alignItems: 'center'
   },
   textoBoton: {
     fontSize: 16,
     fontWeight: 'bold'
+  },
+  card: {
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 20,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2 // Sombra en Android
   },
 });

@@ -320,6 +320,7 @@ export default function Estadisticas({ correoUsuario }) {
                <Podio
                   data={top3Mes}
                   titulo="Top 3 Usuarios del Mes"
+                  currentUserId={correoUsuario}
                />
             )}
 
@@ -328,6 +329,7 @@ export default function Estadisticas({ correoUsuario }) {
                <Podio
                   data={top3Anio}
                   titulo="Top 3 Usuarios del Año"
+                  currentUserId={correoUsuario}
                />
             )}
 

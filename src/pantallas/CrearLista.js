@@ -9,11 +9,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, FlatList } from 'react-native';
+import { CommonActions } from '@react-navigation/native';
 import { useThemeColors } from '../componentes/Tema';
 import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "../../config";
 
-export default function CrearLista({ correoUsuario, navigation }) {
+export default function CrearLista({ correoUsuario, navigation, route }) {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [privacidad, setPrivacidad] = useState('Privada');
@@ -96,11 +97,19 @@ export default function CrearLista({ correoUsuario, navigation }) {
       });
 
       if (respuesta.ok) {
+        const data = await respuesta.json();
         Alert.alert('✅ Éxito', 'Lista creada correctamente.');
-        navigation.goBack(); // Volver a MisListas
-      } else {
-        const respuestaTexto = await respuesta.text();
-        Alert.alert('Error', `No se pudo crear la lista. Respuesta: ${respuestaTexto}`);
+
+        // Si el parámetro "origen" indica que se llamó desde Detalles, navega de vuelta a Detalles
+        // pasando el nombre de la lista para activar el autoañadido del libro.
+        if (route.params?.origen === "detalleslibro" && route.params.onListCreated) {
+          // Llama al callback pasando el nombre de la lista creada
+          route.params.onListCreated(nombre);
+          // Vuelve a la pantalla anterior (la instancia actual de Detalles se mantiene en el stack)
+          navigation.goBack();
+        } else {
+          navigation.goBack();
+        }
       }
     } catch (error) {
       console.error('Error al crear la lista:', error);
@@ -186,7 +195,7 @@ export default function CrearLista({ correoUsuario, navigation }) {
           onPress={handleEditarFotoPerfil}
         >
           <Ionicons name="pencil" size={17} color={colors.buttonTextDark} style={{ marginRight: 7 }} />
-          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Editar foto de perfil</Text>
+          <Text style={[styles.textoBoton, { color: colors.buttonTextDark }]}>Editar foto de lista</Text>
         </TouchableOpacity>
         {renderModalTodasImagenes()}
       </View>
@@ -303,8 +312,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlignVertical: 'top',
   },
-
-  // 📌 Estilos para las imágenes de portada
   imagenesContainer: {
     flexDirection: 'row',
     alignItems: 'center',     // Asegura que estén verticalmente centrados
@@ -340,16 +347,12 @@ const styles = StyleSheet.create({
     fontSize: 18, // un + grande
     fontWeight: 'bold',
   },
-
-  // Modal overlay (fondo semitransparente)
   modalOverlay: {
     marginTop: 60,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  // Contenido principal del modal
   modalContent: {
     borderRadius: 8,
     padding: 16,
@@ -363,8 +366,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center', // Centra el texto horizontalmente
   },
-
-  // Estilo de la lista dentro del modal
   imagenPortadaModal: {
     width: 80,
     height: 80,
@@ -375,7 +376,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // 📌 Estilos para el selector de privacidad
   radioContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 20 },
   radioButton: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 10 },
   radioOuter: {
@@ -393,8 +393,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   radioLabel: { fontSize: 16 },
-
-  // 📌 Botón de "Crear Lista"
   botonEditar: {
     paddingVertical: 6,
     paddingHorizontal: 20,

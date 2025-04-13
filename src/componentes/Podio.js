@@ -32,7 +32,7 @@ function transformarURLGoogleDrive(url) {
  * PodioColumna: renderiza una columna con el nombre/imagen
  * del usuario arriba y la base del podio abajo.
  */
-function PodioColumna({ height, user, place }) {
+function PodioColumna({ height, user, place, currentUserId }) {
    const colors = useThemeColors();
 
    // Selección de color según el puesto
@@ -57,6 +57,14 @@ function PodioColumna({ height, user, place }) {
       ? transformarURLGoogleDrive(user.foto_perfil)
       : null;
 
+   // Verificamos si el usuario que se muestra es el usuario actual
+   const isCurrentUser = user.usuario_id === currentUserId;
+
+   // Definimos el estilo para la imagen de perfil; si es el usuario actual, agregamos un borde extra grueso.
+   const profileImageStyle = [
+      styles.profileImage,
+      isCurrentUser && styles.currentUserProfileImage
+   ];
 
    return (
       <View style={styles.columnaContainer}>
@@ -69,7 +77,7 @@ function PodioColumna({ height, user, place }) {
          {profilePicURL ? (
             <Image
                source={{ uri: profilePicURL }}
-               style={styles.profileImage}
+               style={profileImageStyle}
                onError={(e) => console.log("Error al cargar la imagen:", e.nativeEvent.error)}
             />
          ) : (
@@ -94,7 +102,7 @@ function PodioColumna({ height, user, place }) {
 /**
  * Podio: renderiza el contenedor con las 3 columnas (2º, 1º, 3º)
  */
-export default function Podio({ data, titulo }) {
+export default function Podio({ data, titulo, currentUserId }) {
    const colors = useThemeColors();
 
    // Si no hay datos, mostramos placeholders
@@ -126,17 +134,17 @@ export default function Podio({ data, titulo }) {
          <View style={styles.podiumRow}>
             {/* Segundo lugar */}
             <View style={styles.podiumColumn2}>
-               <PodioColumna height={80} user={secondPlace} place={2} />
+               <PodioColumna height={80} user={secondPlace} place={2} currentUserId={currentUserId} />
             </View>
 
             {/* Primer lugar */}
             <View style={styles.podiumColumn1}>
-               <PodioColumna height={120} user={firstPlace} place={1} />
+               <PodioColumna height={120} user={firstPlace} place={1} currentUserId={currentUserId} />
             </View>
 
             {/* Tercer lugar */}
             <View style={styles.podiumColumn3}>
-               <PodioColumna height={60} user={thirdPlace} place={3} />
+               <PodioColumna height={60} user={thirdPlace} place={3} currentUserId={currentUserId} />
             </View>
          </View>
       </View>
@@ -202,6 +210,12 @@ const styles = StyleSheet.create({
       width: 80,
       alignItems: 'center',
       justifyContent: 'center',
+   },
+   currentUserProfileImage: {
+      borderWidth: 3,
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
    },
    placeText: {
       fontWeight: 'bold',

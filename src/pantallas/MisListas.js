@@ -71,11 +71,10 @@ export default function MisListas({ correoUsuario, navigation, route }) {
       }));
 
       // Filtrar todas las listas que NO sean "Mis Favoritos", "Leídos" o "En proceso"
-      const listasFiltradas = datos.filter(
-        (lista) =>
-          lista.nombre !== 'Mis Favoritos' &&
-          lista.nombre !== 'Leídos' &&
-          lista.nombre !== 'En proceso'
+      const listasFiltradas = listasConPortada.filter(lista =>
+        lista.nombre !== 'Mis Favoritos' &&
+        lista.nombre !== 'Leídos' &&
+        lista.nombre !== 'En proceso'
       );
 
       // Ordenar alfabéticamente las listas restantes

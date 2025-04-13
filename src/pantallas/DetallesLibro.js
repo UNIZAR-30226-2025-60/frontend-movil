@@ -77,10 +77,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
       });
     }
   };
-  
+
 
   // Constantes para la sinopsis
-  const MAX_LINES = 6;  
+  const MAX_LINES = 6;
   const MAX_CHARACTERS = 250;
   const esResumenCorto = libro.resumen.length <= MAX_CHARACTERS;
 
@@ -95,7 +95,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       obtenerListasDondeEstaLibro();
     }
   }, []);
-  
+
   // 📌 Efecto para actualizar valoraciones al reenfocar la pantalla
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -103,7 +103,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       if (correoUsuario) {
         obtenerListasUsuario();
       }
-      
+
     });
     return unsubscribe;
   }, [navigation]);
@@ -123,6 +123,20 @@ export default function DetallesLibro({ route, correoUsuario }) {
     setPromedio(promedioAux);
   }, [valoraciones]);
 
+  useEffect(() => {
+    if (route.params?.nuevaListaCreada) {
+      const nuevaLista = route.params.nuevaListaCreada;
+
+      (async () => {
+        await añadirLibroAListaPorNombre(nuevaLista);
+        Alert.alert("Éxito", `El libro se añadió automáticamente a la lista "${nuevaLista}"`);
+        // Limpiar el parámetro para evitar ejecuciones repetidas
+        navigation.setParams({ nuevaListaCreada: undefined });
+      })();
+    }
+  }, [route.params?.nuevaListaCreada]);
+
+
   // 📌 Función para obtener más libros del mismo autor
   const obtenerMasLibrosDelAutor = async () => {
     try {
@@ -133,7 +147,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
       }
       const data = await response.json();
       setLibrosDelAutor(data);
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -154,7 +168,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
         fecha: item.fecha?.split("T")[0] || item.fecha,
       }));
       setValoraciones(dataTransformada);
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -162,24 +176,24 @@ export default function DetallesLibro({ route, correoUsuario }) {
   const obtenerListasUsuario = async () => {
     try {
       const respuesta = await fetch(`${API_URL}/listas/${correoUsuario}`);
-  
+
       if (!respuesta.ok) {
         throw new Error('No se pudieron obtener las listas del usuario');
       }
-  
+
       const datos = await respuesta.json();
-  
+
       // Filtrar listas para excluir "Leídos" y "En proceso"
-      const listasFiltradas = datos.filter(lista => 
+      const listasFiltradas = datos.filter(lista =>
         lista.nombre !== "Leídos" && lista.nombre !== "En proceso"
       );
-  
+
       setListasUsuario(listasFiltradas);
     } catch (error) {
       console.error('Error al obtener listas del usuario:', error);
     }
   };
-  
+
 
   // 📌 Obtener las listas que YA contienen este libro
   const obtenerListasDondeEstaLibro = async () => {
@@ -192,7 +206,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
         setListasSeleccionadas(new Set());
         return;
       }
-  
+
       if (!respuesta.ok) {
         throw new Error('Error real del servidor');
       }
@@ -282,34 +296,41 @@ export default function DetallesLibro({ route, correoUsuario }) {
   // 📌 Función para añadir un libro a una lista personalizada del usuario
   const añadirLibroAListaPorNombre = async (nombreLista) => {
     try {
+      console.log("Añadiendo libro a la lista:", {
+        usuario_id: correoUsuario,
+        libro_id: libro.enlace,  // Aquí 'libro.enlace' es el identificador del libro
+        lista: nombreLista
+      });
+
       const url = `${API_URL}/listas/${encodeURIComponent(nombreLista)}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario_id: correoUsuario,    // el correo del usuario
-          libro_id: libro.enlace       // el enlace del libro que el backend espera en "libro_id"
+          usuario_id: correoUsuario,
+          libro_id: libro.enlace
         }),
       });
 
       if (!response.ok) {
-        // Por ejemplo, si el libro ya existe en esa lista, tu backend retorna 409
         if (response.status === 409) {
           const msg = await response.text();
-          Alert.alert('Aviso', msg); 
+          Alert.alert('Aviso', msg);
         } else {
           throw new Error('Error al añadir el libro a la lista');
         }
+      } else {
+        console.log("Libro añadido exitosamente a la lista:", nombreLista);
       }
-
-      // Recargar listas para que se refleje el cambio
+      // Si fuera necesario, recarga las listas que ya contienen el libro
       obtenerListasDondeEstaLibro();
-  
+
     } catch (error) {
-      console.error('Error al añadir libro a la lista:', error);
-      Alert.alert('Error', 'No se pudo añadir el libro a la lista');
+      console.error("Error en añadirLibroAListaPorNombre:", error);
+      Alert.alert("Error", "No se pudo añadir el libro a la lista");
     }
   };
+
 
   // 📌 Crea la función para eliminar de una lista:
   const eliminarLibroDeListaPorNombre = async (nombreLista) => {
@@ -339,12 +360,12 @@ export default function DetallesLibro({ route, correoUsuario }) {
       if (nuevoSet.has(nombreLista)) {
         // Estaba marcado => desmarcamos => ELIMINAR
         nuevoSet.delete(nombreLista);
-        eliminarLibroDeListaPorNombre(nombreLista); 
+        eliminarLibroDeListaPorNombre(nombreLista);
       }
       else {
         // No estaba => marcamos => AÑADIR
         nuevoSet.add(nombreLista);
-        añadirLibroAListaPorNombre(nombreLista); 
+        añadirLibroAListaPorNombre(nombreLista);
       }
       return nuevoSet;
     });
@@ -383,7 +404,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
       Alert.alert("Error", "Por favor, ingresa un título para la lista");
       return;
     }
-  
+
+    console.log("Creando lista con estos datos:", {
+      usuario_id: correoUsuario,
+      nombre: nombreNuevaLista,
+      descripcion: descripcionNuevaLista,
+      publica: publicaNuevaLista,
+      portada: null
+    });
+
     try {
       const resp = await fetch(`${API_URL}/listas`, {
         method: 'POST',
@@ -403,23 +432,28 @@ export default function DetallesLibro({ route, correoUsuario }) {
         throw new Error(data?.error || 'Error al crear la lista');
       }
 
-      // Añadir el libro a la nueva lista recién creada
-      await añadirLibroAListaPorNombre(nombreNuevaLista);
-      Alert.alert("Éxito", `Lista "${data.nombre}" creada.`);
-      // Agregar la lista al estado para que se vea reflejada en la UI
-      setListasUsuario(prev => [...prev, data]);
+      console.log("Lista creada exitosamente:", data);
 
-      // Cierro modal y limpio
+      // Aquí es donde añades el libro automáticamente
+      await añadirLibroAListaPorNombre(nombreNuevaLista);
+
+      Alert.alert("Éxito", `Lista "${data.nombre}" creada y el libro se añadió automáticamente.`);
+
+      // Actualiza la UI (si procede)
+      // Por ejemplo, agregar a un estado local que muestre la lista nueva
+
+      // Limpia el formulario/modal, etc.
       setShowCrearListaModal(false);
       setNombreNuevaLista("");
       setDescripcionNuevaLista("");
       setPublicaNuevaLista(false);
-      
+
     } catch (error) {
-      console.error("Error al crear lista:", error);
+      console.error("Error en handleCrearLista:", error);
       Alert.alert("Error", "Hubo un problema al crear la lista");
     }
   };
+
 
   useEffect(() => {
     setValoracionesOrdenadas(valoraciones);
@@ -458,10 +492,10 @@ export default function DetallesLibro({ route, correoUsuario }) {
     const dia = String(date.getDate()).padStart(2, '0'); // Asegura que el día tenga 2 dígitos
     const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0, así que le sumamos 1
     const anio = date.getFullYear(); // Obtiene el año completo
-    
+
     return `${dia}-${mes}-${anio}`;
   };
-  
+
 
   // 📌 Renderización del componente
   return (
@@ -472,9 +506,9 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
         {/* 📌 Portada del libro */}
         <View style={stylesGeneral.columnaIzquierda}>
-          <Image 
+          <Image
             source={{ uri: libro.imagen_portada }}
-            style={stylesGeneral.imagen_portada_libro} 
+            style={stylesGeneral.imagen_portada_libro}
           />
         </View>
 
@@ -493,23 +527,23 @@ export default function DetallesLibro({ route, correoUsuario }) {
                   <Ionicons
                     name={esFavorito ? 'heart' : 'heart-outline'}
                     size={30}
-                    color={esFavorito ? 'red' : colors.iconBorder }
+                    color={esFavorito ? 'red' : colors.iconBorder}
                   />
                 </TouchableOpacity>
               )}
             </View>
           </View>
-          
+
           {/* 📌 Botones: Leer */}
           <View style={[stylesGeneral.fila/*, { flexWrap: 'wrap' }*/]}>
-            <TouchableOpacity 
-              style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
+            <TouchableOpacity
+              style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
               onPress={handleLeer}
             >
               <Ionicons
                 name='book'
                 size={15}
-                color={ colors.buttonTextDark }
+                color={colors.buttonTextDark}
                 style={{ marginRight: 5 }}
               />
               <Text style={[{ color: colors.buttonTextDark }]}>Leer</Text>
@@ -517,14 +551,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
             {/* 📌 Botones: Añadir a lista */}
             {correoUsuario && (
-              <TouchableOpacity 
-                style={[stylesGeneral.boton, { marginLeft: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
+              <TouchableOpacity
+                style={[stylesGeneral.boton, { marginLeft: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
                 onPress={() => setModalVisible(true)}
               >
                 <Ionicons
                   name='add'
                   size={17}
-                  color={ colors.buttonTextDark }
+                  color={colors.buttonTextDark}
                   style={{ marginRight: 5 }}
                 />
                 <Text style={[{ color: colors.buttonTextDark }]}>Añadir a lista</Text>
@@ -539,12 +573,12 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
       {/* 📌 Sinopsis del libro */}
       <View>
-        <Text 
+        <Text
           style={[stylesGeneral.titulo, { color: colors.text }]}
         >
           Sinopsis
         </Text>
-        <Text 
+        <Text
           style={[stylesGeneral.resumen, { color: colors.text }]}
           numberOfLines={mostrarResumenCompleto ? undefined : MAX_LINES}
           ellipsizeMode="tail"
@@ -561,13 +595,13 @@ export default function DetallesLibro({ route, correoUsuario }) {
       </View>
 
       {/* 📌 Línea divisoria */}
-      <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]}/>
+      <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
 
       {/* 📌 Sección de información adicional del libro */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Acerca de este libro</Text>
         <View style={stylesAcercaDe.columnas3}>
-          
+
           {/* 📌 Número de páginas */}
           <View style={stylesAcercaDe.columna}>
             <Ionicons name="book" size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
@@ -577,7 +611,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
               <Text style={{ color: colors.text }}>páginas</Text>
             </View>
           </View>
-          
+
           {/* 📌 Tiempo estimado de lectura */}
           <View style={stylesAcercaDe.columna}>
             <Ionicons name="time" size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
@@ -587,7 +621,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
               <Text style={{ color: colors.text }}>horas</Text>
             </View>
           </View>
-          
+
           {/* 📌 Cantidad total de palabras */}
           <View style={stylesAcercaDe.columna}>
             <FontAwesomeIcon icon={faFileWord} size={24} style={[stylesAcercaDe.icono, { color: colors.icon }]} />
@@ -612,31 +646,31 @@ export default function DetallesLibro({ route, correoUsuario }) {
             {librosDelAutor
               .filter((item) => item.nombre !== libro.nombre)
               .map((item) => (
-              <TouchableOpacity
-                key={`${item.enlace}-${item.nombre}`}
-                onPress={() => navigation.push("Detalles", { libro: item })}
-                style={{ marginRight: 10, alignItems: "center" }}
-              >
-                <Image
-                  source={{ uri: item.imagen_portada }}
-                  style={[stylesGeneral.imagen_portada]}
-                />
-                <Text
-                  style={{ width: 100, textAlign: "center", color: colors.text }}
-                  numberOfLines={2}
+                <TouchableOpacity
+                  key={`${item.enlace}-${item.nombre}`}
+                  onPress={() => navigation.push("Detalles", { libro: item })}
+                  style={{ marginRight: 10, alignItems: "center" }}
                 >
-                  {item.nombre}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Image
+                    source={{ uri: item.imagen_portada }}
+                    style={[stylesGeneral.imagen_portada]}
+                  />
+                  <Text
+                    style={{ width: 100, textAlign: "center", color: colors.text }}
+                    numberOfLines={2}
+                  >
+                    {item.nombre}
+                  </Text>
+                </TouchableOpacity>
+              ))}
           </ScrollView>
 
           <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 2.5 }]} />
-        
+
         </View>
       )}
 
-      
+
       {/* 📌 Sección de valoraciones */}
       <View>
         <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Valoraciones del libro:</Text>
@@ -652,7 +686,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
             {/* {'⭐️'.repeat(Math.floor(promedio)) + '☆'.repeat(5 - Math.floor(promedio))} */}
           </View>
         </View>
-        
+
         {/* 📌 Barras de progreso de valoraciones */}
         {totalValoraciones > 0 && [5, 4, 3, 2, 1].map((num) => {
           const porcentaje = ((conteo[num] || 0) / totalValoraciones) * 100; // Calcula el porcentaje
@@ -673,14 +707,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
         })}
 
         {correoUsuario && (
-          <TouchableOpacity 
-            style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
+          <TouchableOpacity
+            style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
             onPress={handleAñadirValoracion}
           >
             <Ionicons
               name='add'
               size={17}
-              color={ colors.buttonTextDark }
+              color={colors.buttonTextDark}
               style={{ marginRight: 5 }}
             />
             <Text style={[{ color: colors.buttonTextDark }]}>Añadir valoración</Text>
@@ -693,19 +727,19 @@ export default function DetallesLibro({ route, correoUsuario }) {
       {/* 📌 Todas las reseñas del libro */}
       <View>
         <View>
-        <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
+          <Text style={[stylesGeneral.titulo, { color: colors.text }]}>Todas las reseñas del libro:</Text>
           {valoraciones.length > 0 ? (
             <View>
-              <TouchableOpacity 
+              <TouchableOpacity
                 ref={botonOrdenarRef}
-                style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]} 
+                style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
                 onPress={mostrarDropdown}
               >
                 <Text style={[{ color: colors.buttonTextDark }]}>{ordenSeleccionado === 'ninguno' ? 'Ordenar por:' : `Ordenado por: ${ordenSeleccionado}`}</Text>
                 <Ionicons
                   name='caret-down'
                   size={15}
-                  color={ colors.buttonTextDark }
+                  color={colors.buttonTextDark}
                   style={{ marginLeft: 7 }}
                 />
               </TouchableOpacity>
@@ -742,12 +776,15 @@ export default function DetallesLibro({ route, correoUsuario }) {
                   <View style={{ flexDirection: 'row' }}>
                     <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena} </Text>
                     {Array(item.valor).fill().map((_, index) => (
-                      <Ionicons key={index} name="star" size={13} color={ colors.star } />
+                      <Ionicons key={index} name="star" size={13} color={colors.star} />
                     ))}
                   </View>
                   <Text style={{ color: colors.text }}>{item.mensaje}</Text>
-                  <Text style={{ color: colors.textTerciary }}>Por {item.usuario_id} el {formatearFecha(item.fecha)}</Text>
-                
+                  <Text style={{ color: colors.textTerciary }}>
+                    Por <NombreUsuario correo={item.usuario_id} /> el {formatearFecha(item.fecha)}
+                  </Text>
+
+
                   <View style={[stylesGeneral.linea, { backgroundColor: colors.line, height: 1 }]} />
                 </View>
               ))}
@@ -808,7 +845,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
 
                   {/* Nombre de la lista */}
                   <Text style={{ flex: 1 }}>{item.nombre}</Text>
-                  
+
                   {/* Mostrar candado si la lista es privada (según tu lógica) */}
                   {!item.publica && <Text>🔒</Text>}
                 </TouchableOpacity>
@@ -822,13 +859,30 @@ export default function DetallesLibro({ route, correoUsuario }) {
               padding: 12,
               backgroundColor: colors.button,
               borderRadius: 22,
-              
               alignItems: 'center',
             }}
-            onPress={() => navigation.navigate("CrearLista")}
+            onPress={() =>
+              navigation.navigate("CrearLista", {
+                origen: "detalleslibro",
+                libro: libro,
+                // Se pasa el callback
+                onListCreated: (nombreListaCreada) => {
+                  // En este callback se llama a la función que añade el libro a la nueva lista
+                  añadirLibroAListaPorNombre(nombreListaCreada)
+                    .then(() => {
+                      Alert.alert("Éxito", `El libro se añadió a la lista "${nombreListaCreada}"`);
+                    })
+                    .catch((err) => {
+                      console.error("Error al añadir el libro:", err);
+                      Alert.alert("Error", "No se pudo añadir el libro a la lista");
+                    });
+                }
+              })
+            }
           >
             <Text style={{ color: colors.textLight, fontWeight: 'bold', fontSize: 15 }}>+ Nueva lista</Text>
           </TouchableOpacity>
+
         </View>
       </Modal>
 

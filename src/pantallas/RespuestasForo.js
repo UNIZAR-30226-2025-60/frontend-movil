@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TextInput, Alert, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from 'react-native-vector-icons';
+import NombreUsuario from "../componentes/NombreUsuario";
 import { useThemeColors } from '../componentes/Tema';
 import { API_URL } from '../../config';
 
@@ -155,9 +156,14 @@ export default function RespuestasForo({ route, correoUsuario }) {
                 )}
 
                 <View style={[styles.mismaFila, { flexWrap: 'wrap' }]}>
-                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Por: {respuesta.usuario_respuesta}   </Text>
-                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>Fecha: {new Date(respuesta.fecha).toLocaleDateString()}</Text>
+                  <Text style={[styles.usuario, { color: colors.textDarkSecondary }]}>
+                    Por: <NombreUsuario correo={respuesta.usuario_respuesta}/>
+                  </Text>
+                  <Text style={[styles.usuario, { color: colors.textDarkSecondary, marginLeft: 10 }]}>
+                    Fecha: {new Date(respuesta.fecha).toLocaleDateString()}
+                  </Text>
                 </View>
+
 
                 {respuesta.usuario_respuesta === correoUsuario && (
                   <View style={{ position: 'absolute', top: 10, right: 10 }}>

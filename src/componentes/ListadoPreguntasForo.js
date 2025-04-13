@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Alert, TextInput, TouchableOpacity, Switch, Modal, FlatList } from 'react-native';
 import { findNodeHandle, UIManager } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
 import NombreUsuario from "../componentes/NombreUsuario";
 import { Ionicons } from 'react-native-vector-icons';
@@ -156,6 +156,26 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     setTodasPreguntasOrdenadas(todasPreguntas);
     setMisPreguntasOrdenadas(misPreguntas);
   }, [todasPreguntas, misPreguntas]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Resetea los estados a sus valores por defecto al volver a la pantalla
+      setVerMisPreguntas(false);
+      setOrdenSeleccionado('ninguno');
+      setExpandedQuestion({});
+      // Si deseas resetear también los arrays de preguntas ordenadas, podrías restablecerlos
+      setTodasPreguntasOrdenadas(todasPreguntas);
+      setMisPreguntasOrdenadas(misPreguntas);
+
+      // Puedes, opcionalmente, recargar todas las preguntas de nuevo:
+      // cargarTodasPreguntas();
+      // if (correoUsuario) cargarMisPreguntas();
+
+      // El callback no necesita devolver nada
+      return () => { };
+    }, [correoUsuario, todasPreguntas, misPreguntas])
+  );
+
 
   // Función para cargar las preguntas del usuario
   const cargarMisPreguntas = async () => {
@@ -312,6 +332,14 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
     setMisPreguntasOrdenadas(ordenarPreguntas(misPreguntas, opcion.id));
   };
 
+  function formatearFecha(fecha) {
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+    return `${dia}-${mes}-${anio}`;
+  }
+
   // Mostrar modal de ordenación
   const handleOrdenarPor = () => {
     setModalOrdenarVisible(true);
@@ -456,171 +484,35 @@ export default function ListadoPreguntasForo({ correoUsuario }) {
       {verMisPreguntas ? (
         <View style={styles.section}>
           {misPreguntasOrdenadas.map((pregunta) => (
-            <View key={pregunta.id} style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-              {/* <Text style={[styles.pregunta, { color: colors.text }]}>{pregunta.cuestion}</Text> */}
-              <Text style={[styles.pregunta, { color: colors.textDark }]}>
-                {expandedQuestion[pregunta.id]
-                  ? pregunta.cuestion
-                  : pregunta.cuestion.length > 63
-                    ? `${pregunta.cuestion.substring(0, 63)}...`
-                    : pregunta.cuestion}
-              </Text>
-
-              {/* Solo mostramos el botón 'Ver más' si la pregunta tiene más de 30 caracteres */}
-              {pregunta.cuestion.length > 63 && (
-                <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
-                  <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
-                    {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-
-              <View style={[styles.mismaFila, { flexWrap: 'wrap', fontSize: 10, marginBottom: 10 }]}>
-                {/* <Text style={[{ color: colors.textDarkSecondary }]}>Por: {pregunta.usuario}    </Text> */}
-                <Text style={[{ color: colors.textDarkSecondary }]}>Por: </Text>
-                <NombreUsuario correo={pregunta.usuario} />
-                <Text style={[{ color: colors.textDarkSecondary }]}>   Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}</Text>
-              </View>
-              <View style={[styles.mismaFila]}>
-                <Ionicons
-                  name='chatbubble'
-                  size={15}
-                  color={colors.textDarkSecondary}
-                  style={{ marginRight: 7 }}
-                />
-                <Text style={[{ color: colors.textDarkSecondary }]}>{pregunta.numRespuestas} respuestas</Text>
-
-
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]} // Ajusta el ancho al texto
-                  onPress={() =>
-                    navigation.navigate('RespuestasForo', {
-                      preguntaId: pregunta.id,
-                      cuestion: pregunta.cuestion,
-                    })
-                  }
-                >
-                  <Text style={[styles.buttonText, { color: colors.buttonText }]}>Ver respuestas</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: 'red', alignSelf: 'flex-start' }]}
-                  onPress={() => handleEliminarPregunta(pregunta.id)}
-                >
-                  <Text style={[styles.buttonText, { color: '#fff' }]}>Eliminar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))
-          }
+            <PreguntaCard
+              key={pregunta.id}
+              pregunta={pregunta}
+              correoUsuario={correoUsuario}
+              colors={colors}
+              expandedQuestion={expandedQuestion}
+              toggleExpand={toggleExpand}
+              handleEliminarPregunta={handleEliminarPregunta}
+              preguntaSeleccionada={preguntaSeleccionada}
+              setPreguntaSeleccionada={setPreguntaSeleccionada}
+              navigation={navigation}
+            />
+          ))}
         </View >
       ) : (
         <View style={styles.section}>
           {todasPreguntasOrdenadas.map((pregunta) => (
-            <React.Fragment key={pregunta.id}>
-              <PreguntaCard
-                pregunta={pregunta}
-                correoUsuario={correoUsuario}
-                colors={colors}
-                expandedQuestion={expandedQuestion}
-                toggleExpand={toggleExpand}
-                handleEliminarPregunta={handleEliminarPregunta}
-                preguntaSeleccionada={preguntaSeleccionada}
-                setPreguntaSeleccionada={setPreguntaSeleccionada}
-                navigation={navigation}
-              />
-              <View style={[styles.card, { backgroundColor: colors.backgroundSecondary }]}>
-                <Text style={[styles.pregunta, { color: colors.textDark }]}>
-                  {expandedQuestion[pregunta.id]
-                    ? pregunta.cuestion
-                    : pregunta.cuestion.length > 63
-                      ? `${pregunta.cuestion.substring(0, 63)}...`
-                      : pregunta.cuestion}
-                </Text>
-                {pregunta.cuestion.length > 63 && (
-                  <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
-                    <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
-                      {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                <View style={[styles.mismaFila, { fontSize: 10, marginBottom: 10, marginTop: 10 }]}>
-                  <Text style={{ color: colors.textDarkSecondary }}>Por: </Text>
-                  <NombreUsuario correo={pregunta.usuario} />
-                  <Text style={{ color: colors.textDarkSecondary }}>
-                    {"   "}Fecha: {formatearFecha(pregunta.fecha_mensaje)}
-                  </Text>
-                </View>
-                <View style={styles.mismaFila}>
-                  <Ionicons
-                    name="chatbubble"
-                    size={15}
-                    color={colors.textDarkSecondary}
-                    style={{ marginRight: 7 }}
-                  />
-                  <Text style={{ color: colors.textDarkSecondary }}>
-                    {pregunta.numRespuestas} respuestas
-                  </Text>
-                  <TouchableOpacity
-                    style={[styles.button, { backgroundColor: colors.button, alignSelf: 'flex-start' }]}
-                    onPress={() =>
-                      navigation.navigate('RespuestasForo', {
-                        preguntaId: pregunta.id,
-                        cuestion: pregunta.cuestion,
-                      })
-                    }
-                  >
-                    <Text style={[styles.buttonText, { color: colors.buttonText }]}>
-                      {pregunta.numRespuestas > 0 ? 'Ver respuestas' : 'Ver respuestas'}
-                    </Text>
-                  </TouchableOpacity>
-                  {pregunta.usuario === correoUsuario && (
-                    <View style={{ position: 'relative' }}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          setPreguntaSeleccionada(preguntaSeleccionada === pregunta.id ? null : pregunta.id)
-                        }
-                        style={{ padding: 5, marginLeft: 8 }}
-                      >
-                        <Ionicons name="ellipsis-vertical" size={20} color={colors.textDarkSecondary} />
-                      </TouchableOpacity>
-                      {preguntaSeleccionada === pregunta.id && (
-                        <View
-                          style={{
-                            position: 'absolute',
-                            top: 30,
-                            right: 0,
-                            backgroundColor: '#fff',
-                            borderRadius: 6,
-                            padding: 8,
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.3,
-                            shadowRadius: 4,
-                            elevation: 6,
-                            zIndex: 1000,
-                          }}
-                        >
-                          <TouchableOpacity
-                            style={{ flexDirection: 'row', alignItems: 'center' }}
-                            onPress={() => {
-                              setPreguntaSeleccionada(null);
-                              handleEliminarPregunta(pregunta.id);
-                            }}
-                          >
-                            <Ionicons name="trash-outline" size={18} color="red" />
-                            <Text style={{ marginLeft: 6, fontSize: 14, color: 'red' }}>
-                              Eliminar
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      )}
-                    </View>
-                  )}
-                </View>
-              </View>
-            </React.Fragment>
+            <PreguntaCard
+              key={pregunta.id}
+              pregunta={pregunta}
+              correoUsuario={correoUsuario}
+              colors={colors}
+              expandedQuestion={expandedQuestion}
+              toggleExpand={toggleExpand}
+              handleEliminarPregunta={handleEliminarPregunta}
+              preguntaSeleccionada={preguntaSeleccionada}
+              setPreguntaSeleccionada={setPreguntaSeleccionada}
+              navigation={navigation}
+            />
           ))}
         </View>
       )}
