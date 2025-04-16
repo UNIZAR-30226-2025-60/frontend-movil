@@ -207,7 +207,6 @@ export default function RespuestasForo({ route, correoUsuario }) {
 
         {correoUsuario ? (
           <View style={[{ borderTopWidth: 1, padding: 10, borderColor: colors.border, backgroundColor: colors.backgroundForo }]}>
-            <Text style={[styles.tituloCampo, { color: colors.textDark }]}>Mensaje:</Text>
             <View style={[styles.formContainer]}>
               <View style={[styles.input, { flex: 1, backgroundColor: colors.backgroundFormulario, borderColor: colors.border }]}>
                 <TextInput
