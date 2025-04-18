@@ -65,9 +65,10 @@ const PreguntaCard = ({
             </TouchableOpacity>
          )}
 
-         <View style={[styles.mismaFila, { color: colors.textDarkSecondary, flexWrap: 'wrap', marginBottom: 10, marginTop: 10 }]}>
-            <Text style={{ color: colors.textDarkSecondary }}>Por: </Text>
-            <NombreUsuario style={{ color: colors.textDarkSecondary }} correo={pregunta.usuario} />
+         <View style={[styles.mismaFila, { flexWrap: 'wrap', marginBottom: 10, marginTop: 10 }]}>
+            <Text style={{ color: colors.textDarkSecondary }}>
+               Por: <NombreUsuario correo={pregunta.usuario}/>
+            </Text>
             <Text style={{ color: colors.textDarkSecondary }}>
                {"   "}Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}
             </Text>

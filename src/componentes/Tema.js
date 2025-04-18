@@ -26,7 +26,7 @@ export const useThemeColors = () => {
         backgroundMenu: "#6a6456",
         backgroundMenuLibro: "#d9d6cc",
         //
-        backgroundModal: "#c3c1b3",
+        backgroundModal: "#FBF1CD",
         backgroundCheckbox: "#f8f7f3",
         backgroundForo: "#ecebe5",
         backgroundCirculoEstadisticas: "#f8f7f3",

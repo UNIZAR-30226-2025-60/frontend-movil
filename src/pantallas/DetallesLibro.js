@@ -558,7 +558,7 @@ export default function DetallesLibro({ route, correoUsuario }) {
                   {/* 📌 Botones: Añadir a lista */}
                   {correoUsuario && (
                      <TouchableOpacity
-                        style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
+                        style={[stylesGeneral.boton, { marginLeft: 3, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
                         onPress={() => setModalVisible(true)}
                      >
                         <Ionicons

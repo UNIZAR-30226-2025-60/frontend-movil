@@ -133,7 +133,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 
           {(nombreLista || 'Título de la lista').length > 55 && (
             <TouchableOpacity onPress={() => setExpandido(!expandido)}>
-              <Text style={{ color: colors.textSecondary, fontSize: 14, marginTop: 5 }}>
+              <Text style={{ color: colors.text, fontSize: 14, marginTop: 5 }}>
                 {expandido ? 'Ver menos' : 'Ver más'}
               </Text>
             </TouchableOpacity>

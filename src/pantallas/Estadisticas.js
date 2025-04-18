@@ -297,7 +297,7 @@ export default function Estadisticas({ correoUsuario }) {
                         </ScrollView>
                      ) : (
                         <View style={[styles.blockContainer, { backgroundColor: colors.backgroundSecondary }]}>
-                           <Text style={[styles.messageText, { color: colors.text }]}>
+                           <Text style={[styles.messageText, { color: colors.textDark }]}>
                               ¡Hey! Todavía no has valorado ningún libro.
                            </Text>
                         </View>

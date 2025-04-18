@@ -129,7 +129,7 @@ function DrawerNavigator({ correoUsuario }) {
             drawerStyle: { backgroundColor: colors.backgroundMenu },
             drawerLabelStyle: { color: colors.text },
             drawerActiveTintColor: colors.textDark,
-            drawerActiveBackgroundColor: colors.switchFondoSeleccionado, // Fondo activo
+            drawerActiveBackgroundColor: colors.switchFondoNoSeleccionado, // Fondo activo
             headerShown: false,
          }}
       >
