@@ -10,13 +10,15 @@ export default function CambioNombre({ route, navigation }) {
   const [nuevoNombre, setNuevoNombre] = useState("");
 
   const handleCambiarNombre = async () => {
+    console.log("USUARIO: " + usuario.correo);
+    console.log("USUARIO (nombre): " + usuario.nombre);
     try {
       // Realizamos la petición al backend para cambiar la contraseña
       const response = await fetch(`${API_URL}/usuarios/usuario/cambiar-nombre`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          correo: usuario.correoUsuario,
+          correo: usuario.correo,
           nombre: nuevoNombre,
         }),
       });

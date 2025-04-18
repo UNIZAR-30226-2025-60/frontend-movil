@@ -3,11 +3,16 @@
  * Descripción: Configuración de la navegación principal de la app.
  */
 
-import React, { useState } from "react";
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useThemeColors } from './src/componentes/Tema';
+import { useColorScheme } from 'react-native';
+import { useUsuario } from './UsuarioContext'; 
+import { UsuarioProvider } from './UsuarioContext';
+import { StatusBar } from 'react-native';
+
 
 // Componentes
 import AñadirValoracion from './src/componentes/AñadirValoracion';
@@ -46,12 +51,19 @@ const Drawer = createDrawerNavigator();
  * 📌 Componente principal App
  */
 export default function App() {
-   const [correoUsuario, setCorreoUsuario] = useState(null); // Estado para guardar el correo del usuario autenticado
+   const colors = useThemeColors();
+   const theme = useColorScheme();
 
    return (
-      <NavigationContainer>
-         <RootStack correoUsuario={correoUsuario} setCorreoUsuario={setCorreoUsuario} />
-      </NavigationContainer>
+      <UsuarioProvider>
+         <StatusBar
+            barStyle={theme === "dark" ? "light-content" : "dark-content"}
+            backgroundColor={colors.background}
+         />
+         <NavigationContainer>
+            <RootStack />
+         </NavigationContainer>
+      </UsuarioProvider>
    );
 }
 
@@ -70,7 +82,8 @@ function authHeaderOptions(title, colors) {
 /**
  * 📌 RootStack: Pila principal que incluye Drawer y pantallas de auth
  */
-function RootStack({ correoUsuario, setCorreoUsuario }) {
+function RootStack() {
+   const { correoUsuario, setCorreoUsuario } = useUsuario();
    const colors = useThemeColors();
 
    return (
@@ -90,7 +103,7 @@ function RootStack({ correoUsuario, setCorreoUsuario }) {
 
          {/* Pantallas de usuario */}
          <Stack.Screen name="MenuUsuario" component={MenuUsuario} options={authHeaderOptions("Menú de Usuario", colors)} />
-         <Stack.Screen name="MenuPerfil" component={MenuPerfil} initialParams={{ correoUsuario, setCorreoUsuario }} options={authHeaderOptions("Mi Perfil", colors)} />
+         <Stack.Screen name="MenuPerfil" component={MenuPerfil} /*initialParams={{ correoUsuario, setCorreoUsuario }}*/ options={authHeaderOptions("Mi Perfil", colors)} />
          <Stack.Screen name="CambioContrasena" component={CambioContrasena} initialParams={{ correoUsuario }} options={authHeaderOptions("Editar contraseña", colors)} />
          <Stack.Screen name="CambioNombre" component={CambioNombre} initialParams={{ correoUsuario }} options={authHeaderOptions("Editar nombre", colors)} />
 

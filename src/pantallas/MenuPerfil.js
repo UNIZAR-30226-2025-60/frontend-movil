@@ -5,9 +5,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Modal, FlatList
 import { Ionicons } from "@expo/vector-icons";
 import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from "../../config";
+import { useUsuario } from '../../UsuarioContext';
 
-export default function MenuPerfil({ route, navig }) {
-  const { correoUsuario, setCorreoUsuario } = route.params;
+export default function MenuPerfil() {
+  const { correoUsuario, setCorreoUsuario } = useUsuario();
   const [usuario, setUsuario] = useState(null);
   const [esUsuarioGoogle, setEsUsuarioGoogle] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
