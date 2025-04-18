@@ -558,14 +558,14 @@ export default function DetallesLibro({ route, correoUsuario }) {
                   {/* 📌 Botones: Añadir a lista */}
                   {correoUsuario && (
                      <TouchableOpacity
-                        style={[stylesGeneral.boton, { marginLeft: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
+                        style={[stylesGeneral.boton, { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.buttonDark }]}
                         onPress={() => setModalVisible(true)}
                      >
                         <Ionicons
                            name='add'
                            size={17}
                            color={colors.buttonTextDark}
-                           style={{ marginRight: 5 }}
+                           style={{ marginRight: 1 }}
                         />
                         <Text style={[{ color: colors.buttonTextDark }]}>Añadir a lista</Text>
                      </TouchableOpacity>
@@ -777,15 +777,17 @@ export default function DetallesLibro({ route, correoUsuario }) {
                         </View>
                      )}
 
-                     {valoracionesOrdenadas.map((item) => (
-                        <View key={`${item.usuario_id}-${item.libro_id}-${item.titulo_resena}-${item.fecha}`}>
-                           <View style={{ flexDirection: 'row' }}>
+                     {valoracionesOrdenadas.map((item, index) => (
+                        <View key={`${item.usuario_id}-${item.fecha}-${index}`}>
+                           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                               <Text style={{ fontWeight: 'bold', color: colors.text }}>{item.titulo_resena} </Text>
-                              {Array(item.valor).fill().map((_, index) => (
-                                 <Ionicons key={index} name="star" size={13} color={colors.star} />
-                              ))}
+                              <View style={{ flexDirection: 'row', marginTop: 2 }}>
+                                 {Array(item.valor).fill().map((_, index) => (
+                                    <Ionicons key={index} name="star" size={13} color={colors.star} />
+                                 ))}
+                              </View>
                            </View>
-                           <Text style={{ color: colors.text }}>{item.mensaje}</Text>
+                           <Text style={{ color: colors.text, textAlign: 'justify' }}>{item.mensaje}</Text>
                            <Text style={{ color: colors.textTerciary }}>
                               Por <NombreUsuario correo={item.usuario_id} /> el {formatearFecha(item.fecha)}
                            </Text>

@@ -13,6 +13,7 @@ import { useThemeColors } from "../componentes/Tema";
 import { Ionicons } from 'react-native-vector-icons';
 import ListadoLibros from '../componentes/ListadoLibros';
 import BuscadorLibrosLista from './BuscadorLibrosLista';
+import cargandoGif from "../../assets/animacion_cargando.gif";
 import { API_URL } from '../../config';
 
 export default function LibrosDeLista({ correoUsuario, tituloProp }) {
@@ -44,7 +45,6 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   // 📌 Función que obtiene los libros de la lista desde la API
   const obtenerLibros = async () => {
     try {
-      console.log("PORTADA", portada);
       setCargando(true);
       const respuesta = await fetch(finalUrl);
       const textoRespuesta = await respuesta.text();
@@ -106,7 +106,13 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
 
   // Si los datos están cargando, muestra un spinner
   if (cargando) {
-    return <ActivityIndicator size="large" color={colors.icon} style={{ marginTop: 20 }} />;
+    return (
+      <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+        <Text style={{ color: colors.text }}>Cargando...</Text>
+        <Image source={cargandoGif} style={styles.loadingImage}/>
+      </View>
+    );
+    // <ActivityIndicator size="large" color={colors.icon} style={{ marginTop: 20 }} />;
   }
 
   return (
@@ -119,13 +125,13 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
           style={styles.imagen_portada_lista} 
         />
         <View>
-          <Text style={{ color: colors.text, maxWidth: 270, flexWrap: 'wrap' }}>
-            {expandido || (nombreLista || 'Título de la lista').length <= 57
+          <Text style={{ color: colors.text, fontWeight: 'bold', maxWidth: 270, flexWrap: 'wrap' }}>
+            {expandido || (nombreLista || 'Título de la lista').length <= 55
               ? nombreLista || 'Título de la lista'
-              : `${(nombreLista || 'Título de la lista').substring(0, 57)}...`}
+              : `${(nombreLista || 'Título de la lista').substring(0, 55)}...`}
           </Text>
 
-          {(nombreLista || 'Título de la lista').length > 57 && (
+          {(nombreLista || 'Título de la lista').length > 55 && (
             <TouchableOpacity onPress={() => setExpandido(!expandido)}>
               <Text style={{ color: colors.textSecondary, fontSize: 14, marginTop: 5 }}>
                 {expandido ? 'Ver menos' : 'Ver más'}
@@ -133,7 +139,8 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
             </TouchableOpacity>
           )}
           
-          <Text style={[styles.descripcionLista, { color: colors.text, maxWidth: 270 }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+          <Text style={[styles.descripcionLista, { color: colors.text, maxWidth: 250 }]}>{descripcionLista?.trim() || 'Sin descripción'}</Text>
+          
           {esPublica ? (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons
@@ -207,5 +214,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginRight: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },  
+  loadingImage: {
+    width: 160,
+    height: 160,
   },
 });

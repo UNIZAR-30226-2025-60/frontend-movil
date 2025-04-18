@@ -17,6 +17,7 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '197878322753-432ne8o85i4212s80th9gshbi1cat054.apps.googleusercontent.com',
+    // androidClientId: '251988611522-0klcocrp7913fsk46e9d93rl6crue1r3.apps.googleusercontent.com',
   });
 
   useEffect(() => {
@@ -60,6 +61,9 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
         } finally {
           setMostrarModal(false);
         }
+      } else if (response?.type === 'dismiss' || response?.type === 'error') {
+        // Si el usuario cierra o hay error, cerramos el modal
+        setMostrarModal(false);
       }
     };
     fetchUserInfo();

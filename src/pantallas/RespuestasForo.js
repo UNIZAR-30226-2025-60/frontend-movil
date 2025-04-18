@@ -116,12 +116,12 @@ export default function RespuestasForo({ route, correoUsuario }) {
           <Text style={[styles.titulo, { color: colors.text }]}>Pregunta:</Text>
           {/* <Text style={[styles.cuestion, { color: colors.text }]}>{cuestion}</Text> */}
           <Text style={[styles.cuestion, { color: colors.text }]}>
-            {expanded || cuestion.length <= 63
+            {expanded || cuestion.length <= 84
               ? cuestion
-              : `${cuestion.substring(0, 63)}...`}
+              : `${cuestion.substring(0, 84)}...`}
           </Text>
 
-          {cuestion.length > 63 && (
+          {cuestion.length > 84 && (
             <TouchableOpacity onPress={() => setExpanded(!expanded)}>
               <Text style={[{ color: colors.text, fontSize: 14, marginTop: 5 }]}>
                 {expanded ? 'Ver menos' : 'Ver más'}
@@ -142,12 +142,12 @@ export default function RespuestasForo({ route, correoUsuario }) {
               }
               ]}>
                 <Text style={[styles.mensaje, { color: colors.textDark }]}>
-                  {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 63
+                  {expandedRespuestas[respuesta.id] || respuesta.mensaje_respuesta.length <= 84
                     ? respuesta.mensaje_respuesta
-                    : `${respuesta.mensaje_respuesta.substring(0, 63)}...`}
+                    : `${respuesta.mensaje_respuesta.substring(0, 84)}...`}
                 </Text>
 
-                {respuesta.mensaje_respuesta.length > 63 && (
+                {respuesta.mensaje_respuesta.length > 84 && (
                   <TouchableOpacity onPress={() => toggleExpandedRespuesta(respuesta.id)}>
                     <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
                       {expandedRespuestas[respuesta.id] ? 'Ver menos' : 'Ver más'}

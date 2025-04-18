@@ -36,7 +36,7 @@ export default function NombreUsuario({ correo, estilo = {} }) {
    if (cargando) return null;
 
    return (
-      <Text style={[{ color: colors.textDarkSecondary }, estilo]}>
+      <Text style={[estilo]}>
          {nombre}
       </Text>
    );

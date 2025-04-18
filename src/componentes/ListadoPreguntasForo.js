@@ -52,12 +52,12 @@ const PreguntaCard = ({
          <Text style={[styles.pregunta, { color: colors.textDark }]}>
             {expandedQuestion[pregunta.id]
                ? pregunta.cuestion
-               : pregunta.cuestion.length > 63
-                  ? `${pregunta.cuestion.substring(0, 63)}...`
+               : pregunta.cuestion.length > 84
+                  ? `${pregunta.cuestion.substring(0, 84)}...`
                   : pregunta.cuestion}
          </Text>
 
-         {pregunta.cuestion.length > 63 && (
+         {pregunta.cuestion.length > 84 && (
             <TouchableOpacity onPress={() => toggleExpand(pregunta.id)}>
                <Text style={[{ color: colors.textDark, fontSize: 14, marginTop: 5 }]}>
                   {expandedQuestion[pregunta.id] ? 'Ver menos' : 'Ver más'}
@@ -65,9 +65,9 @@ const PreguntaCard = ({
             </TouchableOpacity>
          )}
 
-         <View style={[styles.mismaFila, { flexWrap: 'wrap', marginBottom: 10, marginTop: 10 }]}>
+         <View style={[styles.mismaFila, { color: colors.textDarkSecondary, flexWrap: 'wrap', marginBottom: 10, marginTop: 10 }]}>
             <Text style={{ color: colors.textDarkSecondary }}>Por: </Text>
-            <NombreUsuario correo={pregunta.usuario} />
+            <NombreUsuario style={{ color: colors.textDarkSecondary }} correo={pregunta.usuario} />
             <Text style={{ color: colors.textDarkSecondary }}>
                {"   "}Fecha: {new Date(pregunta.fecha_mensaje).toISOString().split('T')[0]}
             </Text>

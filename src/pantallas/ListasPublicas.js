@@ -5,12 +5,13 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { useThemeColors } from '../componentes/Tema';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-
+import cargandoGif from "../../assets/animacion_cargando.gif";
 import Encabezado from '../componentes/Encabezado';
-import { useThemeColors } from '../componentes/Tema';
+
 import { API_URL } from '../../config';
 
 const convertirDriveLink = (url) => {
@@ -122,7 +123,11 @@ export default function ListasPublicas({ correoUsuario }) {
 
          {/* 📌 Muestra un texto de carga mientras se obtienen los datos */}
          {isLoading ? (
-            <Text style={{ margin: 20, color: colors.text }}>Cargando...</Text>
+            <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+               <Text style={{ color: colors.text }}>Cargando...</Text>
+               <Image source={cargandoGif} style={styles.loadingImage}/>
+            </View>
+            // <Text style={{ margin: 20, color: colors.text }}>Cargando...</Text>
          ) : (
             <FlatList
                data={listasPublicas}
@@ -180,5 +185,14 @@ const styles = StyleSheet.create({
       marginTop: 20,
       textAlign: 'center',
       fontSize: 16,
-   }
+   },
+   modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+   },  
+   loadingImage: {
+      width: 160,
+      height: 160,
+   },
 });
