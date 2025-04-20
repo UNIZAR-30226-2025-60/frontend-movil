@@ -10,20 +10,28 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "./Tema";
+import { useColorScheme } from "react-native";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 
 export default function ListadoLibros({ libros }) {
    const navigation = useNavigation();
    const colors = useThemeColors();
+   const theme = useColorScheme();
 
    if (!libros || libros.length === 0) {
       return (
-         <View style={styles.noResultadosContainer}>
-            <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros</Text>
-         </View>
+         // <View style={styles.noResultadosContainer}>
+         //    <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros</Text>
+         // </View>
+         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+            <Text style={{ color: colors.text }}>Cargando libros...</Text>
+            <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
+        </View>
       );
    }
 
-   // 📌 MemoizedLibro: Componente memoizado que representa un solo libro en la lista.
+   // MemoizedLibro: Componente memoizado que representa un solo libro en la lista.
    // React.memo evita renders innecesarios si las props no cambian.
    // Esto mejora el rendimiento cuando se renderizan muchos elementos en una FlatList.
    const MemoizedLibro = React.memo(({ item }) => (
@@ -98,5 +106,16 @@ const styles = StyleSheet.create({
    noResultadosText: {
       textAlign: "center",
       marginTop: 50,
-   }
+   },
+   modalContainer: {
+      flexGrow: 1,
+      paddingTop: 20,
+      paddingBottom: 200,
+      justifyContent: 'center',
+      alignItems: 'center',
+   },
+   loadingImage: {
+      width: 160,
+      height: 160,
+   },
 });

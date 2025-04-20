@@ -9,7 +9,9 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import BuscadorLibrosLista from '../componentes/BuscadorLibrosLista';
 import { useThemeColors } from "../componentes/Tema";
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import { useColorScheme } from "react-native";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from "../../config";
 
 
@@ -19,6 +21,7 @@ export default function Favoritos({ correoUsuario }) {
    const [isLoading, setIsLoading] = useState(true);
    const navigation = useNavigation();
    const colors = useThemeColors();
+   const theme = useColorScheme();
 
    // 📌 Función para obtener detalles del libro a partir de su enlace
    const obtenerDetallesLibro = async (enlaceLibro) => {
@@ -117,7 +120,7 @@ export default function Favoritos({ correoUsuario }) {
 
          {isLoading ? (
             <View style={styles.loadingContainer}>
-               <Image source={cargandoGif} style={styles.loadingImage} />
+               <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
                <Text style={{ color: colors.text, marginTop: 10 }}>Cargando...</Text>
             </View>
          ) : (

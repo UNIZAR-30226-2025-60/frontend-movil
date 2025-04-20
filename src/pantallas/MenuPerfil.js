@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { useThemeColors } from "../componentes/Tema";
+import { useColorScheme } from "react-native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Modal, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from "../../config";
 import { useUsuario } from '../../UsuarioContext';
 
@@ -16,6 +18,7 @@ export default function MenuPerfil() {
 
   const colors = useThemeColors();
   const navigation = useNavigation();
+  const theme = useColorScheme();
 
   useFocusEffect(
     useCallback(() => {
@@ -117,8 +120,8 @@ export default function MenuPerfil() {
   if (usuario === null) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Image source={cargandoGif} style={styles.loadingImage} />
         <Text style={{ color: colors.text }}>Cargando...</Text>
+        <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
       </View>
     );
   }

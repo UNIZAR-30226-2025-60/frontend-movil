@@ -6,7 +6,9 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Encabezado from '../componentes/Encabezado';
 import BuscadorLibrosLista from '../componentes/BuscadorLibrosLista';
 import { useThemeColors } from "../componentes/Tema";
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import { useColorScheme } from "react-native";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from "../../config";
 
 export default function EnProceso({ correoUsuario }) {
@@ -15,6 +17,7 @@ export default function EnProceso({ correoUsuario }) {
    const [isLoading, setIsLoading] = useState(true);
    const navigation = useNavigation();
    const colors = useThemeColors();
+   const theme = useColorScheme();
 
    const obtenerDetallesLibro = async (enlaceLibro) => {
       try {
@@ -161,7 +164,7 @@ export default function EnProceso({ correoUsuario }) {
 
          {isLoading ? (
             <View style={styles.loadingContainer}>
-               <Image source={cargandoGif} style={styles.loadingImage} />
+               <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
                <Text style={{ color: colors.text }}>Cargando...</Text>
             </View>
          ) : (

@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
+import { useColorScheme } from "react-native";
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, Modal } from "react-native";
 import logoGoogle from "../../assets/logo_google.png";
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+ import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from "../../config";
 
 import * as Google from 'expo-auth-session/providers/google';
@@ -14,6 +16,7 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
   const [mostrarModal, setMostrarModal] = useState(false); // Estado para el modal
   const navigation = useNavigation();
   const colors = useThemeColors();
+  const theme = useColorScheme();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '197878322753-432ne8o85i4212s80th9gshbi1cat054.apps.googleusercontent.com',
@@ -97,7 +100,7 @@ export default function BotonLoginGoogle({ setCorreoUsuario }) {
       <Modal visible={mostrarModal} transparent={false}>
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
           <Text style={{ color: colors.text }}>Cargando...</Text>
-          <Image source={cargandoGif} style={styles.loadingImage}/>
+          <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
         </View>
       </Modal>
     </View>
