@@ -2,8 +2,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ScrollView, TouchableOpacity, Text, Image, StyleSheet, View } from "react-native";
 import { useThemeColors } from "../componentes/Tema";
+import { useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from "../../config";
 
 export default function FiltroCategorias({ onSelectCategoria }) {
@@ -13,6 +15,7 @@ export default function FiltroCategorias({ onSelectCategoria }) {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const colors = useThemeColors();
+  const theme = useColorScheme();
 
   const scrollViewRef = useRef(null);
   const scrollOffset = useRef(0);
@@ -68,7 +71,7 @@ export default function FiltroCategorias({ onSelectCategoria }) {
   if (loading) {
     return (
       <View>
-        <Image source={cargandoGif} />
+        <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} />
       </View>
     );
   }

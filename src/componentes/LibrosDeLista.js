@@ -10,16 +10,19 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { useThemeColors } from "../componentes/Tema";
+import { useColorScheme } from "react-native";
 import { Ionicons } from 'react-native-vector-icons';
 import ListadoLibros from '../componentes/ListadoLibros';
 import BuscadorLibrosLista from './BuscadorLibrosLista';
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from '../../config';
 
 export default function LibrosDeLista({ correoUsuario, tituloProp }) {
   const route = useRoute(); // Accede a los parámetros pasados por navegación
   const navigation = useNavigation(); // Para navegar entre pantallas
   const colors = useThemeColors();  // Colores personalizados según el tema
+  const theme = useColorScheme();
 
   // Extraemos los datos que se pasaron como parámetros a la pantalla
   const { url, nombreLista, descripcionLista, esPublica, portada } = route.params;
@@ -109,7 +112,7 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
     return (
       <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
         <Text style={{ color: colors.text }}>Cargando...</Text>
-        <Image source={cargandoGif} style={styles.loadingImage}/>
+        <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
       </View>
     );
     // <ActivityIndicator size="large" color={colors.icon} style={{ marginTop: 20 }} />;

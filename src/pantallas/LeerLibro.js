@@ -6,7 +6,9 @@ import RNFetchBlob from "react-native-blob-util";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { useThemeColors } from "../componentes/Tema";
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import { useColorScheme } from "react-native";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import { API_URL } from "../../config";
 
 
@@ -14,6 +16,7 @@ export default function LeerLibro({ route, correoUsuario }) {
   const { libro } = route.params;
   const navigation = useNavigation();
   const colors = useThemeColors();
+  const theme = useColorScheme();
 
   const [pdfPath, setPdfPath] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -353,7 +356,7 @@ export default function LeerLibro({ route, correoUsuario }) {
       ) : (
         <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
           <Text style={{ color: colors.text }}>Cargando PDF...</Text>
-          <Image source={cargandoGif} style={styles.loadingImage}/>
+          <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
         </View>
       )}
 

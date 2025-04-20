@@ -7,9 +7,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeColors } from '../componentes/Tema';
+import { useColorScheme } from "react-native";
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import cargandoGif from "../../assets/animacion_cargando.gif";
+import cargandoModoOscuro from "../../assets/animacion_cargando_modo_oscuro.gif";
+import cargandoModoClaro from "../../assets/animacion_cargando_modo_claro.gif";
 import Encabezado from '../componentes/Encabezado';
 
 import { API_URL } from '../../config';
@@ -34,6 +36,7 @@ export default function ListasPublicas({ correoUsuario }) {
 
    const navigation = useNavigation();
    const colors = useThemeColors();
+   const theme = useColorScheme();
 
    // Se ejecuta cada vez que se enfoca la pantalla
    useFocusEffect(
@@ -125,7 +128,7 @@ export default function ListasPublicas({ correoUsuario }) {
          {isLoading ? (
             <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
                <Text style={{ color: colors.text }}>Cargando...</Text>
-               <Image source={cargandoGif} style={styles.loadingImage}/>
+               <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
             </View>
             // <Text style={{ margin: 20, color: colors.text }}>Cargando...</Text>
          ) : (
