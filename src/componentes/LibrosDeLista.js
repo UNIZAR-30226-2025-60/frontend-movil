@@ -115,7 +115,6 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
         <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
       </View>
     );
-    // <ActivityIndicator size="large" color={colors.icon} style={{ marginTop: 20 }} />;
   }
 
   return (
@@ -128,13 +127,13 @@ export default function LibrosDeLista({ correoUsuario, tituloProp }) {
           style={styles.imagen_portada_lista} 
         />
         <View>
-          <Text style={{ color: colors.text, fontWeight: 'bold', maxWidth: 270, flexWrap: 'wrap' }}>
-            {expandido || (nombreLista || 'Título de la lista').length <= 55
+          <Text style={{ color: colors.text, fontWeight: 'bold', maxWidth: 250, flexWrap: 'wrap' }}>
+            {expandido || (nombreLista || 'Título de la lista').length <= 60
               ? nombreLista || 'Título de la lista'
-              : `${(nombreLista || 'Título de la lista').substring(0, 55)}...`}
+              : `${(nombreLista || 'Título de la lista').substring(0, 60)}...`}
           </Text>
 
-          {(nombreLista || 'Título de la lista').length > 55 && (
+          {(nombreLista || 'Título de la lista').length > 60 && (
             <TouchableOpacity onPress={() => setExpandido(!expandido)}>
               <Text style={{ color: colors.text, fontSize: 14, marginTop: 5 }}>
                 {expandido ? 'Ver menos' : 'Ver más'}

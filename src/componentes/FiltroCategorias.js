@@ -71,8 +71,7 @@ export default function FiltroCategorias({ onSelectCategoria }) {
   if (loading) {
     return (
       <View>
-        {/* <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} /> */}
-        <Text>Cargando categorías...</Text>
+        {/* <Text style={{ marginLeft: 10, color: colors.text }}>Cargando categorías...</Text> */}
       </View>
     );
   }

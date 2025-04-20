@@ -19,15 +19,20 @@ export default function ListadoLibros({ libros }) {
    const colors = useThemeColors();
    const theme = useColorScheme();
 
-   if (!libros || libros.length === 0) {
+   if (!libros) {
       return (
-         // <View style={styles.noResultadosContainer}>
-         //    <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros</Text>
-         // </View>
          <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
             <Text style={{ color: colors.text }}>Cargando libros...</Text>
             <Image source={theme === 'dark' ? cargandoModoOscuro : cargandoModoClaro} style={styles.loadingImage}/>
         </View>
+      );
+   }
+
+   else if (libros.length === 0) {
+      return (
+         <View style={styles.noResultadosContainer}>
+            <Text style={[styles.noResultadosText, { color: colors.text }]}>No se encontraron libros</Text>
+         </View>
       );
    }
 
@@ -102,6 +107,9 @@ const styles = StyleSheet.create({
       textAlign: "center",
       flexWrap: "wrap",
       width: 100, // Evita que el texto sobresalga
+   },
+   noResultadosContainer: {
+      flexGrow: 1,
    },
    noResultadosText: {
       textAlign: "center",
