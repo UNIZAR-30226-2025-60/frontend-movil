@@ -1,38 +1,63 @@
-# frontend-movil
-TUTORIAL
-    PASO Nº0
-        git pull origin main
-    PASO Nº1
-        Nos metemos en la carpeta en la que queremos trabajar (backend, frontend-movil, frontend-web) cd backend.
-    PASO Nº2
-        Creamos SIEMPRE una rama para trabajar en local, es decir, los cambios que hagas en los archivos y los que creas o destruyes solo se hace en local.
-        git checkout -b nombreRama
-        Siendo nombreRama el nombre que tu quieras, con el checkout te cambias de rama y con el -b creas la rama.
-        Si solo quieres cambiarte de rama git checkout nombreADondeVas
-        Y si solo quieres crear rama git branch nuevaRama, siendo nuevaRama el nombre de la que creas.
-        Y si solo quieres ver en que rama estas git branch y te saldra con asterisco o en verde en la que estás.
+# 📱 Bookly - Frontend Móvil
 
-    PASO Nº3
-        Ahora podemos comprobar en la rama en la que estamos git branch, y tendrá que ser la que hemos creado anteriormente.
-        Si coincide ya estamos en disposición de empezar a modificar, añadir o eliminar ficheros.
+Frontend móvil para la plataforma **Bookly**, construido con **React Native** usando **Expo** para facilitar el desarrollo, pruebas y generación de builds. El proyecto detecta automáticamente si está en desarrollo (local) o producción (APK instalada), conectando al backend correspondiente.
 
-        Una vez acabemos con nuestra tarea tendremos que guardar los cambios (en nuestra rama)
-        1- git add .
-        2- git commit -m “Cambio”
-        3- git push origin nombreRama
-        Ahora ya tenemos los cambios que hemos hecho en local subidos a una rama, pero esta no es la rama main a la que todos tienen acceso.
+- **Framework:** React Native  
+- **Gestión de paquetes:** npm  
+- **Entorno de desarrollo:** Expo + Android Emulator 
+- **CI/CD:** Archivo apk a instalar en móvil 
 
-    PASO Nº4
-        Ahora haremos un  git checkout main para volver a la rama main(la compartida entre todos) y con git pull origin main me bajo los posibles cambios. Unimos nuestra rama con la compartida, git merge ramaPrueba y git push origin main (subes los cambios definitivamente a lo compartido por todos)
+---
 
+## 📁 Estructura del Proyecto
 
-    git pull origin main(te bajas lo último que ha hecho alguien)
-    git checkout -b ramaPrueba (Creas la rama con el -b y te cambias a la vez con el checkout).
-    //modifico lo que quiera
-    git add . (para guardar todos los cambios que has hecho).
-    git commit -m “Cambio”
-    git push origin ramaPrueba
-    git checkout main (te cambias a la rama principal).
-    git pull origin main (para bajarte los cambios de la rama que especificas despues del origin).
-    git merge ramaPrueba (“fusionas la rama”).
-    git push origin main (subes los cambios definitivamente).
+- **📁 src/**
+  - **📁 componentes/** → Componentes reutilizables de UI y lógica
+  - **📁 pantallas/** → Vistas principales del usuario
+- **📁 assets/** → Recursos estáticos como imágenes
+- **📁 node_modules/** → Dependencias del proyecto gestionadas por npm
+- **📄 App.js** → Configuración de navegación principal y proveedor de contexto de usuario
+- **📄 index.js** → Punto de entrada principal, registra el componente raíz
+- **📄 config.js** → Configuración de rutas API para desarrollo y producción (backend, redirección Google, etc.)
+- **📄 UsuarioContext.js** → Contexto global para gestionar el estado del usuario autenticado
+- **📄 metro.config.js** → Configuración personalizada de Metro bundler (compilador para React Native)
+- **📄 package.json** → Dependencias, scripts y configuración general del proyecto
+- **📄 eas.json** → Configuración de perfiles de construcción con EAS (Expo Application Services)
+
+---
+
+## 🔧 Instalación y entorno local
+
+### 1. Requisitos previos
+
+- Tener Expo Orbit instalado en PC y un emulador de Android
+- Tener **Expo CLI** instalado:
+```bash
+npm install -g expo-cli
+```
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+npx expo install expo
+npm install concurrently --save-dev
+npm install start-server-and-test --save-dev
+npm install wait-on --save-dev
+npx expo install @react-native-picker/picker
+```
+### 3. Iniciar la aplicación en local (emulador)
+
+Ejecutamos el siguiente comando:
+```bash
+npx expo run:android
+```
+
+## 📱 Generar un APK para ejecutar en Android (Requiere tener Android Studio)
+
+Ejecutar el comando:
+```bash
+npx expo run:android --variant release
+```
+
+Y el archivo se encontrará en la ruta "android/app/build/outputs/apk/release/app-release.apk"
