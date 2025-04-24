@@ -42,7 +42,7 @@ export default function Favoritos({ correoUsuario }) {
    // 📌 Función para obtener favoritos para 'correoUsuario'
    const obtenerFavoritos = async () => {
       try {
-         const url = `http://10.0.2.2:3000/api/listas/favoritos/${encodeURIComponent(correoUsuario)}`;
+         const url = `${API_URL}/listas/favoritos/${encodeURIComponent(correoUsuario)}`;
          const respuesta = await fetch(url);
 
          const textoRespuesta = await respuesta.text(); // Leer la respuesta como texto primero
