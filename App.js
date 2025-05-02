@@ -309,6 +309,8 @@ function ListasPublicasStack({ correoUsuario }) {
       { name: "ListasPublicasScreen", Component: ListasPublicas, options: { headerShown: false } },
       { name: "LibrosDeListaScreen", Component: LibrosDeLista, title: "Libros de la lista" },
       { name: "Detalles", Component: DetallesLibro, title: "Detalles del libro" },
+      { name: "CrearLista", Component: CrearLista, title: "Crear Lista" },
+      { name: "LeerLibro", Component: LeerLibro, title: "Leyendo..." },
       { name: "AñadirValoracion", Component: AñadirValoracion, title: "Nueva valoración" },
    ];
    return (

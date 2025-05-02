@@ -997,9 +997,4 @@ const stylesGeneral = StyleSheet.create({
       marginVertical: 5,
       alignSelf: 'flex-start',
    },
-   fila: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-   },
 });
