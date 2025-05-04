@@ -211,7 +211,7 @@ export default function Estadisticas({ correoUsuario }) {
                         {/* Círculo 1: En proceso */}
                         <View style={[styles.statCircle, { backgroundColor: colors.backgroundCirculoEstadisticas }]}>
                            <Text style={styles.statNumber}>
-                              {yearlyStats?.libros_en_progreso ?? 0}
+                              {globalStats?.librosEnProgreso ?? 0}
                            </Text>
                            <Text style={styles.statLabel}>En proceso</Text>
                         </View>
