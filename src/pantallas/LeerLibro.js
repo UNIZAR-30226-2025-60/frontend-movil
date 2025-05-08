@@ -368,10 +368,10 @@ export default function LeerLibro({ route, correoUsuario }) {
       >
         <View style={[styles.drawerOverlay]}>
           <View style={[styles.drawer]}>
-            <Text style={[styles.drawerTitle, { color: colors.text }]}>Páginas destacadas</Text>
+            <Text style={[styles.drawerTitle, { color: colors.textDark }]}>Páginas destacadas</Text>
 
             {paginasMarcadas.length === 0 ? (
-              <Text style={{ color: colors.text }}>No hay páginas destacadas aún</Text>
+              <Text style={{ color: colors.textDark }}>No hay páginas destacadas aún</Text>
             ) : (
               paginasMarcadas
                 .sort((a, b) => a - b)
@@ -386,7 +386,7 @@ export default function LeerLibro({ route, correoUsuario }) {
                       size={24}
                       color={colors.star}
                     />
-                    <Text style={[styles.pageItem, { marginLeft: 10, color: colors.text }]}>Página {page}</Text>
+                    <Text style={[styles.pageItem, { marginLeft: 10, color: colors.textDark }]}>Página {page}</Text>
                   </TouchableOpacity>
                 ))
             )}

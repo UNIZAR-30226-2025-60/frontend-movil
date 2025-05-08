@@ -234,7 +234,7 @@ export default function EditarLista({ route, navigation }) {
       <TextInput
         style={[styles.input, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario }]}
         placeholder="Nombre de la lista"
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={colors.textDark}
         value={nombre}
         onChangeText={setNombre}
       />
@@ -245,7 +245,7 @@ export default function EditarLista({ route, navigation }) {
         <TextInput
           style={[styles.textarea, { borderColor: colors.text, backgroundColor: colors.backgroundFormulario, color: colors.textDark }]}
           placeholder="Añade una descripción (opcional)"
-          placeholderTextColor={colors.textSecondary}
+          placeholderTextColor={colors.textDark}
           value={descripcion}
           onChangeText={setDescripcion}
           multiline

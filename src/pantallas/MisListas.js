@@ -222,8 +222,8 @@ export default function MisListas({ correoUsuario, navigation, route }) {
                            navigation.navigate("EditarLista", { lista: item, correoUsuario });
                         }}
                      >
-                        <Ionicons name="create-outline" size={18} color={colors.text} />
-                        <Text style={[styles.textoOpcion, { color: colors.text }]}>Editar</Text>
+                        <Ionicons name="create-outline" size={18} color={colors.textDark} />
+                        <Text style={[styles.textoOpcion, { color: colors.textDark }]}>Editar</Text>
                      </TouchableOpacity>
 
                      <TouchableOpacity
